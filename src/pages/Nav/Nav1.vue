@@ -1,24 +1,24 @@
 <template>
-	<el-col :span="24" class="main">
+	<el-col :span="24" class="main" :class="cssStyle">
 		<!--左侧导航-->
 		<aside :class="collapsed?'aside64':'aside160'">
-			<div class="menu-toggle" @click.prevent="collapse" style="color: #fff;background: #4A5064;line-height: 30px; width: 100%;" v-if="enableCollapse">
+			<div class="menu-toggle sidebar-open-button" @click.prevent="collapse"  v-if="enableCollapse">
 				<i class="iconfont icon-menufold" v-show="!collapsed"></i>
 				<i class="iconfont icon-menuunfold" v-show="collapsed"></i>
 			</div>
-			<template v-for="(child, index) in $router.options.routes" v-if="child.menuShow" >
-				<el-menu background-color="#324057" text-color="#fff" :default-active="$route.path" unique-opened class="el-menu-vertical-demo" theme="dark" @select='secPath' :collapse="isCollapse">
-
+			<template v-for="(child, index) in $router.options.routes" v-if="child.menuShow">
+				<el-menu :background-color="backgroundColor" :text-color="textColor" :active-text-color="activeTextColor" :default-active="$route.path" unique-opened class="el-menu-vertical-demo"  mode="horizontal"  theme="dark" @select='secPath' :collapse="isCollapse">
 					<el-submenu v-for="children in child.children" v-if="children.menuShow && children.children.length>1" :index='children.path' :key='children.path'>
 						<template slot="title">
 							<i :class="children.iconCls" v-if="enableMenuIcon"></i>
 							<span slot="title">{{children.name}}</span>
 						</template>
-						<el-menu-item v-for="secNav in children.children" v-if="secNav.menuShow" :index='secNav.path' :key='secNav.path' :class="system&&(secNav.path=='/system/getSysuserList'||secNav.path=='/system/getSysRoleList'||secNav.path=='/system/manageRecharge'||secNav.path=='/system/zoneManage')?'sysNone':''" style='padding-left:20px;'>{{secNav.name}}</el-menu-item>
+						<el-menu-item v-for="secNav in children.children" v-if="secNav.menuShow" :index='secNav.path' :key='secNav.path' style='padding-left:20px;'>{{secNav.name}}</el-menu-item>
 					</el-submenu>
-
-					<el-menu-item v-else-if='children.menuShow && children.children.length<=1' :index='children.children[0].path' :key='children.children[0].path'><i :class="children.iconCls" v-if="enableMenuIcon"></i>{{(children.name)}}</el-menu-item>
-
+					<el-menu-item v-else-if='children.menuShow && children.children.length==1' :index='children.children[0].path' :key='children.children[0].path'>
+						<i :class="children.iconCls" v-if="enableMenuIcon"></i>
+						<span slot="title">{{children.name}}</span>
+					</el-menu-item>
 				</el-menu>
 			</template>
 
@@ -46,8 +46,8 @@
 	export default {
 		data() {
 			return {
-				enableCollapse: false,
-				enableMenuIcon: false,
+				enableCollapse: true,
+				enableMenuIcon: true,
 
 				secnav: [],
 				bNav: '',
@@ -56,7 +56,19 @@
 				isCollapse: false,
 				content: 'content-container160',
 				aside: 'aside160',
-				system:false
+				system: false,
+				cssStyle:"",
+				
+				
+				
+//				backgroundColor:"#324057",
+//				textColor:"#fff",
+//				activeTextColor:"",
+				
+				
+				backgroundColor:"#545c64",
+				textColor:"#fff",
+				activeTextColor:"#ffd04b",
 			};
 		},
 
@@ -82,7 +94,7 @@
 
 		},
 		mounted() {
-			
+
 		},
 		methods: {
 			secPath: function(key, keyPath) {
@@ -106,7 +118,8 @@
 		top: 0;
 		padding-top: 60px;
 		box-sizing: border-box;
-		background-color: #f1f2f7;
+		/*background-color: #f1f2f7;*/
+		/*background-color: #545c64;*/
 		border-width: 2px;
 		right: 0;
 		left: 160px;
@@ -119,7 +132,8 @@
 		top: 0;
 		padding-top: 60px;
 		box-sizing: border-box;
-		background-color: #f1f2f7;
+		/*background-color: #f1f2f7;*/
+		/*background-color: #545c64;*/
 		border-width: 2px;
 		right: 0;
 		left: 64px;
@@ -138,7 +152,7 @@
 	.el-menu-vertical-demo {
 		/*width: 160px !important;*/
 		transition: width 0s;
-		border-right: none; 
+		border-right: none;
 	}
 	
 	.el-submenu .el-menu-item {
@@ -169,10 +183,34 @@
 	.grid-content {
 		padding: 0;
 	}
-	.sysNone{
+	
+	.sysNone {
 		display: none;
 	}
-	.content-wrapper{
-		overflow-y:inherit;
+	
+	.content-wrapper {
+		overflow-y: inherit;
+	}
+	.sidebar-open-button:hover{
+		cursor: pointer;
+	}
+	.sidebar-open-button{
+		color: #fff;background: #4A5064;line-height: 30px; width: 100%;text-align: center;
+	}
+	
+	
+	
+	
+		aside {
+		height: 100%;
+		position: absolute;
+		top: 0;
+		/*background: #324057;*/
+		background:#545c64;
+		padding-top: 60px;
+		box-sizing: border-box;
+	}	
+	aside .el-menu-item:hover {
+		background: #48576a;
 	}
 </style>

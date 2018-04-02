@@ -1,22 +1,43 @@
 <template>
 	<el-col :span="24" class="main">
 		<!--左侧导航-->
-		<aside :key="$route.path">
-			<el-menu :default-active="$route.path" class="el-menu-vertical-demo" @select='secPath'>
+		<aside :key="$route.path" style="z-index: 100;position: absolute;width: 100%;">
+			<!--<el-menu :default-active="$route.path" class="el-menu-vertical-demo" @select='secPath'>
 				<el-menu-item v-for="(item,index) in secnav" v-if='(item.menuShow==true)' :index="item.path" :key='index'>
 					{{item.name}}
 				</el-menu-item>
-			</el-menu>
+			</el-menu>-->
+			<template v-for="(child, index) in $router.options.routes" v-if="child.menuShow">
+				<el-menu :background-color="backgroundColor" :text-color="textColor" :active-text-color="activeTextColor" :default-active="$route.path" unique-opened class="el-menu-vertical-demo"  mode="horizontal"  @select='secPath' :collapse="isCollapse">
+					<el-submenu v-for="children in child.children" v-if="children.menuShow && children.children.length>1" :index='children.path' :key='children.path'>
+						<template slot="title">
+							<i :class="children.iconCls" v-if="enableMenuIcon"></i>
+							<span slot="title">{{children.name}}</span>
+						</template>
+						<el-menu-item v-for="secNav in children.children" v-if="secNav.menuShow" :index='secNav.path' :key='secNav.path' style='padding-left:20px;'>{{secNav.name}}</el-menu-item>
+					</el-submenu>
+					<el-menu-item v-else-if='children.menuShow && children.children.length==1' :index='children.children[0].path' :key='children.children[0].path'>
+						<i :class="children.iconCls" v-if="enableMenuIcon"></i>
+						<span slot="title">{{children.name}}</span>
+					</el-menu-item>
+				</el-menu>
+			</template>
+			
+			
+			
+			
+			
+			
 		</aside>
 
 		<!--右侧内容区-->
-		<section class="content-container">
-			<div class="grid-content bg-purple-light">
-				<el-col :span="24" class="content-wrapper">
-					<el-breadcrumb separator="/" style='font-weight: 700; font-size:14px;'>
+		<section class="content-container" style="height: 100%;padding-top: 121px;box-sizing: border-box;position: absolute;top: 0;left: 0;width: 100%;">
+			<div class="grid-content bg-purple-light" style="height: 100%;width: 100%;">
+				<el-col :span="24" class="content-wrapper" style="overflow: inherit;">
+					<!--<el-breadcrumb separator="/" style='font-weight: 700; font-size:14px;'>
 						<el-breadcrumb-item :to="{ path: bNav.path }">{{bNav.name}}</el-breadcrumb-item>
 						<el-breadcrumb-item v-for='item in bNav.children' v-if='item.path==$route.path' :key='item.path'>{{item.name}}</el-breadcrumb-item>
-					</el-breadcrumb>
+					</el-breadcrumb>-->
 					<transition name="fade" mode="out-in">
 
 						<section class="rightcontent">
@@ -34,7 +55,17 @@
 		data() {
 			return {
 				secnav: [],
-				bNav: ''
+				bNav: '',
+				isCollapse: false,
+				enableMenuIcon: false,
+//				backgroundColor:"#fff",
+//				textColor:"#333333",
+//				activeTextColor:"#0f67cc",
+				
+				
+				backgroundColor:"#1D8CE0",
+				textColor:"#fff",
+				activeTextColor:"#ccc",
 			};
 		},
 
@@ -79,9 +110,11 @@
 	}
 	
 	.rightcontent {
+		width: 100%;
+		height: 100%;
 		background: #fff;
 		margin: 0;
-		padding: 10px;
+		box-sizing: border-box;
 	}
 	
 	.rightcontent:after {
@@ -98,5 +131,11 @@
 	
 	.grid-content {
 		padding-left: 0;
+	}
+	.main {
+		height: 100%;
+		padding-top: 60px;
+		box-sizing: border-box;
+		position: absolute;top: 0;;left: 0;
 	}
 </style>

@@ -1,7 +1,7 @@
 <template >
 	<el-row class="bg login">
 		<el-row>
-			<el-col :span="24"><div class="grid-content" style="text-align:center;margin-top:5%;font-size:40px;">扬州交通局控制中心管理平台</div></el-col>
+			<el-col :span="24"><div class="grid-content" style="text-align:center;margin-top:5%;font-size:40px;">{{title}}</div></el-col>
 		</el-row>
 		<el-form ref="account" :model="account" :rules="rules" label-position="left" label-width="0px"	class="demo-ruleForm login-container">
 			<h3 class="title">系统登录</h3>
@@ -30,6 +30,7 @@
 					adminName: '',
 					password: ''
 				},
+				title:window.g.netName,
 				rules: {
 					adminName: [
 					{required: true, message: '请输入账号', trigger: 'blur'},
@@ -99,7 +100,7 @@
 </script>
 
 
-<style>
+<style  scoped>
 	.bg{
 		height: 100%;
 		background-size: cover;

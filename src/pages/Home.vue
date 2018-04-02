@@ -1,37 +1,28 @@
 <template>
 	<div id="app">
-		<el-row class="container" style="height:100%;overflow: hidden;" :class="cssStyle">
+		<el-row class="container" style="height:100%;overflow: hidden;">
 			<!--头部-->
 			<el-row style='z-index: 1;'>
 				<el-col :span="24">
 					<div class="grid-content bg-dark-blue">
-						<div class="net-title topFontColor">{{title}}</div>
+						<div class="net-title">{{netName}} - {{groupName}}{{(this.roleName)}}</div>
 						<div class="login-info">
-							<div class="set">
-								<el-dropdown  @command="handleCommand">
-								  <span class="el-dropdown-link system">
-								    设置<i class="el-icon-caret-bottom el-icon--right"></i>
-								  </span>
-								  <el-dropdown-menu slot="dropdown" style="font-size: 14px;text-align: center;">
-								    <el-dropdown-item  command="1">修改密码</el-dropdown-item>
-								    <el-dropdown-item command="2">退出</el-dropdown-item>
-								  </el-dropdown-menu>
-								</el-dropdown>
+							<div class="exit">
 								<!-- <router-link to="/perInfo" style="color:whitesmoke;">个人信息</router-link> -->
-								<!--<a class="exit-ico" href="javascript:void(0);" style="color:whitesmoke;" v-on:click="logout"><i class="el-icon-upload2"></i>退出</a>-->
+								<a class="exit-ico" href="javascript:void(0);" style="color:whitesmoke;" v-on:click="logout"><i class="el-icon-upload2"></i>退出</a>
 							</div>
 							<ul class="">
-								<li style="font-size: 14px;line-height: 60px;" class="topFontColor">{{preTime}}</li>
+								<li style="font-size: 14px; color: whitesmoke;line-height: 60px;">{{preTime}}</li>
 							</ul>
 							<ul class="">
 								<li style="margin-right:15px;">
-									<a href="#" class="topFontColor" style="font-weight: bold;">
-										<div style="height: 60px;font-size: 20px; color: rgb(60, 60, 60); font-weight: bold; line-height:60px;"><label style="font-size: 16px;  font-style: italic; font-weight: normal;">
+									<a href="#" style="color: whitesmoke; font-weight: bold;">
+										<div style="height: 60px;font-size: 20px; color: rgb(60, 60, 60); font-weight: bold; line-height:60px;"><label style="font-size: 16px; color: rgb(244, 244, 244); font-style: italic; font-weight: normal;">
 							欢迎您
 						</label>
 											<!-- <a href="/perInfo">{{sysUserName}}</a> -->
-											<router-link to='/perInfo'>{{sysUserName}}</router-link>
-											<label style="font-size: 16px;  font-weight: normal;">  </label></div>
+											<router-link to='/perInfo' style='color:#324057;'>{{sysUserName}}</router-link>
+											<label style="font-size: 16px; color: rgb(244, 244, 244); font-weight: normal;">  </label></div>
 									</a>
 								</li>
 							</ul>
@@ -59,48 +50,42 @@
 			</el-row>
 			<!-- 一级导航 -->
 			<div class="nav navbar-nav firstNav" style="width:1000; position: absolute;z-index: 1;width: 100%;">
-				<!--<template v-for="child in $router.options.routes" v-if="child.menuShow">
+				<template v-for="child in $router.options.routes" v-if="child.menuShow">
 					<el-menu theme="dark" :default-active="$route.path | filterParentPath" class="el-menu-demo" mode="horizontal" @select='single'>
-					<el-menu-item style="font-size: 17px;" v-for="(item,index) in child.children" v-if="item.menuShow" :index="item.path" >
-						{{item.name}}
-					</el-menu-item>
-				</el-menu>
-				</template>-->
+						<el-menu-item style="font-size: 17px;" v-for="(item,index) in child.children" v-if="item.menuShow" :index="item.path" :key='index'>
+							{{item.name}}
+						</el-menu-item>
+					</el-menu>
+				</template>
+
+				<!--<ul class="nav navbar-nav" >
+        <el-menu mode="horizontal"  :default-active="$route.path | filterParentPath" @select="handleSelect"
+                 style="height: 100%" theme="dark">
+			<template v-for="item in $router.options.routes" v-if="!item.hidden">
+				<el-menu-item
+						v-for="child in item.children"
+						:index="child.path"
+						v-show="!child.hidden && hasChildren(child.path) "
+						style="font-size: 17px">
+					{{child.meta}}
+				</el-menu-item>
+			</template>
+        </el-menu >
+      </ul >-->
+
 			</div>
-			<!--二级导航和内容区域-->
 			<router-view></router-view>
-			
-			
-			<el-dialog title="密码修改" :visible.sync="dialogEditVisible" width="500px">
-  <el-form :model="form" label-width="100px">
-    <el-form-item label="原始密码" >
-      <el-input type="password" v-model="form.name" auto-complete="off"></el-input>
-    </el-form-item>
-    <el-form-item label="新密码" >
-      <el-input type="password" v-model="form.name1" auto-complete="off"></el-input>
-    </el-form-item>
-    <el-form-item label="重复新密码">
-      <el-input type="password" v-model="form.name2" auto-complete="off"></el-input>
-    </el-form-item>
-    
-  </el-form>
-  <div slot="footer" class="dialog-footer">
-    <el-button @click="dialogEditVisible = false">取 消</el-button>
-    <el-button type="primary" @click="dialogEditVisible = false">确 定</el-button>
-  </div>
-</el-dialog>
+
 		</el-row>
-		
-		
-		
-		
-		
 	</div>
 
 </template>
 
 <script>
 	import { bus } from '../bus.js'
+	import { Nav } from './Nav/Nav'
+	import { netName } from '../js/api'
+	import {formatTime} from '../js/formatTime'
 	export default {
 		name: 'home',
 
@@ -114,27 +99,10 @@
 				preTime: '',
 				groupName: '',
 				roleName: '',
-				title: window.g.netName,
-
-
-
-			dialogEditVisible:false,
-			form:{},
-			cssStyle:"write",
+				netName: netName
 			}
 		},
 		methods: {
-			handleCommand(command){
-				console.log(command);
-				switch (command){
-					case '1':
-						this.dialogEditVisible=true;
-					break;
-					case '2':
-					this.logout();
-					break;
-				}
-			},
 			logout: function() {
 				var _this = this;
 				this.$confirm('确认退出吗?', '提示', {
@@ -165,32 +133,31 @@
 			var _this = this;
 
 			setInterval(function() {
-				var date = new Date();
-				var seperator1 = "-";
-				var seperator2 = ":";
-				var month = date.getMonth() + 1;
-				var strDate = date.getDate();
-				var sec = date.getSeconds();
-				var min = date.getMinutes();
-				var hou = date.getHours();
-				if(month >= 1 && month <= 9) {
-					month = "0" + month;
-				}
-				if(strDate >= 0 && strDate <= 9) {
-					strDate = "0" + strDate;
-				}
-				if(sec >= 0 && sec <= 9) {
-					sec = "0" + sec;
-				}
-				if(min >= 0 && min <= 9) {
-					min = "0" + min;
-				}
-				if(hou >= 0 && hou <= 9) {
-					hou = "0" + hou;
-				}
-				var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate + " " + hou + seperator2 + min + seperator2 + sec;
-				_this.preTime = currentdate;
-				// console.log(_this.preTime);
+//				var date = new Date();
+//				var seperator1 = "-";
+//				var seperator2 = ":";
+//				var month = date.getMonth() + 1;
+//				var strDate = date.getDate();
+//				var sec = date.getSeconds();
+//				var min = date.getMinutes();
+//				var hou = date.getHours();
+//				if(month >= 1 && month <= 9) {
+//					month = "0" + month;
+//				}
+//				if(strDate >= 0 && strDate <= 9) {
+//					strDate = "0" + strDate;
+//				}
+//				if(sec >= 0 && sec <= 9) {
+//					sec = "0" + sec;
+//				}
+//				if(min >= 0 && min <= 9) {
+//					min = "0" + min;
+//				}
+//				if(hou >= 0 && hou <= 9) {
+//					hou = "0" + hou;
+//				}
+//				var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate + " " + hou + seperator2 + min + seperator2 + sec;
+				_this.preTime = formatTime(new Date());
 			}, 1000);
 		},
 		computed: {
@@ -229,30 +196,9 @@
 		}
 	}
 	
-	.blue .bg-dark-blue {
+	.bg-dark-blue {
 		background: #1D8CE0;
 	}
-	
-		.grey .bg-dark-blue {
-		background: #101010;
-	}
-	
-	.green .bg-dark-blue {
-		background: #00CA79;
-	}
-	
-	.write .bg-dark-blue {
-		background: rgb(245, 245, 245);
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	.bg-purple {
 		background: #d3dce6;
@@ -281,13 +227,9 @@
 	.net-title {
 		font-size: large;
 		font-weight: bolder;
-		
+		color: whitesmoke;
 		line-height: 60px;
 		float: left;
-		padding-left: 20px;
-	}
-	.topFontColor{
-		color: #1D8CE0;
 	}
 	
 	.login-info {
@@ -300,21 +242,16 @@
 		float: right;
 	}
 	
-	.set {
+	.exit {
 		/*position:absolute;right:0;top:60px;z-index:1;*/
-		margin-left: 10px;
 		height: 60px;
 		line-height: 60px;
 		font-size: 14px;
 		margin-right: 10px;
 		float: right;
-		
-	}
-	.system:hover{
-		cursor:pointer;
 	}
 	
-	.set a {
+	.exit a {
 		padding: 0 15px;
 	}
 	
@@ -323,7 +260,37 @@
 		margin-right: 5px;
 	}
 	
-
+	aside {
+		height: 100%;
+		width: 160px;
+		position: absolute;
+		top: 0;
+		background: #324057;
+		padding-top: 120px;
+		box-sizing: border-box;
+	}
+	
+	aside .el-menu-item {
+		background: #324057;
+		color: #bfcbd9;
+	}
+	
+	aside .el-menu-item:hover {
+		background: #48576a;
+	}
+	
+	.content-container {
+		position: absolute;
+		top: 0;
+		padding-top: 120px;
+		box-sizing: border-box;
+		background-color: #f1f2f7;
+		border-width: 2px;
+		right: 0;
+		left: 160px;
+		height: 100%;
+		overflow: hidden;
+	}
 	
 	a:-webkit-any-link {
 		color: inherit;
@@ -331,7 +298,9 @@
 		text-decoration: none;
 	}
 	
-
+	.main {
+		height: 100%;
+	}
 	
 	.content-wrapper {
 		overflow-y: scroll;

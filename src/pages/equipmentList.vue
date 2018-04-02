@@ -1,5 +1,5 @@
 <template>
-	<section style="padding: 10px 0 0 10px;box-sizing: border-box;position: relative;height: 100%;">
+	<section style="padding: 10px 0 0 10px;box-sizing: border-box;position: relative;height: 100%;" class="equipmentList">
 		<div style="margin-right: 200px;">
 			<el-row>
 				<el-form :inline="true" :model="searchData" class="demo-form-inline">
@@ -7,7 +7,7 @@
 						<el-input v-model="searchData.number" placeholder="编号"></el-input>
 					</el-form-item>
 					<el-form-item label="名称">
-						<el-input v-model="searchData.name" placeholder="编号"></el-input>
+						<el-input v-model="searchData.name" placeholder="名称"></el-input>
 					</el-form-item>
 					<el-form-item label="状态">
 						<el-select v-model="searchData.state" placeholder="状态">
@@ -17,8 +17,9 @@
 					</el-form-item>
 					<el-form-item label="分组">
 						<el-select v-model="searchData.group" placeholder="分组">
-							<el-option label="1" value="1"></el-option>
-							<el-option label="2" value="0"></el-option>
+							<el-option label="分组一" value="1"></el-option>
+							<el-option label="分组二" value="2"></el-option>
+							<el-option label="分组三" value="3"></el-option>
 						</el-select>
 					</el-form-item>
 					<el-form-item label="安装位置">
@@ -69,6 +70,12 @@
 			<p style="height: 50px;text-align: center;line-height: 50px;background: #999;font-weight: bold;">分组列表</p>
 			<el-tree :data="data" :props="defaultProps" default-expand-all @node-click="handleNodeClick"></el-tree>
 		</div>
+
+		<!--实时视频播放窗口-->
+		<el-dialog v-if="showWin" :visible.sync="dialogFormVisible" :center="true" :close-on-click-modal="false" top="5vh" width="90%" @close="diaClose">
+			<video-player style='width: 100%;height: 100%;' class="vjs-custom-skin" ref="videoPlayer" :options="playerOptions" @ready="onPlayerReadied">
+			</video-player>
+		</el-dialog>
 	</section>
 </template>
 <script>
@@ -90,7 +97,7 @@
 					label: '分组三',
 					children: [{
 						label: '003（三号监控）'
-					},]
+					}, ]
 				}],
 				defaultProps: {
 					children: 'children',
@@ -101,6 +108,43 @@
 				pageSize: 15,
 				total: 400,
 				currentPage: 2,
+
+				dialogFormVisible: true,
+				showWin: false,
+				playerOptions: {
+					overNative: true,
+					autoplay: true,
+					controls: false,
+					techOrder: ['flash', 'html5'],
+					sourceOrder: true,
+					flash: {
+						hls: {
+							withCredentials: false
+						}
+					},
+					html5: {
+						hls: {
+							withCredentials: false
+						}
+					},
+					sources: [{
+						type: 'rtmp/mp4',
+						src: 'rtmp://184.72.239.149/vod/&mp4:BigBuckBunny_115k.mov'
+					}, {
+						withCredentials: false,
+						type: 'application/x-mpegURL',
+						src: 'http://playertest.longtailvideo.com/adaptive/bipbop/gear4/prog_index.m3u8'
+					}],
+					fullscreenToggle: true,
+					controlBar: {
+						//           timeDivider: false, // 时间分割线
+						//           durationDisplay: false, // 总时间
+						//           progressControl: true, // 进度条
+						//           customControlSpacer: true, // 未知
+						//           fullscreenToggle: true // 全屏
+					},
+				},
+
 				tableData: [{
 						number: '001',
 						name: '一号监控',
@@ -128,8 +172,7 @@
 						position: '扬州市快速路口'
 					},
 				],
-				searchData: {
-				},
+				searchData: {},
 			}
 		},
 		methods: {
@@ -141,9 +184,22 @@
 			//			showAddWin() {
 			//
 			//			},
+			onPlayerReadied() {
+				if(!this.initialized) {
+					this.initialized = true
+					//      this.currentTech = this.player.techName
+				}
+			},
+			diaClose() {
+				console.log(123456);
+				this.showWin = false;
+				this.dialogFormVisible = false;
+			},
 			//显示实时监控
 			showTime(row) {
 				console.log(row);
+				this.showWin = true;
+				this.dialogFormVisible = true;
 			},
 			//显示历史监控
 			showHistory(row) {
@@ -180,7 +236,7 @@
 </script>
 
 <style>
-	.stateGre{
+	.stateGre {
 		width: 16px;
 		height: 16px;
 		display: inline-block;
@@ -188,12 +244,25 @@
 		background: green;
 		vertical-align: middle;
 	}
-	.stateRed{
+	
+	.stateRed {
 		width: 16px;
 		height: 16px;
 		display: inline-block;
 		border-radius: 8px;
 		background: red;
 		vertical-align: middle;
+	}
+	
+	.equipmentList .video-js {
+		height: 80vh;
+	}
+	
+	.equipmentList .el-dialog {
+		height: 90%;
+	}
+	
+	.equipmentList .vjs-button {
+		height: auto;
 	}
 </style>

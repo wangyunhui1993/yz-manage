@@ -49,41 +49,64 @@
 				</el-table-column>
 			</el-table>
 			<el-row style="margin-top: 10px;">
-			<el-pagination style="float: right;" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="pageSizes" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total">
-			</el-pagination>
+				<el-pagination style="float: right;" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="pageSizes" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total">
+				</el-pagination>
+			</el-row>
 		</el-row>
-		</el-row>
-		
+
+		<el-dialog :title="opTitle" :visible.sync="dialogFormVisible" width="600px">
+			<el-form :model="formInfo" label-width="100px">
+				<el-form-item label="用户名">
+					<el-input v-model="formInfo.name" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="真实姓名">
+					<el-input v-model="formInfo.reallyName" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="角色">
+					<el-select v-model="formInfo.region" placeholder="请选择角色">
+						<el-option label="系统管理员" value="1"></el-option>
+						<el-option label="用户" value="2"></el-option>
+					</el-select>
+				</el-form-item>
+			</el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click="dialogFormVisible = false">取 消</el-button>
+				<el-button type="primary" @click="subAddInfo">确 定</el-button>
+			</div>
+		</el-dialog>
+
 	</section>
 </template>
 <script>
 	import {} from '../../js/api';
-	
+
 	export default {
 		data() {
 			return {
 				pageSizes: [15, 100, 200, 500],
 				pageSize: 15,
-				total:400,
-				currentPage:2,
-				searchData:{},
+				total: 400,
+				currentPage: 2,
+				searchData: {},
+				dialogFormVisible: false,
+				formInfo: {},
+				opTitle: "",
 				tableData: [{
-						number: '001',
-						userName: 'admin',
-						reallyName: '小明',
-						role: '系统管理员',
-					}, {
-						number: '001',
-						userName: 'zhangsan',
-						reallyName: '张三',
-						role: '用户',
-					},{
-						number: '001',
-						userName: 'lisi',
-						reallyName: '李四',
-						role: '用户',
-					},
-				],
+					number: '001',
+					userName: 'admin',
+					reallyName: '小明',
+					role: '系统管理员',
+				}, {
+					number: '001',
+					userName: 'zhangsan',
+					reallyName: '张三',
+					role: '用户',
+				}, {
+					number: '001',
+					userName: 'lisi',
+					reallyName: '李四',
+					role: '用户',
+				}, ],
 			}
 		},
 		methods: {
@@ -93,15 +116,32 @@
 			},
 			//显示添加窗口
 			showAddWin() {
-
+				this.opTitle = "添加用户";
+				this.dialogFormVisible = true;
 			},
 			//显示编辑窗口
-			showEditWin(){
-				
+			showEditWin() {
+				this.opTitle = "编辑用户";
+				this.dialogFormVisible = true;
 			},
 			//显示删除页面
 			showDeleteWin(row) {
 				console.log(row);
+				this.$confirm('此操作将删除此设备, 是否继续?', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
+				}).then(() => {
+					this.$message({
+						type: 'success',
+						message: '删除成功!'
+					});
+				}).catch(() => {
+					this.$message({
+						type: 'info',
+						message: '已取消删除'
+					});
+				});
 			},
 			//每页显示的条数改变时
 			handleSizeChange(val) {
@@ -110,13 +150,19 @@
 			//当前页
 			handleCurrentChange(val) {
 				console.log(`当前页: ${val}`);
-			}
+			},
+			//提交添加的信息
+			subAddInfo() {
+
+			},
+			//关闭窗口
+			closeWin() {},
 		},
 		mounted() {
 
 		}
 	}
 </script>
-<style>
+<style scoped>
 
 </style>

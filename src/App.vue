@@ -12,10 +12,15 @@
 </script>
 
 <style>
+	html{
+		width: 100%;
+		height: 100%;
+	}
 	body {
 		padding:0px;
 		margin:0px auto;
 		height: 100%;
+		width: 100%;
 	}
 	*{margin: 0;
 		padding: 0;

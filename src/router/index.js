@@ -3,7 +3,7 @@
 	Vue.use(Router)
 	// 懒加载方式，当路由被访问的时候才加载对应组件
 	const Home = resolve => require(['@/pages/Home1'], resolve)
-	const Nav = resolve => require(['@/pages/Nav/Nav1'], resolve)
+	const Nav = resolve => require(['@/pages/Nav/Nav'], resolve)
 	const Login = resolve => require(['@/pages/Login'], resolve)
 	
 	
@@ -42,12 +42,12 @@
 				component: Login
 		},
 		
-		{
-				path: '/bigScreen',
-				name: '大屏',
-				menuShow: false,
-				component: BigScreen
-		},
+//		{
+//				path: '/bigScreen',
+//				name: '大屏',
+//				menuShow: false,
+//				component: BigScreen
+//		},
 		
 		
 			{
@@ -60,8 +60,9 @@
 						name: 'Gis信息展示',
 						component: Nav,
 						menuShow: true,
+						iconCls:"el-icon-location",
 						children: [
-							{ path: '/map/mapShow', component: MapShow, menuShow: true },
+							{ path: '/map/mapShow', component: MapShow, name: 'Gis信息展示', menuShow: true },
 						]
 					},
 					{
@@ -69,26 +70,29 @@
 						name: '设备列表',
 						component: Nav,
 						menuShow: true,
+						iconCls:"el-icon-tickets",
 						children: [
-							{ path: '/equipmentList', component: EquipmentList, menuShow: true },
+							{ path: '/equipmentList', name: '设备列表',component: EquipmentList, menuShow: true },
 						]
 					},
-					{
-						path: '/queryStats',
-						name: '查询统计',
-						component: Nav,
-						menuShow: true,
-						children: [
-							{ path: '/queryStats', component: QueryStats, menuShow: true },
-						]
-					},
+//					{
+//						path: '/queryStats',
+//						name: '查询统计',
+//						component: Nav,
+//						menuShow: true,
+//						iconCls:"el-icon-setting",
+//						children: [
+//							{ path: '/queryStats', component: QueryStats, menuShow: true },
+//						]
+//					},
 					{
 						path: '/big',
 						name: '大屏展示',
 						component: Nav,
 						menuShow: true,
+						iconCls:"el-icon-menu",
 						children: [
-							{ path: '/big', redirect:'/bigScreen', menuShow: true },
+							{ path: '/big',  component: BigScreen,name: '大屏展示', menuShow: true },
 						]
 					},
 					{
@@ -96,6 +100,7 @@
 						name: '系统管理',
 						component: Nav,
 						menuShow: true,
+						iconCls:"el-icon-setting",
 						children: [
 							{ path: '/system/userManage', component: UserManage,  name: '用户管理', menuShow: true },
 //							{ path: '/system/authority', component: Authority,  name: '角色权限管理', menuShow: true },

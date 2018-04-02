@@ -1,71 +1,85 @@
 <template>
-	<section style="height: 100%;width: 100%;">
-		<baidu-map class="bm-view" :center="center" :zoom="zoom" @mousewheel.native="mousewheelOp">
-
-			<bm-scale anchor="BMAP_ANCHOR_BOTTOM_LEFT"></bm-scale>
-			<bm-navigation anchor="BMAP_ANCHOR_TOP_LEFT"></bm-navigation>
-			<bm-city-list anchor="BMAP_ANCHOR_TOP_RIGHT" :offset="offsetCityList"></bm-city-list>
-			<bm-map-type :map-types="['BMAP_NORMAL_MAP', 'BMAP_HYBRID_MAP']" anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-map-type>
-
-			<bm-overview-map anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :isOpen="true"></bm-overview-map>
-
-			<bm-traffic v-if="controlTraffic" :predictDate="trafficData"></bm-traffic>
-			<bm-info-window :position="winInfo.markerPoint" :closeOnClick="false" :title="markerTitle" :show="show" @clickclose="infoWindowClose">
-				<p>编号：{{winInfo.num}}</p>
-				<p>经度：{{winInfo.markerPoint.lng}}</p>
-				<p>纬度：{{winInfo.markerPoint.lat}}</p>
-				<el-button type="primary" size="mini" @click="immediate(winInfo.num)">实时监控</el-button>
-				<el-button type="primary" size="mini" @click="history(winInfo.num)">历史监控</el-button>
-			</bm-info-window>
-			
-			
-			
-			<bm-marker v-for=" (item,index) in market" :key="index" :position="item.markerPoint" @click="infoWindowOpen(index)" :offset="{width: 9,height: -11}" :icon="{url: './static/img/map_camera.png', size: {width: 30, height: 25}}">
-			</bm-marker>
-			
-			
-			
-			<bm-polyline :path="market|filterMarket " stroke-color="red" :stroke-opacity="0.5" :stroke-weight="5"></bm-polyline>
-
-			<bm-control anchor="BMAP_ANCHOR_TOP_RIGHT" :offset="{width:170,height:8}">
-				<div style="position: relative;">
-					<div style="float: right;" class="traffic" :class="controlTraffic?'showTraffic':''" @click="traffic">路况</div>
-					<div class="dataWin" v-show="showPrediction">
-						<i class="el-icon-close closeTraffic" @click="closeTraffic"></i>
-						<el-tabs v-model="trafficSelectModel" type="card" @tab-click="trafficSelect">
-						    <el-tab-pane label="实时路况" name="first">
-						    	更新时间：{{nowTime}}<i class="el-icon-refresh refresh" @click="refreshTime"></i>
-						    </el-tab-pane>
-						    <el-tab-pane label="路况预测" name="second">
-						    	<el-form label-width="50px">
-							<span style="color: #666;font-size: 14px;">
+	<section style="height: 100%;width: 100%;" class="mapShow">
+		<el-container style="height: 100%;margin-top: 5px;box-sizing: border-box;border-top:1px solid #bfcbd9 ;padding-bottom: 5px;">
+			<div @click="mobileBtn" class="mobileBtn"  :class="openMobile?'aside-150':'aside-0'"><i :class="openMobile?'el-icon-arrow-left':'el-icon-arrow-right'" style="font-size: 20px;line-height: 50px;"></i></div>
+			<el-aside :width="openMobile?'150px':'0px'" style="border-right:1px solid #bfcbd9 ;position: relative;">
+				<div></div>
+				<el-input placeholder="输入关键字进行过滤" size="small" suffix-icon="el-icon-search" v-model="filterText">
+				</el-input>
+				<el-tree class="filter-tree" :data="data2" :props="defaultProps" default-expand-all :filter-node-method="filterNode" ref="tree2">
+				</el-tree>
+				
+			</el-aside>
+			<el-main style="height: 100%;padding: 0;">
+				<baidu-map class="bm-view" :center="center" :zoom="zoom" @mousewheel.native="mousewheelOp"  @ready="handler">
+					<bm-scale anchor="BMAP_ANCHOR_BOTTOM_LEFT"></bm-scale>
+					<!--<bm-navigation anchor="BMAP_ANCHOR_TOP_LEFT"></bm-navigation>-->
+					<bm-city-list anchor="BMAP_ANCHOR_TOP_RIGHT" :offset="offsetCityList"></bm-city-list>
+					<bm-map-type :map-types="['BMAP_NORMAL_MAP', 'BMAP_HYBRID_MAP']" anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-map-type>
+					<bm-overview-map anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :isOpen="true"></bm-overview-map>
+					<bm-traffic v-if="controlTraffic" :predictDate="trafficData"></bm-traffic>
+					<bm-info-window :position="winInfo.markerPoint" :closeOnClick="false" :title="markerTitle" :show="show" @clickclose="infoWindowClose">
+						<p>编号：{{winInfo.num}}</p>
+						<p>经度：{{winInfo.markerPoint.lng}}</p>
+						<p>纬度：{{winInfo.markerPoint.lat}}</p>
+						<el-button type="primary" size="mini" @click="immediate(winInfo.num)">实时监控</el-button>
+						<el-button type="primary" size="mini" @click="history(winInfo.num)">历史监控</el-button>
+					</bm-info-window>
+					<bm-marker v-for=" (item,index) in market" :key="index" :position="item.markerPoint" @click="infoWindowOpen(index)" :offset="{width: 9,height: -11}" :icon="{url: './static/img/map_camera.png', size: {width: 30, height: 25}}">
+					</bm-marker>
+					<bm-polyline :path="market|filterMarket " stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="5"></bm-polyline>
+					<bm-control anchor="BMAP_ANCHOR_TOP_RIGHT" :offset="offsetControl">
+						<div style="position: relative;">
+							<div style="float: right;" class="traffic" :class="controlTraffic?'showTraffic':''" @click="traffic">路况</div>
+							<div class="dataWin" v-show="showPrediction">
+								<i class="el-icon-close closeTraffic" @click="closeTraffic"></i>
+								<el-tabs v-model="trafficSelectModel" type="card" @tab-click="trafficSelect">
+									<el-tab-pane label="实时路况" name="first">
+										更新时间：{{nowTime}}<i class="el-icon-refresh refresh" @click="refreshTime"></i>
+									</el-tab-pane>
+									<el-tab-pane label="路况预测" name="second">
+										<el-form label-width="50px">
+											<span style="color: #666;font-size: 14px;">
 								星期{{weekdays}}  {{times}}
 							</span>
-							<el-form-item label="星期">
-								<el-button-group class="weekG">
-									<el-button  size="mini" @click="selectWeeks(1,'一')">一</el-button>
-									<el-button  size="mini"  @click="selectWeeks(2,'二')">二</el-button>
-									<el-button  size="mini"  @click="selectWeeks(3,'三')">三</el-button>
-									<el-button  size="mini"  @click="selectWeeks(4,'四')">四</el-button>
-									<el-button  size="mini"  @click="selectWeeks(5,'五')">五</el-button>
-									<el-button  size="mini"  @click="selectWeeks(6,'六')">六</el-button>
-									<el-button  size="mini"  @click="selectWeeks(7,'日')">日</el-button>
-								</el-button-group>
-							</el-form-item>
-							<el-form-item label="时间">
-								<el-slider v-model="trafficData.hour" :format-tooltip="formaTooltip" :step="1" :max="24"  show-stops>
-								</el-slider>
-							</el-form-item>
-						</el-form>
-						    </el-tab-pane>
-						  </el-tabs>
-						
-					</div>
-				</div>
-
-			</bm-control>
-			<!--<bml-curve-line :points="market|filterMarket"></bml-curve-line>-->
-		</baidu-map>
+											<el-form-item label="星期">
+												<el-button-group class="weekG">
+													<el-button size="mini" @click="selectWeeks(1,'一')">一</el-button>
+													<el-button size="mini" @click="selectWeeks(2,'二')">二</el-button>
+													<el-button size="mini" @click="selectWeeks(3,'三')">三</el-button>
+													<el-button size="mini" @click="selectWeeks(4,'四')">四</el-button>
+													<el-button size="mini" @click="selectWeeks(5,'五')">五</el-button>
+													<el-button size="mini" @click="selectWeeks(6,'六')">六</el-button>
+													<el-button size="mini" @click="selectWeeks(7,'日')">日</el-button>
+												</el-button-group>
+											</el-form-item>
+											<el-form-item label="时间">
+												<el-slider v-model="trafficData.hour" :format-tooltip="formaTooltip" :step="1" :max="24" show-stops>
+												</el-slider>
+											</el-form-item>
+										</el-form>
+									</el-tab-pane>
+								</el-tabs>
+							</div>
+						</div>
+					</bm-control>
+					<bm-control anchor="BMAP_ANCHOR_TOP_RIGHT" :offset="offsetW">
+						<template>
+							<div id="tp-weather-widget"></div>
+						</template>
+					</bm-control>
+					<!--<bml-curve-line :points="market|filterMarket"></bml-curve-line>-->
+				</baidu-map>
+				
+			</el-main>
+			
+		</el-container>
+		<!--实时视频播放窗口-->
+				<el-dialog v-if="showWin" :visible.sync="dialogFormVisible"  :center="true" :modal-append-to-body="true" :close-on-click-modal="false" top="5vh" width="90%" @close="diaClose">
+					<video-player style='width: 100%;height: 100%;' class="vjs-custom-skin" ref="videoPlayer" :options="playerOptions" @ready="onPlayerReadied">
+					</video-player>
+				</el-dialog>
+		
 	</section>
 </template>
 <script>
@@ -81,7 +95,7 @@
 					lng: 119.42285,
 					lat: 32.37020
 				},
-//				center:"杭州",     /*用这个坐中心会出现一个黑条一闪而过的问题*/
+				//				center:"杭州",     /*用这个坐中心会出现一个黑条一闪而过的问题*/
 				show: false,
 				controlTraffic: false,
 				trafficData: {
@@ -92,12 +106,56 @@
 					width: 90,
 					height: 8
 				},
-				times:"",
-				showPrediction:false,
+				offsetW: {
+					width: 217,
+					height: 5
+				},
+				offsetControl: {
+					width: 163,
+					height: 8
+				},
+				times: "",
+				showPrediction: false,
 				trafficHour: 0,
 				weekdays: '一',
-				trafficSelectModel:"first",
-				nowTime:"",
+				trafficSelectModel: "first",
+				nowTime: "",
+				dialogFormVisible: true,
+				showWin: false,
+				playerOptions: {
+					overNative: true,
+					autoplay: true,
+					controls: false,
+					techOrder: ['flash', 'html5'],
+					sourceOrder: true,
+					flash: {
+						hls: {
+							withCredentials: false
+						}
+					},
+					html5: {
+						hls: {
+							withCredentials: false
+						}
+					},
+					sources: [{
+						type: 'rtmp/mp4',
+						src: 'rtmp://184.72.239.149/vod/&mp4:BigBuckBunny_115k.mov'
+					}, {
+						withCredentials: false,
+						type: 'application/x-mpegURL',
+						src: 'http://playertest.longtailvideo.com/adaptive/bipbop/gear4/prog_index.m3u8'
+					}],
+					fullscreenToggle: true,
+					controlBar: {
+						//           timeDivider: false, // 时间分割线
+						//           durationDisplay: false, // 总时间
+						//           progressControl: true, // 进度条
+						//           customControlSpacer: true, // 未知
+						//           fullscreenToggle: true // 全屏
+					},
+				},
+
 				market: [{
 						markerPoint: {
 							lng: 119.47869,
@@ -261,6 +319,7 @@
 					},
 				],
 
+
 				//,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 				polylinePath: [],
@@ -271,10 +330,65 @@
 						lat: ""
 					},
 					num: ""
-				}
+				},
+				
+				
+				
+				filterText: '',
+        data2: [{
+          id: 1,
+          label: '一级 1',
+          children: [{
+            id: 4,
+            label: '二级 1-1',
+            children: [{
+              id: 9,
+              label: '三级 1-1-1'
+            }, {
+              id: 10,
+              label: '三级 1-1-2'
+            }]
+          }]
+        }, {
+          id: 2,
+          label: '一级 2',
+          children: [{
+            id: 5,
+            label: '二级 2-1'
+          }, {
+            id: 6,
+            label: '二级 2-2'
+          }]
+        }, {
+          id: 3,
+          label: '一级 3',
+          children: [{
+            id: 7,
+            label: '二级 3-1'
+          }, {
+            id: 8,
+            label: '二级 3-2'
+          }]
+        }],
+        defaultProps: {
+          children: 'children',
+          label: 'label'
+        },
+        
+        asideWidth:'150px',
+        iconClass:'el-icon-arrow-left',
+        openMobile:true,
+				
+				
 			}
 		},
 		methods: {
+			onPlayerReadied() {
+				if(!this.initialized) {
+					this.initialized = true
+					//      this.currentTech = this.player.techName
+				}
+			},
 			mousewheelOp(val) {
 				if(val.deltaY > 0) {
 					this.zoom > 3 ? this.zoom-- : "";
@@ -293,12 +407,20 @@
 				this.winInfo.num = this.market[index].num;
 				this.winInfo.markerPoint.lng = this.market[index].markerPoint.lng;
 				this.winInfo.markerPoint.lat = this.market[index].markerPoint.lat;
-//				this.winInfo = this.market[index];
+				//				this.winInfo = this.market[index];
 				console.log(this.show);
+			},
+			diaClose() {
+				console.log(123456);
+				this.showWin = false;
+				this.dialogFormVisible = false;
 			},
 			//即使播放
 			immediate(id) {
-				console.log(id);
+				//				console.log(id);
+				this.showWin = true;
+				this.dialogFormVisible = true;
+
 			},
 			//历史记录
 			history(id) {
@@ -307,48 +429,94 @@
 			//路况预测
 			traffic() {
 				this.controlTraffic = !this.controlTraffic;
-				this.showPrediction=!this.showPrediction;
-				if(this.controlTraffic){
+				this.showPrediction = !this.showPrediction;
+				if(this.controlTraffic) {
 					console.log(new Date().getHours());
-					let t=new Date();
-					this.times=this.getTime(false);
-					this.trafficData.hour=t.getHours();
-					this.nowTime=this.getTime(true);
+					let t = new Date();
+					this.times = this.getTime(false);
+					this.trafficData.hour = t.getHours();
+					this.nowTime = this.getTime(true);
 				}
 			},
-			getTime(h){
-				let t=new Date();
-				if(h){
-					return (t.getHours()>10?t.getHours():'0'+t.getHours())+":"+(t.getMinutes()>10?t.getMinutes():'0'+t.getMinutes());
-				}else{
-					return (t.getHours()>10?t.getHours():'0'+t.getHours())+":00";
+			getTime(h) {
+				let t = new Date();
+				if(h) {
+					return(t.getHours() > 10 ? t.getHours() : '0' + t.getHours()) + ":" + (t.getMinutes() > 10 ? t.getMinutes() : '0' + t.getMinutes());
+				} else {
+					return(t.getHours() > 10 ? t.getHours() : '0' + t.getHours()) + ":00";
 				}
-				console.log(h,m);
+				console.log(h, m);
 			},
 			//选择星期
-			selectWeeks(i,j){
-				this.weekdays=j;
-				this.trafficData.weekday=i;
-				
+			selectWeeks(i, j) {
+				this.weekdays = j;
+				this.trafficData.weekday = i;
+
 			},
 			//格式化小时
-			formaTooltip(val){
-				return (val>10?val:'0'+val)+":00";
+			formaTooltip(val) {
+				return(val > 10 ? val : '0' + val) + ":00";
 			},
 			//实时\预测
-			trafficSelect(tab, event){
+			trafficSelect(tab, event) {
 				console.log(tab, event);
 			},
 			//刷新时间
-			refreshTime(){
-				this.nowTime=this.getTime(true);
+			refreshTime() {
+				this.nowTime = this.getTime(true);
 				console.log(this.nowTime);
 			},
 			//关闭交通流量预测窗口
-			closeTraffic(){
+			closeTraffic() {
 				this.controlTraffic = !this.controlTraffic;
-				this.showPrediction=false;
+				this.showPrediction = false;
 			},
+			 filterNode(value, data) {
+        if (!value) return true;
+        return data.label.indexOf(value) !== -1;
+     },
+     mobileBtn(){
+     	this.openMobile=!this.openMobile;
+     },
+     
+     	initTQ(T, h, i, n, k, P, a, g, e){
+     		g = function() {
+					P = h.createElement(i);
+					a = h.getElementsByTagName(i)[0];
+					P.src = k;
+					P.charset = "utf-8";
+					P.async = 1;
+					a.parentNode.insertBefore(P, a)
+				};
+				T["ThinkPageWeatherWidgetObject"] = n;
+				T[n] || (T[n] = function() {
+					(T[n].q = T[n].q || []).push(arguments)
+				});
+				T[n].l = +new Date();
+				if(T.attachEvent) {
+					T.attachEvent("onload", g)
+				} else {
+					T.addEventListener("load", g, false)
+				}
+     },
+     handler(){
+     	this.initTQ(window, document, "script", "tpwidget","http://widget.seniverse.com/widget/chameleon.js");
+     	tpwidget("init", {
+				"flavor": "slim",
+				"location": "WTUBM40RTTUB",
+				"geolocation": "disabled",
+				"language": "zh-chs",
+				"unit": "c",
+				"theme": "chameleon",
+				"container": "tp-weather-widget",
+				"bubble": "enabled",
+				"alarmType": "badge",
+				"uid": "U96951CA27",
+				"hash": "5227380b574313a1b8d532f2ad8c165a"
+			});
+			tpwidget("show");
+     },
+     
 		},
 		//过滤器
 		filters: {
@@ -361,15 +529,18 @@
 			}
 		},
 		watch: {
-			'trafficData.hour':function(newVal){
+			'trafficData.hour': function(newVal) {
 				console.log(newVal);
-				this.times=(newVal>10?newVal:'0'+newVal)+":00";
-//				this.controlTraffic=!this.controlTraffic;
-			}
+				this.times = (newVal > 10 ? newVal : '0' + newVal) + ":00";
+				//				this.controlTraffic=!this.controlTraffic;
+			},
+			 filterText(val) {
+        this.$refs.tree2.filter(val);
+     },
 		},
-		mounted() {},
+		mounted() {
+		},
 		created() {
-
 		}
 	}
 </script>
@@ -412,25 +583,30 @@
 		padding: 4px;
 		box-sizing: border-box;
 	}
-		.dataWin .el-slider{
-			margin-right: 20px;
-		}
+	
+	.dataWin .el-slider {
+		margin-right: 20px;
+	}
 	
 	.dataWin .el-form-item {
 		margin-bottom: 0;
 	}
-	.weekG .el-button{
+	
+	.weekG .el-button {
 		padding: 4px 8px;
 	}
-.refresh{
+	
+	.refresh {
 		font-size: 14px;
 		font-weight: bold;
 		margin-left: 5px;
 	}
-	.refresh:hover{
+	
+	.refresh:hover {
 		cursor: pointer;
 	}
-	.closeTraffic{
+	
+	.closeTraffic {
 		position: absolute;
 		top: 5px;
 		right: 5px;
@@ -438,16 +614,54 @@
 		z-index: 1000;
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	.anchorBL{
+	.anchorBL {
 		/*display: none;*/
+	}
+	
+	.mapShow .video-js {
+		height: 80vh;
+	}
+	
+	.mapShow .el-dialog {
+		height: 90%;
+	}
+	
+	.mapShow .vjs-button {
+		height: auto;
+	}
+	
+	#tp-weather-widget {
+		background: #fff;
+		/*height: 24px;*/
+		border: 1px solid #cdcdcd;
+		/*position: absolute;
+		top: 0;
+		left: 50px;*/
+	}
+	/*.container__sDy_v_ {display: none;}*/
+	/*.textCenter_73kZ5EK {display: none;}*/
+	/*.weakText_1XEibmw{display: none;}*/
+	/*.baseText_1MW-qdn {display: none;}*/
+	
+	.copyright_2JjcV5R {
+		display: none;
+	}
+	
+	.video-js .vjs-control {
+		height: auto;
+	}
+	.mobileBtn{
+		position: absolute; top: 50%;transform: translateY(-50%);;z-index: 999;width: 20px;height: 50px;background: #fff;
+		border: 1px solid rgb(191, 203, 217);
+		border-left: none;
+	}
+	.mobileBtn:hover{
+		cursor: pointer;
+	}
+	.aside-150{
+		left: 150px
+	}
+	.aside-0{
+		left: 0px
 	}
 </style>
