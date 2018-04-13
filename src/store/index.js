@@ -12,9 +12,9 @@ const state={
 
 
 const mutations={
-//	keepAdminUserInfo(state,adminUserInfo){
-//		state.adminUserInfo=adminUserInfo;
-//	},
+	keepAdminUserInfo(state,adminUserInfo){
+		state.adminUserInfo=adminUserInfo;
+	},
 //	setGeneralInfo(state,info){
 //		state.generalInfo=info;
 //	}

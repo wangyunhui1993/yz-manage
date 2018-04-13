@@ -1,47 +1,47 @@
 <template>
-	<section style="box-sizing: border-box;width: 100%;height: 100%;position: relative;" class="bigScreen"ref="bigScreen">
+	<section style="box-sizing: border-box;width: 100%;height: 100%;position: relative;" class="bigScreen" ref="bigScreen">
 		<el-container style="height: 100%;">
-			<el-aside width="150px">
-				<el-input placeholder="输入关键字搜索" v-model="filterText">
-				</el-input>
+			<el-aside width="200px" style="position: relative;margin-right: 5px;padding-right: 5px;box-sizing: border-box; border: 1px solid #dcdfe6;">
+				<el-row>
+					<el-input placeholder="输入关键字过滤" size="small" suffix-icon="el-icon-search" v-model="filterText">
+					</el-input>
+					<el-tree :data="data5"  node-key="id" default-expand-all :expand-on-click-node="false" @node-drag-start="handleDragStart" @node-drag-enter="handleDragEnter" @node-drag-leave="handleDragLeave" @node-drag-over="handleDragOver" @node-drag-end="handleDragEnd" @node-drop="handleDrop" :allow-drop="allowDrop" :allow-drag="allowDrag">
+						<span class="custom-tree-node" slot-scope="{ node, data }">
+        			<span v-if="node.icon==1" draggable><i class="el-icon-tickets"></i>{{ node.label }}</span>
+						<span v-else draggable><i class="el-icon-date"></i>{{ node.label }}</span>
+						</span>
+					</el-tree>
+				</el-row>
+				<el-row style="position: absolute;width: 100%;left: 0;bottom: 0;max-height: 300px;">
+					<el-card class="box-card videoParameters" :body-style="{ padding: '15px' }">
+						<div slot="header" class="clearfix" @click="visVideoParameters">
+							<span>视频参数</span>
+							<i class="el-icon-d-arrow-left" :class="showVideoParameters?'VideoParametersOpen':'VideoParametersClose'"></i>
+						</div>
+						<div class="text item" style="font-size:12px;" v-if="showVideoParameters">
+							<div class="block">
+								<span class="demonstration">亮度</span>
+								<el-slider v-model="value1"></el-slider>
+							</div>
+							<div class="block">
+								<span class="demonstration">对比度</span>
+								<el-slider v-model="value1"></el-slider>
+							</div>
+							<div class="block">
+								<span class="demonstration">饱和度</span>
+								<el-slider v-model="value1"></el-slider>
+							</div>
+							<el-row>
+								<el-button type="success" style="width: 100%;">
+									默认值
+								</el-button>
+							</el-row>
+						</div>
+					</el-card>
 
-				<!--<el-tree
-  class="filter-tree"
-  :data="data2"
-  :props="defaultProps"
-  default-expand-all
-  :filter-node-method="filterNode"
-  ref="tree2">
-</el-tree>-->
-				<el-menu default-active="1" class="el-menu-vertical-demo">
-					<el-submenu index="1-1">
-						<template slot="title">
-							<span>分类一</span>
-						</template>
-						<el-menu-item draggable="true" @dragstart="drag($event)" index="1-1">001（一号监控）</el-menu-item>
-						<el-menu-item draggable="true" index="1-2">002（二号监控）</el-menu-item>
-					</el-submenu>
-					<el-submenu index="2-1">
-						<template slot="title">
-							<span>分类二</span>
-						</template>
-						<el-menu-item draggable="true" @dragstart="drag($event)" index="1-1">003（三号监控）</el-menu-item>
-						<el-menu-item draggable="true" index="1-2">004（四号监控）</el-menu-item>
-					</el-submenu>
-					<el-submenu index="3-1">
-						<template slot="title">
-							<span>分类三</span>
-						</template>
-						<el-menu-item draggable="true" @dragstart="drag($event)" index="1-1">005（五号监控）</el-menu-item>
-						<el-menu-item draggable="true" index="1-2">006（六号监控）</el-menu-item>
-					</el-submenu>
-					<!--<el-menu-item index="3">
-        <span slot="title" draggable="true" >分类三</span>
-      </el-menu-item>-->
-				</el-menu>
-
+				</el-row>
 			</el-aside>
-			<el-container style="height: 100%;"  :class="allScreen?'all':''" >
+			<el-container style="height: 100%;" :class="allScreen?'all':''" >
 				<el-main style="padding: 0;height: 100%;">
 					<!--<div class="operateWin">
 			<el-tooltip class="item" effect="light" content="返回" placement="bottom-end">
@@ -55,7 +55,7 @@
 					<!--<p>Current Stream: <span class="badge badge-success">{{ currentStream }}</span></p>
     <p>Current Tech: <span class="badge badge-info">{{ currentTech }}</span></p>-->
 
-					<div v-for="(i,index) in bigNum" @dragover="dragenter($event)" @drop="drop(index)" class="screenItem" :data-index='i' :key="index" :class="'part'+num"  @click.native="selectItem(i)" @mouseenter="showInfo" @mouseleave="hideInfo">
+					<div v-for="(i,index) in bigNum" @dragover="dragenter($event)" @drop="drop(index)" class="screenItem" :data-index='i' :key="index" :class="'part'+num" @mouseenter="showInfo" @mouseleave="hideInfo">
 						<div class="topInfo">
 							编号:{{listInfo[i-1].number}}&nbsp;&nbsp; 名称:{{listInfo[i-1].name}}
 						</div>
@@ -93,11 +93,11 @@
 				</el-main>
 				<el-footer height="40px">
 					<div class="btn_pic" style="margin: 3px 0;float: right;">
-						<img :src="1==btn_H?pic.pic_1_h:pic.pic_1" @click="selectNum(1)"/>
-						<img :src="4==btn_H?pic.pic_4_h:pic.pic_4"  @click="selectNum(4)"/>
-						<img :src="9==btn_H?pic.pic_9_h:pic.pic_9"  @click="selectNum(9)"/>
-						<img :src="16==btn_H?pic.pic_16_h:pic.pic_16"  @click="selectNum(16)"/>
-						<img :src="pic.pic_zoom"  @click="selectNum('big')"/>
+						<img :src="1==btn_H?pic.pic_1_h:pic.pic_1" @click="selectNum(1)" />
+						<img :src="4==btn_H?pic.pic_4_h:pic.pic_4" @click="selectNum(4)" />
+						<img :src="9==btn_H?pic.pic_9_h:pic.pic_9" @click="selectNum(9)" />
+						<img :src="16==btn_H?pic.pic_16_h:pic.pic_16" @click="selectNum(16)" />
+						<img :src="pic.pic_zoom" @click="selectNum('big')" />
 					</div>
 				</el-footer>
 			</el-container>
@@ -109,16 +109,52 @@
 	export default {
 		name: 'live',
 		data() {
+			const data = [{
+				id: 1,
+				label: '一级 1',
+				icon: 1,
+				children: [{
+					id: 4,
+					label: '二级 1-1',
+					icon: 2,
+				}]
+			}, {
+				id: 2,
+				label: '一级 2',
+				icon: 1,
+				children: [{
+					id: 5,
+					label: '二级 2-1',
+					icon: 2,
+				}, {
+					id: 6,
+					label: '二级 2-2',
+					icon: 2,
+				}]
+			}, {
+				id: 3,
+				label: '一级 3',
+				icon: 1,
+				children: [{
+					id: 7,
+					label: '二级 3-1',
+					icon: 2,
+				}, {
+					id: 8,
+					label: '二级 3-2',
+					icon: 2,
+				}]
+			}];
 			return {
 				dialogFormVisible: false,
 				bigScreenSet: 4,
 				bigNum: [1, 2, 3, 4],
-				allScreen:false,				
+				allScreen: false,
 				num: 4,
 				initialized: false,
 				currentTech: '',
-				btn_H:4,
-				outBorder:1,
+				btn_H: 4,
+				outBorder: 1,
 				playerOptions: {
 					overNative: true,
 					autoplay: true,
@@ -152,20 +188,17 @@
 						//						           fullscreenToggle: true // 全屏
 					},
 				},
-				pic:{
-					pic_1:"./../../static/img/1_1.png",
-					pic_4:"./../../static/img/4_1.png",
-					pic_9:"./../../static/img/9_1.png",
-					pic_16:"./../../static/img/16_1.png",
-					pic_zoom:"./../../static/img/zoom_out.png",
-					
-					
-					
-					pic_1_h:"./../../static/img/1_2.png",
-					pic_4_h:"./../../static/img/4_2.png",
-					pic_9_h:"./../../static/img/9_2.png",
-					pic_16_h:"./../../static/img/16_2.png",
-					pic_zoom_h:"./../../static/img/zoom_in.png"
+				pic: {
+					pic_1: "static/img/1_1.png",
+					pic_4: "static/img/4_1.png",
+					pic_9: "static/img/9_1.png",
+					pic_16: "static/img/16_1.png",
+					pic_zoom: "static/img/zoom_out.png",
+					pic_1_h: "static/img/1_2.png",
+					pic_4_h: "static/img/4_2.png",
+					pic_9_h: "static/img/9_2.png",
+					pic_16_h: "static/img/16_2.png",
+					pic_zoom_h: "static/img/zoom_in.png"
 				},
 				listInfo: [{
 						number: '001',
@@ -263,7 +296,7 @@
 						lng: 123.456,
 						lat: 456.789
 					},
-					
+
 				],
 
 				filterText: '',
@@ -298,7 +331,10 @@
 				defaultProps: {
 					children: 'children',
 					label: 'label'
-				}
+				},
+				data5: JSON.parse(JSON.stringify(data)),
+				showVideoParameters: true,
+				value1:'',
 
 			}
 		},
@@ -314,6 +350,9 @@
 			}
 		},
 		methods: {
+			visVideoParameters() {
+				this.showVideoParameters = !this.showVideoParameters;
+			},
 			onPlayerReadied() {
 				if(!this.initialized) {
 					this.initialized = true
@@ -332,29 +371,62 @@
 				}
 				this.playerOptions.autoplay = true
 			},
-			
+
 			showInfo(even) {
-//				even.currentTarget.firstElementChild.style.display = 'block'
+				//				even.currentTarget.firstElementChild.style.display = 'block'
 			},
 			hideInfo(even) {
-//				even.currentTarget.firstElementChild.style.display = 'none'
+				//				even.currentTarget.firstElementChild.style.display = 'none'
 			},
-			selectNum(arg){
-				
-				if(arg=="big"){
-					this.allScreen=!this.allScreen;
+			selectNum(arg) {
+				if(arg == "big") {
+					this.allScreen = !this.allScreen;
+
 					console.log(window.event.currentTarget);
-					this.allScreen?window.event.currentTarget.src='./../../static/img/zoom_in.png':window.event.currentTarget.src='./../../static/img/zoom_out.png'
-				}else{
-					this.btn_H=arg;
+//					this.allScreen ? window.event.currentTarget.src = './../../static/img/zoom_in.png' : window.event.currentTarget.src = './../../static/img/zoom_out.png'
+					if(this.allScreen) {
+						window.event.currentTarget.src = this.pic.pic_zoom_h;
+
+						var docElm = document.documentElement;
+						//W3C  
+						if(docElm.requestFullscreen) {
+							docElm.requestFullscreen();
+						}
+						//FireFox  
+						else if(docElm.mozRequestFullScreen) {
+							docElm.mozRequestFullScreen();
+						}
+						//Chrome等  
+						else if(docElm.webkitRequestFullScreen) {
+							docElm.webkitRequestFullScreen();
+						}
+						//IE11
+						else if(elem.msRequestFullscreen) {
+							elem.msRequestFullscreen();
+						}
+					} else {
+						window.event.currentTarget.src = this.pic.pic_zoom;
+
+						if(document.exitFullscreen) {
+							document.exitFullscreen();
+						} else if(document.mozCancelFullScreen) {
+							document.mozCancelFullScreen();
+						} else if(document.webkitCancelFullScreen) {
+							document.webkitCancelFullScreen();
+						} else if(document.msExitFullscreen) {
+							document.msExitFullscreen();
+						}
+					}
+				} else {
+					this.btn_H = arg;
 					this.bigNum = [];
 					this.num = arg;
 					for(var i = 1; i <= arg; i++) {
-					console.log('大屏', i);
-					this.bigNum.push(i);
+						console.log('大屏', i);
+						this.bigNum.push(i);
+					}
 				}
-				}
-				
+
 			},
 			//显示配置页面
 			showSet() {
@@ -394,14 +466,50 @@
 				console.log(1111);
 				ev.preventDefault();
 			},
-			selectItem(index){
-				console.log(index);
+			selectItem(index) {
+				console.log(111);
 			},
+
+			//拖拽相关
+			handleDragStart(node, ev) {
+				console.log('drag start', node);
+			},
+			handleDragEnter(draggingNode, dropNode, ev) {
+				console.log('tree drag enter: ', dropNode.label);
+			},
+			handleDragLeave(draggingNode, dropNode, ev) {
+				console.log('tree drag leave: ', dropNode.label);
+			},
+			handleDragOver(draggingNode, dropNode, ev) {
+				console.log('tree drag over: ', dropNode.label);
+			},
+			handleDragEnd(draggingNode, dropNode, dropType, ev) {
+				console.log('tree drag end: ', dropNode && dropNode.label, dropType);
+			},
+			handleDrop(draggingNode, dropNode, dropType, ev) {
+				console.log('tree drop: ', dropNode.label, dropType);
+			},
+			allowDrop(draggingNode, dropNode) {
+				return dropNode.data.label !== '二级 3-1';
+			},
+			allowDrag(draggingNode) {
+				return draggingNode.data.label.indexOf('三级 3-1-1') === -1;
+			}
+
 		},
 		watch: {
 			filterText(val) {
 				this.$refs.tree2.filter(val);
 			}
+		},
+		mounted() {
+			$(".screenItem").on('click', '.vjs-tech', function() {
+				alert($(this).html());
+			});
+			
+			
+
+			
 		},
 	}
 </script>
@@ -434,6 +542,7 @@
 		height: 100%;
 		width: 100%;
 	}
+	
 	.part4 {
 		height: 50%;
 		width: 50%;
@@ -443,6 +552,7 @@
 		height: 33.333%;
 		width: 33.333%;
 	}
+	
 	.part16 {
 		height: 25%;
 		width: 25%;
@@ -469,7 +579,7 @@
 		/*top：0;*/
 		left: 0;
 		background: #fff;
-		z-index: 999;
+		z-index: 1003;
 		height: 35px;
 		width: 100px;
 		border-bottom-right-radius: 35px;
@@ -483,30 +593,51 @@
 	.el-footer {
 		background-color: #B3C0D1;
 	}
-	.video-js .vjs-control{
+	
+	.video-js .vjs-control {
 		height: 30px;
 	}
-	.btn_pic:hover{
+	
+	.btn_pic:hover {
 		cursor: pointer;
 	}
 	
-	
-	.all{
+	.all {
 		position: fixed !important;
 		top: 0;
 		left: 0;
 		background: #fff;
 		width: 100%;
 		height: 100%;
-		z-index: 999;
+		z-index: 1100;
 	}
-	.screenItem{
+	
+	.screenItem {
 		float: left;
 		border: 2px solid #fff;
 		box-sizing: border-box;
 		position: relative;
 	}
-	.screenItem:first-child{
+	
+	.screenItem:first-child {
 		border: 2px solid #00ff00;
+	}
+	
+	.videoParameters .el-card__header {
+		padding: 5px;
+	}
+	
+	.videoParameters .el-card__header:hover {
+		cursor: pointer;
+	}
+	
+	.VideoParametersOpen {
+		transform: rotate(-90deg);
+		float: right;
+	}
+	
+	.VideoParametersClose {
+		transform: rotate(90deg);
+		float: right;
 	}
 </style>

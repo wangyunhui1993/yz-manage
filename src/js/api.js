@@ -1,14 +1,42 @@
 import axios from 'axios'
 
-//import { config } from './../../static/config.js'
-
-//测试
-// let base = 'http://localhost/api/orgadmin/apitest/company';
-//export const netName = '扬州交通局控制中心管理平台-测试版本';		
 let base = window.g.base;
-//console.log(base);
+
+
+export const newUser = params => { return axios.post(`${base}/user/newUser`, params).then(res => res.data).catch(error=>error); };
+export const selectAllUser = params => { return axios.post(`${base}/user/selectAllUser`, params).then(res => res.data).catch(error=>error); };
+export const selectUsername = params => { return axios.post(`${base}/user/selectUsername`, params).then(res => res.data).catch(error=>error); };
+export const updateUser = params => { return axios.post(`${base}/user/updateUser`, params).then(res => res.data).catch(error=>error); };
+export const delectUser = params => { return axios.post(`${base}/user/delectUser`, params).then(res => res.data).catch(error=>error); };
+export const updatePassword = params => { return axios.post(`${base}/user/updatePassword`, params).then(res => res.data).catch(error=>error); };
+
+export const login = params => { return axios.post(`${base}/user/login`, params).then(res => res.data).catch(error=>error); };
+
+export const selectAllEquipment = params => { return axios.post(`${base}/equipment/selectAllEquipment`, params).then(res => res.data).catch(error=>error); };
+export const selectGroup = params => { return axios.post(`${base}/group/selectGroup`, params).then(res => res.data).catch(error=>error); };
+export const insertEquipment = params => { return axios.post(`${base}/equipment/insertEquipment`, params).then(res => res.data).catch(error=>error); };
+export const deleteEquipment = params => { return axios.post(`${base}/equipment/deleteEquipment`, params).then(res => res.data).catch(error=>error); };
+export const updateEquipment = params => { return axios.post(`${base}/equipment/updateEquipment`, params).then(res => res.data).catch(error=>error); };
+
+export const insertGroup = params => { return axios.post(`${base}/group/insertGroup`, params).then(res => res.data).catch(error=>error); };
 
 
 
-//export const DCSRemoveRateLog = params => { return axios.post(`${DCSbase}/removeRateLog`, params).then(res => res.data).catch(error=>error); };
+
+export const selectLog = params => { return axios.post(`${base}/log/selectLog`, params).then(res => res.data).catch(error=>error); };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

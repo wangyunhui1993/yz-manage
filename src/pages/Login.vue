@@ -5,8 +5,8 @@
 		</el-row>
 		<el-form ref="account" :model="account" :rules="rules" label-position="left" label-width="0px"	class="demo-ruleForm login-container">
 			<h3 class="title">系统登录</h3>
-			<el-form-item prop="adminName">
-				<el-input type="text" v-model="account.adminName" auto-complete="off" placeholder="账号"  @keyup.native="show($event)"></el-input>
+			<el-form-item prop="username">
+				<el-input type="text" v-model="account.username" auto-complete="off" placeholder="账号"  @keyup.native="show($event)"></el-input>
 			</el-form-item>
 			<el-form-item prop="password">
 				<el-input type="password" v-model="account.password" auto-complete="off" placeholder="密码"  @keyup.native="show($event)"></el-input>
@@ -20,19 +20,19 @@
 </template>
 
 <script>
-	import {requestLogin} from '../js/api'
+	import {login} from '../js/api'
 	import { LStorage ,SStorage} from "../js/LStorage"
 	export default {
 		data() {
 			return {
 				logining: false,
 				account: {
-					adminName: '',
+					username: '',
 					password: ''
 				},
 				title:window.g.netName,
 				rules: {
-					adminName: [
+					username: [
 					{required: true, message: '请输入账号', trigger: 'blur'},
 					],
 					password: [
@@ -44,43 +44,46 @@
 		},
 		methods: {
 			handleLogin(formVal) {
-				this.$router.push({ path: '/map/mapShow' });
-//				var  _this=this;
-//				this.$refs.account.validate(function(valid){
-//					if (valid) {
-//						_this.logining = true;
-//						var loginParams = { adminName: _this.account.adminName, password: _this.account.password };
-//
-//						requestLogin(loginParams).then(function(data){
-//							_this.logining = false;
-//							let { errMsg, errCode, adminUserInfo } = data;
-//							if (errCode != 0) {
-//								_this.$message({
-//									message: errMsg,
-//									type: 'error'
-//								});
-//							} else {
-//								SStorage.setItem('access-user', adminUserInfo);
-//								_this.$store.commit('keepAdminUserInfo',adminUserInfo);
+//				this.$router.push({ path: '/map/mapShow' });
+				this.$refs.account.validate((valid)=>{
+					if (valid) {
+						this.logining = true;
+//						var loginParams = { username: this.account.username, password: this.account.password };
+						console.log(JSON.stringify(this.account));
+						
+						login(this.account).then(data=>{
+							this.logining = false;
+							let { errMsg, errCode, value, extralInfo,success} = data;
+							console.log(data);
+							if (success) {
+								console.log(value);
+								SStorage.setItem('access-user', value);
+								this.$store.commit('keepAdminUserInfo',value);
 //								let info={
 //									adminId:adminUserInfo.adminId
 //								}
-//								_this.$store.commit('setGeneralInfo',info);
-//								console.log(_this.$store.state);
-//								//是否保存密码
-//								if(_this.checked){
-//									LStorage.setItem('localaccess-user', _this.account);
-//								}else{
-//									LStorage.removeItem('localaccess-user');
-//								}
-//								_this.$router.push({ path: '/' });
-//							}
-//						});
-//					} else {
-//						console.log('error submit!!');
-//						return false;
-//					}
-//				});
+//								this.$store.commit('setGeneralInfo',info);
+//								console.log(this.$store.state);
+
+								//是否保存密码
+								if(this.checked){
+									LStorage.setItem('localaccess-user', this.account);
+								}else{
+									LStorage.removeItem('localaccess-user');
+								}
+								this.$router.push({ path: '/map/mapShow' });
+							} else {
+								this.$message({
+									message: errMsg,
+									type: 'error'
+								});
+							}
+						});
+					} else {
+						console.log('error submit!!');
+						return false;
+					}
+				});
 			},
 			 show: function (ev) {
             if(ev.keyCode==13){
@@ -92,7 +95,7 @@
 			let LocalUserInfo=LStorage.getItem("localaccess-user");
 			console.log(LocalUserInfo);
 			if(LocalUserInfo!=null){
-				this.account.adminName=LocalUserInfo.adminName;
+				this.account.username=LocalUserInfo.username;
 				this.account.password=LocalUserInfo.password;
 			}
 		}

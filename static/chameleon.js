@@ -883,8 +883,8 @@
 				return e < 0 && (n = b(this.length + e, 0)), wt.call(this, n, t)
 			}
 		}, Mt);
-		var Et = "\t\n\v\f\r 聽釟€釥庘€€鈥佲€傗€冣€勨€呪€嗏€団€堚€夆€娾€仧銆€\u2028\u2029\ufeff",
-			Ct = "鈥�",
+		var Et = "\t\n\v\f\r   ᠎             　\u2028\u2029\ufeff",
+			Ct = "​",
 			Tt = "[" + Et + "]",
 			St = new RegExp("^" + Tt + Tt + "*"),
 			xt = new RegExp(Tt + Tt + "*$"),
@@ -896,7 +896,7 @@
 			}
 		}, Ot);
 		var Dt = g.bind(String.prototype.trim),
-			Pt = l.lastIndexOf && "abc銇傘亜".lastIndexOf("銇傘亜", 2) !== -1;
+			Pt = l.lastIndexOf && "abcあい".lastIndexOf("あい", 2) !== -1;
 		F(l, {
 			lastIndexOf: function(e) {
 				if("undefined" == typeof this || null === this) throw new TypeError("can't convert " + this + " to object");
@@ -11429,50 +11429,50 @@
 }, function(e, t) {
 	"use strict";
 	t.__esModule = !0, t.default = {
-		humidity: "鐩稿婀垮害",
+		humidity: "相对湿度",
 		humidity_value: "{humidity}%",
-		wind: "{wind_direction}椋�",
-		wind_value: "{wind_scale}绾�",
-		aqi: "绌烘皵{quality}",
+		wind: "{wind_direction}风",
+		wind_value: "{wind_scale}级",
+		aqi: "空气{quality}",
 		aqi_value: "{aqi}",
-		aqi_missed: "绌烘皵璐ㄩ噺",
-		aqi_value_missed: "鏃�",
-		today: "浠婂ぉ",
-		mon: "鍛ㄤ竴",
-		tue: "鍛ㄤ簩",
-		wed: "鍛ㄤ笁",
-		thu: "鍛ㄥ洓",
-		fri: "鍛ㄤ簲",
-		sat: "鍛ㄥ叚",
-		sun: "鍛ㄦ棩",
-		thinkpage: "蹇冪煡澶╂皵",
-		pubdate: "{date}鍙戝竷",
-		alarms: "涓璀�",
-		weather_alarm: "棰勮鍚嶇О"
+		aqi_missed: "空气质量",
+		aqi_value_missed: "无",
+		today: "今天",
+		mon: "周一",
+		tue: "周二",
+		wed: "周三",
+		thu: "周四",
+		fri: "周五",
+		sat: "周六",
+		sun: "周日",
+		thinkpage: "心知天气",
+		pubdate: "{date}发布",
+		alarms: "个预警",
+		weather_alarm: "预警名称"
 	}
 }, function(e, t) {
 	"use strict";
 	t.__esModule = !0, t.default = {
-		humidity: "鐩稿皪婵曞害",
+		humidity: "相對濕度",
 		humidity_value: "{humidity}%",
-		wind: "{wind_direction}棰�",
-		wind_value: "{wind_scale}绱�",
-		aqi: "绌烘埃{quality}",
+		wind: "{wind_direction}風",
+		wind_value: "{wind_scale}級",
+		aqi: "空氣{quality}",
 		aqi_value: "{aqi}",
-		aqi_missed: "绌烘埃璩礌",
-		aqi_value_missed: "鐒�",
-		today: "浠婂ぉ",
-		mon: "鍛ㄤ竴",
-		tue: "鍛ㄤ簩",
-		wed: "鍛ㄤ笁",
-		thu: "鍛ㄥ洓",
-		fri: "鍛ㄤ簲",
-		sat: "鍛ㄥ叚",
-		sun: "鍛ㄦ棩",
-		thinkpage: "蹇冪煡澶╂埃",
-		pubdate: "{date}鐧煎竷",
-		alarms: "鍊嬮爯璀�",
-		weather_alarm: "闋愯鍚嶇ū"
+		aqi_missed: "空氣質素",
+		aqi_value_missed: "無",
+		today: "今天",
+		mon: "周一",
+		tue: "周二",
+		wed: "周三",
+		thu: "周四",
+		fri: "周五",
+		sat: "周六",
+		sun: "周日",
+		thinkpage: "心知天氣",
+		pubdate: "{date}發布",
+		alarms: "個預警",
+		weather_alarm: "預警名稱"
 	}
 }, function(e, t, n) {
 	"use strict";
@@ -11885,7 +11885,7 @@
 					className: o.title
 				}, t.name), d.default.createElement("div", {
 					className: o.text
-				}, n.temperature + "掳")), d.default.createElement("div", {
+				}, n.temperature + "°")), d.default.createElement("div", {
 					className: this.getWeatherIcon(n.code)
 				}))
 			}, t
@@ -14615,7 +14615,7 @@
 						return e.text_day == e.text_night ? e.text_day : e.text_day + " / " + e.text_night
 					}),
 					h = o.map(function(e) {
-						return e.low + "掳/" + e.high + "掳"
+						return e.low + "°/" + e.high + "°"
 					});
 				return d.default.createElement("div", {
 					className: this.add(a.container, u.daily)
@@ -14767,7 +14767,7 @@
 					className: r
 				}, e.temperature), d.default.createElement("span", {
 					className: t.degreeIcon
-				}, "掳"), d.default.createElement("div", {
+				}, "°"), d.default.createElement("div", {
 					className: t.text
 				}, e.text))
 			}, t
@@ -14825,9 +14825,9 @@
 					className: e.context
 				}, d.default.createElement("div", {
 					className: e.title
-				}, "缃戠粶閿欒"), d.default.createElement("div", {
+				}, "网络错误"), d.default.createElement("div", {
 					className: e.title
-				}, "鐐瑰嚮閲嶈瘯")))
+				}, "点击重试")))
 			}, t.prototype.renderLoadError = function() {
 				var e = this.getTheme("loading");
 				return d.default.createElement("div", {
@@ -14839,9 +14839,9 @@
 					className: e.context
 				}, d.default.createElement("div", {
 					className: e.title
-				}, "鏃犳晥璇锋眰"), d.default.createElement("div", {
+				}, "无效请求"), d.default.createElement("div", {
 					className: e.title
-				}, "璇锋偍閲嶈瘯")))
+				}, "请您重试")))
 			}, t.prototype.renderReloading = function() {
 				var e = this.getTheme("loading");
 				return d.default.createElement("div", {
@@ -15105,7 +15105,7 @@
 				}), d.default.createElement("div", {
 					className: this.add("tpwidget_text_hook", o.text),
 					style: this.getColor()
-				}, t.now.temperature + "掳"), d.default.createElement("div", {
+				}, t.now.temperature + "°"), d.default.createElement("div", {
 					className: this.add("tpwidget_alarm_hook", o.coverAlarmPane)
 				}, d.default.createElement(m.default, {
 					alarms: t.alarms,

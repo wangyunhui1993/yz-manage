@@ -1,29 +1,38 @@
 <template>
 	<section style="height: 100%;width: 100%;" class="mapShow">
-		<el-container style="height: 100%;margin-top: 5px;box-sizing: border-box;border-top:1px solid #bfcbd9 ;padding-bottom: 5px;">
-			<div @click="mobileBtn" class="mobileBtn"  :class="openMobile?'aside-150':'aside-0'"><i :class="openMobile?'el-icon-arrow-left':'el-icon-arrow-right'" style="font-size: 20px;line-height: 50px;"></i></div>
-			<el-aside :width="openMobile?'150px':'0px'" style="border-right:1px solid #bfcbd9 ;position: relative;">
-				<div></div>
-				<el-input placeholder="输入关键字进行过滤" size="small" suffix-icon="el-icon-search" v-model="filterText">
+		<div style="height: 100%;margin-top: 5px;box-sizing: border-box;border-top:1px solid #bfcbd9 ;padding-bottom: 5px;">
+			<div @click="mobileBtn" class="mobileBtn" :class="openMobile?'aside-150':'aside-0'"><i :class="openMobile?'el-icon-arrow-left':'el-icon-arrow-right'" style="font-size: 20px;line-height: 50px;"></i></div>
+			<div :class="openMobile?'left200':'left0'" style="border-right:1px solid #bfcbd9 ;position: fixed;top: 125px;left: 0;z-index: 100;height: 100%;background: #fff;">
+				<el-input placeholder="输入关键字过滤" size="small" suffix-icon="el-icon-search" v-model="filterText">
 				</el-input>
-				<el-tree class="filter-tree" :data="data2" :props="defaultProps" default-expand-all :filter-node-method="filterNode" ref="tree2">
+				<!--<el-tree class="filter-tree" :data="data2" :props="defaultProps" default-expand-all :filter-node-method="filterNode" ref="tree2">
+				</el-tree>-->
+				<el-tree :data="data5" show-checkbox node-key="id" default-expand-all :expand-on-click-node="false">
+					<span class="custom-tree-node" slot-scope="{ node, data }">
+        <span v-if="node.icon==1"><i class="el-icon-tickets"></i>{{ node.label }}</span>
+					<span v-else><i class="el-icon-date"></i>{{ node.label }}</span>
+					</span>
 				</el-tree>
-				
-			</el-aside>
-			<el-main style="height: 100%;padding: 0;">
-				<baidu-map class="bm-view" :center="center" :zoom="zoom" @mousewheel.native="mousewheelOp"  @ready="handler">
+			</div>
+			<div style="height: 100%;padding: 0;">
+				<baidu-map class="bm-view" :center="center" :zoom="zoom" @mousewheel.native="mousewheelOp" >
 					<bm-scale anchor="BMAP_ANCHOR_BOTTOM_LEFT"></bm-scale>
 					<!--<bm-navigation anchor="BMAP_ANCHOR_TOP_LEFT"></bm-navigation>-->
 					<bm-city-list anchor="BMAP_ANCHOR_TOP_RIGHT" :offset="offsetCityList"></bm-city-list>
 					<bm-map-type :map-types="['BMAP_NORMAL_MAP', 'BMAP_HYBRID_MAP']" anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-map-type>
 					<bm-overview-map anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :isOpen="true"></bm-overview-map>
 					<bm-traffic v-if="controlTraffic" :predictDate="trafficData"></bm-traffic>
-					<bm-info-window :position="winInfo.markerPoint" :closeOnClick="false" :title="markerTitle" :show="show" @clickclose="infoWindowClose">
-						<p>编号：{{winInfo.num}}</p>
-						<p>经度：{{winInfo.markerPoint.lng}}</p>
-						<p>纬度：{{winInfo.markerPoint.lat}}</p>
-						<el-button type="primary" size="mini" @click="immediate(winInfo.num)">实时监控</el-button>
-						<el-button type="primary" size="mini" @click="history(winInfo.num)">历史监控</el-button>
+					<bm-info-window :position="winInfo.markerPoint" :width="250" :closeOnClick="false" :show="show" @clickclose="infoWindowClose">
+						<el-row style="margin-top: 5px;">
+							<div style="width: 100%;text-align: center;"><img src="./../../../static/img/aaa.png" style="max-width: 300px;max-height: 150px;margin-top: 5px;" /></div>
+							<p style="margin-top: 5px;">编号：{{winInfo.num}}</p>
+							<p style="margin-top: 5px;">名称：{{winInfo.num}}</p>
+							<div style="margin-top: 5px;">
+								<el-button type="primary" size="mini" @click="immediate(winInfo.num)" style="padding: 5px;">实时监控</el-button>
+								<el-button type="primary" size="mini" @click="history(winInfo.num)" style="padding: 5px;">历史监控</el-button>
+							</div>
+						</el-row>
+
 					</bm-info-window>
 					<bm-marker v-for=" (item,index) in market" :key="index" :position="item.markerPoint" @click="infoWindowOpen(index)" :offset="{width: 9,height: -11}" :icon="{url: './static/img/map_camera.png', size: {width: 30, height: 25}}">
 					</bm-marker>
@@ -70,16 +79,16 @@
 					</bm-control>
 					<!--<bml-curve-line :points="market|filterMarket"></bml-curve-line>-->
 				</baidu-map>
-				
-			</el-main>
-			
-		</el-container>
+
+			</div>
+
+		</div>
 		<!--实时视频播放窗口-->
-				<el-dialog v-if="showWin" :visible.sync="dialogFormVisible"  :center="true" :modal-append-to-body="true" :close-on-click-modal="false" top="5vh" width="90%" @close="diaClose">
-					<video-player style='width: 100%;height: 100%;' class="vjs-custom-skin" ref="videoPlayer" :options="playerOptions" @ready="onPlayerReadied">
-					</video-player>
-				</el-dialog>
-		
+		<el-dialog v-if="showWin" :visible.sync="dialogFormVisible" :center="true" :modal-append-to-body="true" :close-on-click-modal="false" top="5vh" width="90%" @close="diaClose">
+			<video-player style='width: 100%;height: 100%;' class="vjs-custom-skin" ref="videoPlayer" :options="playerOptions" @ready="onPlayerReadied">
+			</video-player>
+		</el-dialog>
+
 	</section>
 </template>
 <script>
@@ -89,6 +98,43 @@
 			BmlCurveLine
 		},
 		data() {
+			const data = [{
+				id: 1,
+				label: '一级 1',
+				icon: 1,
+				children: [{
+					id: 4,
+					label: '二级 1-1',
+					icon: 2,
+				}]
+			}, {
+				id: 2,
+				label: '一级 2',
+				icon: 1,
+				children: [{
+					id: 5,
+					label: '二级 2-1',
+					icon: 2,
+				}, {
+					id: 6,
+					label: '二级 2-2',
+					icon: 2,
+				}]
+			}, {
+				id: 3,
+				label: '一级 3',
+				icon: 1,
+				children: [{
+					id: 7,
+					label: '二级 3-1',
+					icon: 2,
+				}, {
+					id: 8,
+					label: '二级 3-2',
+					icon: 2,
+				}]
+			}];
+
 			return {
 				zoom: 14,
 				center: {
@@ -319,7 +365,6 @@
 					},
 				],
 
-
 				//,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 				polylinePath: [],
@@ -331,55 +376,18 @@
 					},
 					num: ""
 				},
-				
-				
-				
+
 				filterText: '',
-        data2: [{
-          id: 1,
-          label: '一级 1',
-          children: [{
-            id: 4,
-            label: '二级 1-1',
-            children: [{
-              id: 9,
-              label: '三级 1-1-1'
-            }, {
-              id: 10,
-              label: '三级 1-1-2'
-            }]
-          }]
-        }, {
-          id: 2,
-          label: '一级 2',
-          children: [{
-            id: 5,
-            label: '二级 2-1'
-          }, {
-            id: 6,
-            label: '二级 2-2'
-          }]
-        }, {
-          id: 3,
-          label: '一级 3',
-          children: [{
-            id: 7,
-            label: '二级 3-1'
-          }, {
-            id: 8,
-            label: '二级 3-2'
-          }]
-        }],
-        defaultProps: {
-          children: 'children',
-          label: 'label'
-        },
-        
-        asideWidth:'150px',
-        iconClass:'el-icon-arrow-left',
-        openMobile:true,
-				
-				
+				defaultProps: {
+					children: 'children',
+					label: 'label'
+				},
+
+				asideWidth: '150px',
+				iconClass: 'el-icon-arrow-left',
+				openMobile: true,
+				data5: JSON.parse(JSON.stringify(data)),
+
 			}
 		},
 		methods: {
@@ -471,16 +479,16 @@
 				this.controlTraffic = !this.controlTraffic;
 				this.showPrediction = false;
 			},
-			 filterNode(value, data) {
-        if (!value) return true;
-        return data.label.indexOf(value) !== -1;
-     },
-     mobileBtn(){
-     	this.openMobile=!this.openMobile;
-     },
-     
-     	initTQ(T, h, i, n, k, P, a, g, e){
-     		g = function() {
+			filterNode(value, data) {
+				if(!value) return true;
+				return data.label.indexOf(value) !== -1;
+			},
+			mobileBtn() {
+				this.openMobile = !this.openMobile;
+			},
+
+			initTQ(T, h, i, n, k, P, a, g, e) {
+				g = function() {
 					P = h.createElement(i);
 					a = h.getElementsByTagName(i)[0];
 					P.src = k;
@@ -498,25 +506,45 @@
 				} else {
 					T.addEventListener("load", g, false)
 				}
-     },
-     handler(){
-     	this.initTQ(window, document, "script", "tpwidget","http://widget.seniverse.com/widget/chameleon.js");
-     	tpwidget("init", {
-				"flavor": "slim",
-				"location": "WTUBM40RTTUB",
-				"geolocation": "disabled",
-				"language": "zh-chs",
-				"unit": "c",
-				"theme": "chameleon",
-				"container": "tp-weather-widget",
-				"bubble": "enabled",
-				"alarmType": "badge",
-				"uid": "U96951CA27",
-				"hash": "5227380b574313a1b8d532f2ad8c165a"
-			});
-			tpwidget("show");
-     },
-     
+			},
+			handler() {
+				(function(T, h, i, n, k, P, a, g, e) {
+					g = function() {
+						P = h.createElement(i);
+						a = h.getElementsByTagName(i)[0];
+						P.src = k;
+						P.charset = "utf-8";
+						P.async = 'async';
+						a.parentNode.insertBefore(P, a)
+					};
+					T["ThinkPageWeatherWidgetObject"] = n;
+					T[n] || (T[n] = function() {
+						(T[n].q = T[n].q || []).push(arguments)
+					});
+					T[n].l = +new Date();
+					g();
+//					if(T.attachEvent) {
+//						T.attachEvent("onload", g)
+//					} else {
+//						T.addEventListener("load", g, false)
+//					}
+				}(window, document, "script", "tpwidget", "//widget.seniverse.com/widget/chameleon.js"))
+				tpwidget("init", {
+					"flavor": "slim",
+					"location": "WTUBM40RTTUB",
+					"geolocation": "disabled",
+					"language": "auto",
+					"unit": "c",
+					"theme": "chameleon",
+					"container": "tp-weather-widget",
+					"bubble": "enabled",
+					"alarmType": "circle",
+					"uid": "U96951CA27",
+					"hash": "d91eaac5d1d8b9097beb363cc8c8605d"
+				});
+				tpwidget("show");
+			},
+
 		},
 		//过滤器
 		filters: {
@@ -534,11 +562,12 @@
 				this.times = (newVal > 10 ? newVal : '0' + newVal) + ":00";
 				//				this.controlTraffic=!this.controlTraffic;
 			},
-			 filterText(val) {
-        this.$refs.tree2.filter(val);
-     },
+			filterText(val) {
+				this.$refs.tree2.filter(val);
+			},
 		},
 		mounted() {
+			this.handler();
 		},
 		created() {
 		}
@@ -650,18 +679,36 @@
 	.video-js .vjs-control {
 		height: auto;
 	}
-	.mobileBtn{
-		position: absolute; top: 50%;transform: translateY(-50%);;z-index: 999;width: 20px;height: 50px;background: #fff;
+	
+	.mobileBtn {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		;
+		z-index: 999;
+		width: 20px;
+		height: 50px;
+		background: #fff;
 		border: 1px solid rgb(191, 203, 217);
 		border-left: none;
 	}
-	.mobileBtn:hover{
+	
+	.mobileBtn:hover {
 		cursor: pointer;
 	}
-	.aside-150{
-		left: 150px
+	
+	.aside-150 {
+		left: 200px
 	}
-	.aside-0{
+	
+	.aside-0 {
 		left: 0px
+	}
+	.left200{
+		width: 200px;
+		display: block;
+	}
+	.left0{
+		display: none;
 	}
 </style>

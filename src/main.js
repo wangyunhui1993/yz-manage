@@ -14,7 +14,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 //import '../static/UE/ueditor.parse.min.js'
 
 
-import store from './store/index'
+import store from './store'
  
 // or import all icons if you don't care about bundle size
    import 'vue-awesome/icons'

@@ -62,29 +62,29 @@
 						menuShow: true,
 						iconCls:"el-icon-location",
 						children: [
-							{ path: '/map/mapShow', component: MapShow, name: 'Gis信息展示', menuShow: true },
-						]
-					},
-					{
-						path: '/equipmentList',
-						name: '设备列表',
-						component: Nav,
-						menuShow: true,
-						iconCls:"el-icon-tickets",
-						children: [
-							{ path: '/equipmentList', name: '设备列表',component: EquipmentList, menuShow: true },
+							{ path: '/map/mapShow', component: MapShow,  menuShow: true },
 						]
 					},
 //					{
-//						path: '/queryStats',
-//						name: '查询统计',
+//						path: '/equipmentList',
+//						name: '设备列表',
 //						component: Nav,
 //						menuShow: true,
-//						iconCls:"el-icon-setting",
+//						iconCls:"el-icon-tickets",
 //						children: [
-//							{ path: '/queryStats', component: QueryStats, menuShow: true },
+//							{ path: '/equipmentList', component: EquipmentList, menuShow: true },
 //						]
 //					},
+					{
+						path: '/queryStats',
+						name: '查询统计',
+						component: Nav,
+						menuShow: true,
+						iconCls:"el-icon-setting",
+						children: [
+							{ path: '/queryStats', component: QueryStats, menuShow: true },
+						]
+					},
 					{
 						path: '/big',
 						name: '大屏展示',
@@ -92,7 +92,7 @@
 						menuShow: true,
 						iconCls:"el-icon-menu",
 						children: [
-							{ path: '/big',  component: BigScreen,name: '大屏展示', menuShow: true },
+							{ path: '/big',  component: BigScreen, menuShow: true },
 						]
 					},
 					{
@@ -119,23 +119,21 @@
 		]
 	});
 	router.beforeEach((to, from, next) => {
-//		if(to.path == '/login') {
-//			window.sessionStorage.removeItem('access-user');
-//			router.app.$store.commit('keepAdminUserInfo',{});
-//			router.app.$store.commit('setGeneralInfo',{});
-//			next();
-//		} else {
-//			if(router.app.$store.state.adminUserInfo.adminId){
-//				next();
-//			}else{
-//				if(!SStorage.getItem('access-user')){
-//					next({path: '/login'});
-//				}else{
-//					router.app.$store.commit('keepAdminUserInfo',SStorage.getItem('access-user'));
-//					router.app.$store.commit('setGeneralInfo',{adminId:SStorage.getItem('access-user').adminId});
-//					next();
-//				}
-//			}
+		if(to.path == '/login') {
+			window.sessionStorage.removeItem('access-user');
+			router.app.$store.commit('keepAdminUserInfo',{});
+			next();
+		} else {
+			if(router.app.$store.state.adminUserInfo.userName){
+				next();
+			}else{
+				if(!SStorage.getItem('access-user')){
+					next({path: '/login'});
+				}else{
+					router.app.$store.commit('keepAdminUserInfo',SStorage.getItem('access-user'));
+					next();
+				}
+			}
 			
 			
 			
@@ -156,6 +154,6 @@
 			
 			
 			
-//		}
+		}
 	});
 	export default router

@@ -13,6 +13,7 @@
 								    设置<i class="el-icon-caret-bottom el-icon--right"></i>
 								  </span>
 								  <el-dropdown-menu slot="dropdown" style="font-size: 14px;text-align: center;">
+								  	<el-dropdown-item  command="3">个人资料</el-dropdown-item>
 								    <el-dropdown-item  command="1">修改密码</el-dropdown-item>
 								    <el-dropdown-item command="2">退出</el-dropdown-item>
 								  </el-dropdown-menu>
@@ -72,24 +73,53 @@
 			
 			
 			<el-dialog title="密码修改" :visible.sync="dialogEditVisible" width="500px">
-  <el-form :model="form" label-width="100px">
-    <el-form-item label="原始密码" >
-      <el-input type="password" v-model="form.name" auto-complete="off"></el-input>
+  <el-form :model="form" label-width="100px" :rules="rules" ref="form">
+    <el-form-item label="原始密码" prop="password" :rules="[{ required: true, message: '请输入原始密码', trigger: 'blur'}]">
+      <el-input type="password" v-model="form.password" auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="新密码" >
-      <el-input type="password" v-model="form.name1" auto-complete="off"></el-input>
+    <el-form-item label="新密码" prop="newPassword"  :rules="[{ required: true, message: '请输入新密码', trigger: 'blur'}]" >
+      <el-input type="password" v-model="form.newPassword" auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="重复新密码">
-      <el-input type="password" v-model="form.name2" auto-complete="off"></el-input>
+    <el-form-item label="确认密码" prop="newPassword1"  >
+      <el-input type="password" v-model="form.newPassword1" auto-complete="off"></el-input>
     </el-form-item>
     
   </el-form>
   <div slot="footer" class="dialog-footer">
     <el-button @click="dialogEditVisible = false">取 消</el-button>
-    <el-button type="primary" @click="dialogEditVisible = false">确 定</el-button>
+    <el-button type="primary" @click="subEditPwd">确 定</el-button>
   </div>
 </el-dialog>
-		</el-row>
+
+<el-dialog title="个人资料" :visible.sync="dialogMyDataVisible" width="500px">
+  <el-form :model="myDataForm" label-width="150px">
+    <el-form-item label="用户名：">
+      {{myDataForm.userName}}
+    </el-form-item>
+    <el-form-item label="权限：">
+      {{myDataForm.roleName}}
+    </el-form-item>
+    <el-form-item label="真实姓名：">
+      {{myDataForm.realName}}
+    </el-form-item>
+    <el-form-item label="手机号：">
+      {{myDataForm.moblie}}
+    </el-form-item>
+     <el-form-item label="邮箱：">
+      {{myDataForm.email}}
+    </el-form-item>
+     <el-form-item label="最后登录时间：">
+      {{myDataForm.createTime}}
+    </el-form-item>
+     <el-form-item label="最后登录IP：">
+      {{myDataForm.lastIp}}
+    </el-form-item>
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button type="primary" @click="dialogMyDataVisible = false">确 定</el-button>
+  </div>
+</el-dialog>
+</el-row>
 		
 		
 		
@@ -101,11 +131,20 @@
 
 <script>
 	import { bus } from '../bus.js'
+	import {formatTime} from '../js/formatTime';
+	import {updatePassword,selectAllUser} from '../js/api';
 	export default {
 		name: 'home',
-
-		created() {},
 		data() {
+			 var newPassword1 = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请再次输入密码'));
+        } else if (value !== this.form.newPassword) {
+          callback(new Error('两次输入密码不一致!'));
+        } else {
+          callback();
+        }
+      };
 			return {
 				// activeIndex: '',
 				sysUserName: '',
@@ -119,7 +158,31 @@
 
 
 			dialogEditVisible:false,
-			form:{},
+			dialogMyDataVisible:false,
+			searchMydata:{
+				current:1,
+				id:"",
+				realName:"",
+				roleId:"",
+				size:1,
+				userName:this.$store.state.adminUserInfo.userName,
+			},
+			myDataForm:{
+				
+			},
+			form:{
+				type:"1",
+				username:this.$store.state.adminUserInfo.userName,
+				password:"",
+				newPassword:"",
+				newPassword1:"",
+			},
+			rules:{
+				newPassword1:[
+					 { validator: newPassword1, trigger: 'blur' },
+					  { required: true, message: '请再次输入新密码', trigger: 'blur' },
+				],
+			},
 			cssStyle:"write",
 			}
 		},
@@ -132,6 +195,9 @@
 					break;
 					case '2':
 					this.logout();
+					break;
+					case '3':
+					this.showMydata();
 					break;
 				}
 			},
@@ -150,47 +216,77 @@
 			single(key, keyPath) {
 				this.$router.push(key)
 				//            this.$router.go(0);
-			}
+			},
+			/*提交修改密码*/
+			subEditPwd(){
+				 this.$refs.form.validate((valid) => {
+          if (valid) {
+            this.editPwd();
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+			},
+			/*显示个任务资料页面*/
+			showMydata(){
+				selectAllUser(this.searchMydata).then(data => {
+						let {
+							errMsg,
+							errCode,
+							value,
+							extraInfo,
+							success
+						} = data;
+						if(success) {
+							console.log(data);
+							this.myDataForm=value[0];
+							this.dialogMyDataVisible=true;
+						} else {
+							console.log(data);
+							this.$message({
+								message: errMsg,
+								type: 'error'
+							});
+						}
+					});
+			},
+			/*修改密码*/
+			editPwd(){
+				updatePassword(this.form).then(data => {
+						let {
+							errMsg,
+							errCode,
+							value,
+							extraInfo,
+							success
+						} = data;
+						if(success) {
+							console.log(data);
+							this.$message({
+								message: errMsg,
+								type: 'success'
+							});
+							this.dialogEditVisible=false;
+						} else {
+							console.log(data);
+							this.$message({
+								message: errMsg,
+								type: 'error'
+							});
+						}
+					});
+			},
 		},
 
-		mounted() {
-			console.log(this.$route.path);
-			var user = sessionStorage.getItem('access-user');
+		created() {
+			var user = this.$store.state.adminUserInfo;
 			if(user) {
-				user = JSON.parse(user);
-				this.sysUserName = user.adminName || '';
-				this.groupName = user.groupName || '';
-				this.roleName=user.roleName || '';
+				this.sysUserName = user.userName || '';
 			}
-			var _this = this;
-
-			setInterval(function() {
-				var date = new Date();
-				var seperator1 = "-";
-				var seperator2 = ":";
-				var month = date.getMonth() + 1;
-				var strDate = date.getDate();
-				var sec = date.getSeconds();
-				var min = date.getMinutes();
-				var hou = date.getHours();
-				if(month >= 1 && month <= 9) {
-					month = "0" + month;
-				}
-				if(strDate >= 0 && strDate <= 9) {
-					strDate = "0" + strDate;
-				}
-				if(sec >= 0 && sec <= 9) {
-					sec = "0" + sec;
-				}
-				if(min >= 0 && min <= 9) {
-					min = "0" + min;
-				}
-				if(hou >= 0 && hou <= 9) {
-					hou = "0" + hou;
-				}
-				var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate + " " + hou + seperator2 + min + seperator2 + sec;
-				_this.preTime = currentdate;
-				// console.log(_this.preTime);
+			this.preTime=formatTime(new Date());
+			setInterval(()=>{
+				this.preTime=formatTime(new Date());
 			}, 1000);
 		},
 		computed: {
