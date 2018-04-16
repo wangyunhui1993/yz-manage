@@ -18,7 +18,7 @@
 	const EquipmentManage = resolve => require(['@/pages/system/equipmentManage'], resolve)
 	const Authority = resolve => require(['@/pages/system/authority'], resolve)
 	const Log = resolve => require(['@/pages/system/log'], resolve)
-	
+	const LineManagement = resolve => require(['@/pages/system/lineManagement'], resolve)
 	
 	
 	const NotFind = resolve => require(['@/pages/notFind'], resolve)
@@ -62,7 +62,7 @@
 						menuShow: true,
 						iconCls:"el-icon-location",
 						children: [
-							{ path: '/map/mapShow', component: MapShow,  menuShow: true },
+							{ path: '/map/mapShow', component: MapShow, name: 'Gis信息 展示', menuShow: true },
 						]
 					},
 //					{
@@ -75,16 +75,7 @@
 //							{ path: '/equipmentList', component: EquipmentList, menuShow: true },
 //						]
 //					},
-					{
-						path: '/queryStats',
-						name: '查询统计',
-						component: Nav,
-						menuShow: true,
-						iconCls:"el-icon-setting",
-						children: [
-							{ path: '/queryStats', component: QueryStats, menuShow: true },
-						]
-					},
+					
 					{
 						path: '/big',
 						name: '大屏展示',
@@ -93,6 +84,16 @@
 						iconCls:"el-icon-menu",
 						children: [
 							{ path: '/big',  component: BigScreen, menuShow: true },
+						]
+					},
+					{
+						path: '/queryStats',
+						name: '查询统计',
+						component: Nav,
+						menuShow: true,
+						iconCls:"el-icon-setting",
+						children: [
+							{ path: '/queryStats', component: QueryStats, menuShow: true },
 						]
 					},
 					{
@@ -105,6 +106,7 @@
 							{ path: '/system/userManage', component: UserManage,  name: '用户管理', menuShow: true },
 //							{ path: '/system/authority', component: Authority,  name: '角色权限管理', menuShow: true },
 							{ path: '/system/equipmentManage', component: EquipmentManage,  name: '设备管理', menuShow: true },
+							{ path: '/system/lineManagement', component: LineManagement,  name: '线路管理', menuShow: true },
 							{ path: '/system/log', component: Log,  name: '系统日志', menuShow: true },
 						]
 					},

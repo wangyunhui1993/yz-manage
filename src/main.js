@@ -7,6 +7,7 @@ import Vue from 'vue'
 import App from './App'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css';
+import 'font-awesome/css/font-awesome.css'
 //引入富文本编辑
 //import '../static/UE/ueditor.config.js'
 //import '../static/UE/ueditor.all.min.js'
@@ -17,7 +18,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 import store from './store'
  
 // or import all icons if you don't care about bundle size
-   import 'vue-awesome/icons'
+import 'vue-awesome/icons'
  
 /* Register component with one of 2 methods */
  

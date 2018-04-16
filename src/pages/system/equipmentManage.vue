@@ -20,9 +20,9 @@
 							<span class="custom-tree-node" slot-scope="{ node, data }">
         <!--<span>{{ node.label }}</span>-->
 
-							<span v-if="data.type=='p'" draggable><i class="el-icon-tickets"></i>{{ node.label }}</span>
-							<span v-else-if="data.type=='t'" draggable><i class="el-icon-document"></i>{{ node.label }}</span>
-							<span v-else draggable><i class="el-icon-date"></i>{{ node.label }}</span>
+							<span v-if="data.type=='p'" draggable><i :class="Edata.icon.sitemap"></i> {{ node.label }}</span>
+							<span v-else-if="data.type=='t'" draggable><i :class="Edata.icon.sitemap"></i> {{ node.label }}</span>
+							<span v-else draggable><i :class="Edata.icon.sitemap"></i> {{ node.label }}</span>
 							</span>
 						</el-tree>
 					</div>
@@ -197,9 +197,11 @@
 </template>
 <script>
 	import { selectAllEquipment, selectGroup, insertEquipment, deleteEquipment, updateEquipment ,insertGroup} from '../../js/api';
+	import {Edata} from '../../js/Edata';
 	export default {
 		data() {
 			return {
+				Edata:Edata,
 				tableDataLoading: false,
 				filterText: "",
 				opTitle: "",

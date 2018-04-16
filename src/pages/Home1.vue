@@ -202,14 +202,12 @@
 				}
 			},
 			logout: function() {
-				var _this = this;
 				this.$confirm('确认退出吗?', '提示', {
 					type: 'info'
 				}).then(() => {
 					sessionStorage.removeItem('access-user');
-					_this.$router.push('/login');
-				}).catch(() => {
-
+					this.$router.push({path:"/login"});
+				}).catch((e) => {
 				});
 			},
 

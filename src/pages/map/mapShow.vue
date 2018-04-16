@@ -9,15 +9,14 @@
 				</el-tree>-->
 				<el-tree :data="data5" show-checkbox node-key="id" default-expand-all :expand-on-click-node="false">
 					<span class="custom-tree-node" slot-scope="{ node, data }">
-        <span v-if="node.icon==1"><i class="el-icon-tickets"></i>{{ node.label }}</span>
-					<span v-else><i class="el-icon-date"></i>{{ node.label }}</span>
+       				 <span v-if="node.icon==1"><i :class="Edata.icon.sitemap"></i> {{ node.label }}</span>
+					<span v-else><i :class="Edata.icon.camera"></i> {{ node.label }}</span>
 					</span>
 				</el-tree>
 			</div>
 			<div style="height: 100%;padding: 0;">
-				<baidu-map class="bm-view" :center="center" :zoom="zoom" @mousewheel.native="mousewheelOp" >
+				<baidu-map class="bm-view" :center="center" :zoom="zoom" @mousewheel.native="mousewheelOp"  @ready="handler">
 					<bm-scale anchor="BMAP_ANCHOR_BOTTOM_LEFT"></bm-scale>
-					<!--<bm-navigation anchor="BMAP_ANCHOR_TOP_LEFT"></bm-navigation>-->
 					<bm-city-list anchor="BMAP_ANCHOR_TOP_RIGHT" :offset="offsetCityList"></bm-city-list>
 					<bm-map-type :map-types="['BMAP_NORMAL_MAP', 'BMAP_HYBRID_MAP']" anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-map-type>
 					<bm-overview-map anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :isOpen="true"></bm-overview-map>
@@ -73,11 +72,10 @@
 						</div>
 					</bm-control>
 					<bm-control anchor="BMAP_ANCHOR_TOP_RIGHT" :offset="offsetW">
-						<template>
-							<div id="tp-weather-widget"></div>
-						</template>
+						<!--<template>-->
+							<div id="tp-weather-widget" v-if="showWeather"></div>
+						<!--</template>-->
 					</bm-control>
-					<!--<bml-curve-line :points="market|filterMarket"></bml-curve-line>-->
 				</baidu-map>
 
 			</div>
@@ -93,6 +91,7 @@
 </template>
 <script>
 	import { BmlCurveLine } from 'vue-baidu-map'
+	import {Edata} from '../../js/Edata';
 	export default {
 		components: {
 			BmlCurveLine
@@ -136,6 +135,8 @@
 			}];
 
 			return {
+				showWeather:true,
+				Edata:Edata,
 				zoom: 14,
 				center: {
 					lng: 119.42285,
@@ -567,10 +568,14 @@
 			},
 		},
 		mounted() {
-			this.handler();
+//			this.handler();
 		},
 		created() {
-		}
+			
+		},
+		beforeDestroy(){
+//			this.showWeather=false;
+		},
 	}
 </script>
 
@@ -684,7 +689,6 @@
 		position: absolute;
 		top: 50%;
 		transform: translateY(-50%);
-		;
 		z-index: 999;
 		width: 20px;
 		height: 50px;

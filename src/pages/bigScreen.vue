@@ -7,8 +7,8 @@
 					</el-input>
 					<el-tree :data="data5"  node-key="id" default-expand-all :expand-on-click-node="false" @node-drag-start="handleDragStart" @node-drag-enter="handleDragEnter" @node-drag-leave="handleDragLeave" @node-drag-over="handleDragOver" @node-drag-end="handleDragEnd" @node-drop="handleDrop" :allow-drop="allowDrop" :allow-drag="allowDrag">
 						<span class="custom-tree-node" slot-scope="{ node, data }">
-        			<span v-if="node.icon==1" draggable><i class="el-icon-tickets"></i>{{ node.label }}</span>
-						<span v-else draggable><i class="el-icon-date"></i>{{ node.label }}</span>
+        			<span v-if="node.icon==1" draggable><i :class="Edata.icon.sitemap"></i> {{ node.label }}</span>
+						<span v-else draggable><i class="fa fa-video-camera"></i> {{ node.label }}</span>
 						</span>
 					</el-tree>
 				</el-row>
@@ -106,6 +106,7 @@
 	</section>
 </template>
 <script>
+	import {Edata} from '../js/Edata';
 	export default {
 		name: 'live',
 		data() {
@@ -146,6 +147,7 @@
 				}]
 			}];
 			return {
+				Edata:Edata,
 				dialogFormVisible: false,
 				bigScreenSet: 4,
 				bigNum: [1, 2, 3, 4],

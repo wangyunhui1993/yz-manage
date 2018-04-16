@@ -18,7 +18,7 @@
 <script>
 	import echarts from 'echarts'
 	import jiangsu from 'echarts/map/js/province/jiangsu'
-	require('echarts/extension/bmap/bmap')  //引入china.js地图文件
+	require('echarts/extension/bmap/bmap')  //引入地图文件
 	var dataPart1 = [{
 			name: '设备一',
 			value: 200
@@ -37,7 +37,11 @@
 		},
 		{
 			name: '设备五',
-			value: 10
+			value: 40
+		},
+		{
+			name: '设备六',
+			value: 35
 		},
 
 	];
@@ -47,6 +51,7 @@
 		'设备三': [119.48084, 32.37142],
 		'设备四': [119.48099, 32.37910],
 		'设备五': [119.48084, 32.38459],
+		'设备六': [119.48084, 32.39459],
 
 	};
 
@@ -199,13 +204,15 @@ function renderItem(params, api) {
 }
 
 var optionPart1 = {
-	backgroundColor: '#404a59',
+//	backgroundColor: 'rgba(0,0,0,0.5)',
+//	backgroundColor: '#404a59',
     title: {
         text: '设备访问频率',
         left: 'center',
         textStyle: {
             color: '#000'
-        }
+        },
+        backgroundColor:'rgba(128, 128, 128, 0.5)',
     },
     tooltip : {
         trigger: 'item'
@@ -214,9 +221,10 @@ var optionPart1 = {
        center: [119.47285, 32.37020],
          zoom: 14,
         roam: true,
+        
     },
     series : [
-        {
+       /* {
             name: 'pm2.5',
             type: 'scatter',
             coordinateSystem: 'bmap',
@@ -224,24 +232,24 @@ var optionPart1 = {
             symbolSize: function (val) {
                 return val[2] / 10;
             },
-            label: {
-                normal: {
-                    formatter: '{b}',
-                    position: 'right',
-                    show: false
-                },
-                emphasis: {
-                    show: true
-                }
-            },
-            itemStyle: {
-                normal: {
-                    color: '#ddb926'
-                }
-            }
-        },
+//          label: {
+//              normal: {
+//                  formatter: '{b}',
+//                  position: 'right',
+//                  show: false
+//              },
+//              emphasis: {
+//                  show: true
+//              }
+//          },
+//          itemStyle: {
+//              normal: {
+//                  color: '#ddb926'
+//              }
+//          }
+        },*/
         {
-            name: 'Top 5',
+            name: '设备信息',
             type: 'effectScatter',
             coordinateSystem: 'bmap',
             data: convertData(dataPart1.sort(function (a, b) {
@@ -262,29 +270,29 @@ var optionPart1 = {
                     show: true
                 }
             },
-            itemStyle: {
-                normal: {
-                    color: '#f4e925',
-                    shadowBlur: 10,
-                    shadowColor: '#333'
-                }
-            },
+//          itemStyle: {
+//              normal: {
+//                  color: '#000033',
+//                  shadowBlur: 10,
+//                  shadowColor: '#333'
+//              }
+//          },
             zlevel: 1
         },
-        {
-            type: 'custom',
-            coordinateSystem: 'bmap',
-            renderItem: renderItem,
-            itemStyle: {
-                normal: {
-                    opacity: 0.5
-                }
-            },
-            animation: false,
-            silent: true,
-            data: [0],
-            z: -10
-        }
+//      {
+//          type: 'custom',
+//          coordinateSystem: 'bmap',
+//          renderItem: renderItem,
+//          itemStyle: {
+//              normal: {
+//                  opacity: 0.5
+//              }
+//          },
+//          animation: false,
+//          silent: true,
+//          data: [0],
+//          z: -10
+//      }
     ]
 };
 	
