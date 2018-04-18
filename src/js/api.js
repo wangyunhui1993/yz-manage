@@ -25,11 +25,10 @@ export const insertGroup = params => { return axios.post(`${base}/group/insertGr
 
 export const selectLog = params => { return axios.post(`${base}/log/selectLog`, params).then(res => res.data).catch(error=>error); };
 
-
-
-
-
-
+export const insertRoad = params => { return axios.post(`${base}/road/insertRoad`, params).then(res => res.data).catch(error=>error); };
+export const selectRoad = params => { return axios.post(`${base}/road/selectRoad`, params).then(res => res.data).catch(error=>error); };
+export const updateRoad = params => { return axios.post(`${base}/road/updateRoad`, params).then(res => res.data).catch(error=>error); };
+export const deleteRoad = params => { return axios.post(`${base}/road/deleteRoad`, params).then(res => res.data).catch(error=>error); };
 
 
 

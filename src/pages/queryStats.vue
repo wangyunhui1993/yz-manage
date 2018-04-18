@@ -1,7 +1,9 @@
 <template>
 	<section style="height: 100%;width: 100%;" class="statsScreen">
 		<div id="part1">
-
+			<baidu-map class="bm-view" :center="center" :zoom="zoom" @mousewheel.native="mousewheelOp">
+				  <bml-heatmap :data="heatData" :max="100" :radius="20"></bml-heatmap>
+			</baidu-map>
 		</div>
 		<div id="part2">
 
@@ -17,6 +19,7 @@
 
 <script>
 	import echarts from 'echarts'
+	import {BmlHeatmap} from 'vue-baidu-map'
 	import jiangsu from 'echarts/map/js/province/jiangsu'
 	require('echarts/extension/bmap/bmap')  //引入地图文件
 	var dataPart1 = [{
@@ -56,12 +59,31 @@
 	};
 
 	export default {
+		components: {
+    BmlHeatmap
+  },
 		data() {
 			return {
-
+				zoom: 14,
+				center: {
+					lng: 119.42285,
+					lat: 32.37020
+				},
+				heatData:[
+					 {lng: 119.48099, lat: 32.37910, count: 50},
+			        {lng: 119.48084, lat: 32.38459, count: 51},
+			        {lng: 119.48084, lat: 32.39459, count: 15}
+				],
 			}
 		},
 		methods: {
+			mousewheelOp(val) {
+				if(val.deltaY > 0) {
+					this.zoom > 3 ? this.zoom-- : "";
+				} else {
+					this.zoom < 19 ? this.zoom++ : "";
+				}
+			},
 			initEchart(el, options) {
 				echarts.init(document.getElementById(el)).setOption(options, true);
 			},
@@ -624,7 +646,7 @@ var optionPart2 = {
 			
 
 			$(document).ready(() => {
-				this.initEchart('part1', optionPart1);
+//				this.initEchart('part1', optionPart1);
 				this.initEchart('part2', optionPart2);
 				myChartPart3.setOption(optionPart3, true);
 				this.initEchart('part4', optionPart4);
@@ -638,6 +660,10 @@ var optionPart2 = {
 </script>
 
 <style>
+	.bm-view {
+		width: 100%;
+		height: 100%;
+	}
 	.statsScreen>div {
 		width: 50%;
 		height: 50%;

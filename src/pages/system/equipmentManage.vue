@@ -547,7 +547,7 @@
 						//								});
 						this.tableDataLoading = false;
 					} else {
-						console.log(data);
+//						console.log(data);
 						this.$message({
 							message: errMsg,
 							type: 'error'
@@ -560,9 +560,7 @@
 			getSelectGroup() {
 				let info = {
 					type: "1",
-					groupName: "",
-					current: 1,
-					size: 10000,
+					groupName: ""
 				};
 				selectGroup(info).then(data => {
 					let {
@@ -573,6 +571,7 @@
 						success
 					} = data;
 					if(success) {
+						
 //						let groupTitle = [];
 //						groupTitle.push({
 //							id: "",

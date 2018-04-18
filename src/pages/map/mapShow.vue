@@ -35,6 +35,7 @@
 					</bm-info-window>
 					<bm-marker v-for=" (item,index) in market" :key="index" :position="item.markerPoint" @click="infoWindowOpen(index)" :offset="{width: 9,height: -11}" :icon="{url: './static/img/map_camera.png', size: {width: 30, height: 25}}">
 					</bm-marker>
+					<!--<bm-polyline v-for="(item,index) in formatAfterLineArr"  v-if="item.show" :path="item.ll" stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="5"></bm-polyline>-->
 					<bm-polyline :path="market|filterMarket " stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="5"></bm-polyline>
 					<bm-control anchor="BMAP_ANCHOR_TOP_RIGHT" :offset="offsetControl">
 						<div style="position: relative;">
@@ -92,6 +93,8 @@
 <script>
 	import { BmlCurveLine } from 'vue-baidu-map'
 	import {Edata} from '../../js/Edata';
+	import {formatTreeData} from '../../js/formatTreeData';
+	import { selectGroup,selectRoad } from '../../js/api';
 	export default {
 		components: {
 			BmlCurveLine
@@ -162,6 +165,7 @@
 					height: 8
 				},
 				times: "",
+				formatAfterLineArr:[],
 				showPrediction: false,
 				trafficHour: 0,
 				weekdays: '一',
@@ -365,9 +369,6 @@
 						num: '023'
 					},
 				],
-
-				//,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-
 				polylinePath: [],
 				markerTitle: "监控探头信息",
 				winInfo: {
@@ -488,26 +489,6 @@
 				this.openMobile = !this.openMobile;
 			},
 
-			initTQ(T, h, i, n, k, P, a, g, e) {
-				g = function() {
-					P = h.createElement(i);
-					a = h.getElementsByTagName(i)[0];
-					P.src = k;
-					P.charset = "utf-8";
-					P.async = 1;
-					a.parentNode.insertBefore(P, a)
-				};
-				T["ThinkPageWeatherWidgetObject"] = n;
-				T[n] || (T[n] = function() {
-					(T[n].q = T[n].q || []).push(arguments)
-				});
-				T[n].l = +new Date();
-				if(T.attachEvent) {
-					T.attachEvent("onload", g)
-				} else {
-					T.addEventListener("load", g, false)
-				}
-			},
 			handler() {
 				(function(T, h, i, n, k, P, a, g, e) {
 					g = function() {
@@ -529,7 +510,7 @@
 //					} else {
 //						T.addEventListener("load", g, false)
 //					}
-				}(window, document, "script", "tpwidget", "//widget.seniverse.com/widget/chameleon.js"))
+				}(window, document, "script", "tpwidget", "//widget.seniverse.com/widget/chameleon.js"));
 				tpwidget("init", {
 					"flavor": "slim",
 					"location": "WTUBM40RTTUB",
@@ -544,6 +525,93 @@
 					"hash": "d91eaac5d1d8b9097beb363cc8c8605d"
 				});
 				tpwidget("show");
+				
+			},
+			/*获取分组*/
+			getSelectGroup() {
+				let info = {
+					type: "2",
+					groupName: ""
+				};
+				selectGroup(info).then(data => {
+					let {
+						errMsg,
+						errCode,
+						value,
+						extraInfo,
+						success
+					} = data;
+					if(success) {
+						console.log("分组和设备",data);
+						let attributes = {
+					      id: 'id',
+					      parentId: 'parentId',
+					      name: 'groupName',
+					      rootId: "0"
+					  };
+					  console.log("大街",value.videoGroupsList);
+					  console.log(789,formatTreeData(value.videoGroupsList,attributes));
+//						this.groupArr = this.formatGroup(value);
+//						console.log(this.groupArr);
+
+					} else {
+						console.log(data);
+						this.$message({
+							message: errMsg,
+							type: 'error'
+						});
+					}
+				});
+			},
+			/*查询线路*/
+			getSelectLine() {
+				let info = {
+					current: "1",
+					size: "999"
+				}
+				selectRoad(info).then(data => {
+					let {
+						errMsg,
+						errCode,
+						value,
+						extraInfo,
+						success
+					} = data;
+					if(success) {
+//						console.log(data);
+						this.lineArr = value;
+						this.formatAfterLineArr=[];
+						for(var item of value){
+							this.formatAfterLineArr.push({
+								show:true,
+								id:item.id,
+								ll:this.transCoordinate(this.trims(item.ll).split(","))     
+							});
+						}
+						console.log(this.formatAfterLineArr);
+					} else {
+//						console.log(data);
+						this.$message({
+							message: errMsg,
+							type: 'error'
+						});
+					}
+				});
+			},
+			/*去除字符串里的所有空格*/
+			trims(val) {
+				return val.replace(/[ ]/g, "");
+			},
+			/*转换成坐标*/
+			transCoordinate(arr) {
+				let coordinateList = [];
+				for(var i = 0; i < arr.length; i += 2) {
+					coordinateList.push({
+						lng: arr[i],
+						lat: arr[i + 1]
+					});
+				}
+				return coordinateList;
 			},
 
 		},
@@ -568,10 +636,11 @@
 			},
 		},
 		mounted() {
-//			this.handler();
+			this.handler();
 		},
 		created() {
-			
+			this.getSelectGroup();
+			this.getSelectLine();
 		},
 		beforeDestroy(){
 //			this.showWeather=false;
