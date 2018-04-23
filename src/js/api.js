@@ -20,7 +20,7 @@ export const updateEquipment = params => { return axios.post(`${base}/equipment/
 
 export const insertGroup = params => { return axios.post(`${base}/group/insertGroup`, params).then(res => res.data).catch(error=>error); };
 
-
+export const deleteGroup = params => { return axios.post(`${base}/group/deleteGroup`, params).then(res => res.data).catch(error=>error); };
 
 
 export const selectLog = params => { return axios.post(`${base}/log/selectLog`, params).then(res => res.data).catch(error=>error); };

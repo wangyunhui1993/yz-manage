@@ -18,11 +18,11 @@
 						<el-input placeholder="输入关键字过滤" size="small" v-model="filterText"></el-input>
 						<el-tree :data="groupArr" node-key="id" highlight-current default-expand-all @node-click="selectGroup" :expand-on-click-node="false" class="filter-tree groupTree" :filter-node-method="filterNode" ref="tree2" :props="defaultProps">
 							<span class="custom-tree-node" slot-scope="{ node, data }">
-        <!--<span>{{ node.label }}</span>-->
+       						 <span><i :class="Edata.icon.sitemap"></i> {{ data.title }}</span>
 
-							<span v-if="data.type=='p'" draggable><i :class="Edata.icon.sitemap"></i> {{ node.label }}</span>
+							<!--<span v-if="data.type=='p'" draggable><i :class="Edata.icon.sitemap"></i> {{ node.label }}</span>
 							<span v-else-if="data.type=='t'" draggable><i :class="Edata.icon.sitemap"></i> {{ node.label }}</span>
-							<span v-else draggable><i :class="Edata.icon.sitemap"></i> {{ node.label }}</span>
+							<span v-else draggable><i :class="Edata.icon.sitemap"></i> {{ node.label }}</span>-->
 							</span>
 						</el-tree>
 					</div>
@@ -109,7 +109,7 @@
 			</el-main>
 
 		</el-container>
-		<el-dialog title="添加设备" :visible.sync="dialogFormAddVisible" width="500px" top="5vh" @close="closeAddWin">
+		<el-dialog title="添加设备" :visible.sync="dialogFormAddVisible" width="500px" top="5vh" @close="closeAddWin" :close-on-click-modal="false">
 			<el-form :model="formInfo" status-icon label-width="100px" ref="formInfo">
 				<el-form-item label="序列号" prop="serial" :rules="[{ required: true, message: '序列号不能为空', trigger: 'blur'}]">
 					<el-input v-model="formInfo.serial" auto-complete="off"></el-input>
@@ -123,8 +123,8 @@
 				<el-form-item label="纬度" prop="latitude" :rules="[{ required: true, message: '纬度不能为空', trigger: 'blur'}]">
 					<el-input v-model="formInfo.latitude" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="分组" prop="groupArr" :rules="[{ required: true, message: '请选择分组', trigger: 'change'}]">
-					<el-cascader placeholder="选择分组" v-model="formInfo.groupArr" :options="groupArr" :props="{value:'id',label:'label',children:'children'}" filterable change-on-select></el-cascader>
+				<el-form-item label="分组" prop="groupArr"  :rules="[{ required: true, message: '请选择分组', trigger: 'change'}]">
+					<el-cascader placeholder="选择分组" v-model="formInfo.groupArr" :options="groupArr" :props="{value:'id',label:'title',children:'children'}" filterable change-on-select></el-cascader>
 				</el-form-item>
 				<el-form-item label="IP地址" prop="ip" :rules="[{ required: true, message: '请填写IP地址', trigger: 'blur'}]">
 					<el-input v-model="formInfo.ip" auto-complete="off"></el-input>
@@ -136,7 +136,7 @@
 			</div>
 		</el-dialog>
 
-		<el-dialog title="编辑设备" :visible.sync="dialogFormEditVisible" width="500px" top="5vh" @close="closeEditWin">
+		<el-dialog title="编辑设备" :visible.sync="dialogFormEditVisible" width="500px" top="5vh" @close="closeEditWin" :close-on-click-modal="false">
 			<el-form :model="formEditInfo" status-icon label-width="100px" ref="formEditInfo">
 				<el-form-item label="序列号" prop="serial" :rules="[{ required: true, message: '序列号不能为空', trigger: 'blur'}]">
 					<el-input v-model="formEditInfo.serial" auto-complete="off"></el-input>
@@ -150,8 +150,8 @@
 				<el-form-item label="纬度" prop="latitude" :rules="[{ required: true, message: '纬度不能为空', trigger: 'blur'}]">
 					<el-input v-model="formEditInfo.latitude" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="分组" prop="groupArr" :rules="[{ required: true, message: '请选择分组', trigger: 'change'}]">
-					<el-cascader placeholder="选择分组" v-model="formEditInfo.groupArr" :options="groupArr" :props="{value:'id',label:'label',children:'children'}" filterable change-on-select></el-cascader>
+				<el-form-item label="分组" prop="groupArr" clearable :rules="[{ required: true, message: '请选择分组', trigger: 'change'}]">
+					<el-cascader placeholder="选择分组" v-model="formEditInfo.groupArr" :options="groupArr" :props="{value:'id',label:'title',children:'children'}" filterable change-on-select></el-cascader>
 				</el-form-item>
 				<el-form-item label="IP地址" prop="ip" :rules="[{ required: true, message: '请填写IP地址', trigger: 'blur'}]">
 					<el-input v-model="formEditInfo.ip" auto-complete="off"></el-input>
@@ -163,13 +163,13 @@
 			</div>
 		</el-dialog>
 
-		<el-dialog title="添加分组" :visible.sync="dialogGroupAddVisible" width="400px" top="5vh" @close="closeAddGroupWin">
+		<el-dialog title="添加分组" :visible.sync="dialogGroupAddVisible" width="400px" top="5vh" @close="closeAddGroupWin" :close-on-click-modal="false">
 			<el-form :model="addGroupInfo" label-width="100px"  ref="addGroupInfo">
 				<el-form-item label="上级" prop="groupArr">
-					<el-cascader placeholder="选择分组" v-model="addGroupInfo.groupArr" :options="groupArr" :props="{value:'id',label:'label',children:'children'}" filterable change-on-select></el-cascader>
+					<el-cascader placeholder="选择分组" v-model="addGroupInfo.groupArr" clearable :options="groupArr" :props="{value:'id',label:'title',children:'children'}" filterable change-on-select></el-cascader>
 				</el-form-item>
-				<el-form-item label="名称" :rules="[{ required: true, message: '请填写名称', trigger: 'blur'}]">
-					<el-input v-model="addGroupInfo.groupName" auto-complete="off"></el-input>
+				<el-form-item label="名称"  :rules="[{ required: true, message: '请填写名称', trigger: 'blur'}]">
+					<el-input v-model="addGroupInfo.groupName"  auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -178,10 +178,10 @@
 			</div>
 		</el-dialog>
 
-		<el-dialog title="编辑分组" :visible.sync="dialogGroupEditVisible" width="400px" top="5vh" @close="closeEditGroupWin">
+		<el-dialog title="编辑分组" :visible.sync="dialogGroupEditVisible" width="400px" top="5vh" @close="closeEditGroupWin" :close-on-click-modal="false">
 			<el-form :model="editGroupInfo" label-width="100px">
 				<el-form-item label="上级" prop="groupArr" :rules="[{ required: true, message: '请选择分组', trigger: 'change'}]">
-					<el-cascader placeholder="选择分组" v-model="editGroupInfo.groupArr" :options="groupArr" :props="{value:'id',label:'label',children:'children'}" filterable change-on-select></el-cascader>
+					<el-cascader placeholder="选择分组" v-model="editGroupInfo.groupArr" :options="groupArr" :props="{value:'id',label:'title',children:'children'}" filterable change-on-select></el-cascader>
 				</el-form-item>
 				<el-form-item label="名称" :rules="[{ required: true, message: '请填写名称', trigger: 'blur'}]">
 					<el-input v-model="editGroupInfo.groupName" auto-complete="off"></el-input>
@@ -196,8 +196,9 @@
 	</section>
 </template>
 <script>
-	import { selectAllEquipment, selectGroup, insertEquipment, deleteEquipment, updateEquipment ,insertGroup} from '../../js/api';
+	import { selectAllEquipment, selectGroup, insertEquipment, deleteEquipment, updateEquipment ,insertGroup,deleteGroup} from '../../js/api';
 	import {Edata} from '../../js/Edata';
+	import {formatTreeData} from '../../js/formatTreeData';
 	export default {
 		data() {
 			return {
@@ -240,7 +241,9 @@
 					groupArr:[],
 				},
 				editGroupInfo: {
-
+					id:"",
+					groupArr:[],
+					groupName:"",
 				},
 				groupArr: [],
 				pageSizes: [15, 100, 200, 500],
@@ -262,7 +265,9 @@
 					children: 'children',
 					label: 'label'
 				},
-
+				originalGroupList:[],
+				selectGroupListId:[],
+				selectGroupInfo:{},
 				append(data) {
 					//      const newChild = { id: id++, label: 'testtest', children: [] };
 					//      if (!data.children) {
@@ -309,9 +314,14 @@
 			showEditWin(row) {
 				console.log(row);
 				this.dialogFormEditVisible = true;
-
+				
+				
+				
 				this.formEditInfo = Object.assign(this.formEditInfo, row);
 				this.formEditInfo.oldgId = row.groupId;
+				this.selectGroupListId=[];
+				this.findGroupId(this.originalGroupList,row.groupId);
+				this.formEditInfo.groupArr=this.selectGroupListId;
 				console.log(this.formEditInfo);
 			},
 			//关闭窗口
@@ -452,8 +462,12 @@
 				this.$refs.addGroupInfo.validate((valid) => {
 					if(valid) {
 						console.log(valid)
+						if(this.addGroupInfo.groupArr.length){
+							this.addGroupInfo.parentId = this.stransGroupId(this.addGroupInfo.groupArr);
+						}else{
+							this.addGroupInfo.parentId=0;
+						}
 						
-						this.addGroupInfo.parentId = this.stransGroupId(this.addGroupInfo.groupArr);
 
 						this.addGro();
 					} else {
@@ -581,9 +595,17 @@
 //						});
 //						groupTitle[0].children = this.formatGroup(value);
 //						this.groupArr = groupTitle;
-
-						this.groupArr = this.formatGroup(value);
-						console.log(this.groupArr);
+						let attributes = {
+					      id: 'id',
+					      parentId: 'parentId',
+					      name: 'groupName',
+					      rootId: "0"
+					  };
+//						formatTreeData(value,attributes)
+//						this.groupArr = this.formatGroup(value);
+						this.originalGroupList=JSON.parse(JSON.stringify(value));
+						this.groupArr = formatTreeData(value,attributes);
+						console.log(this.originalGroupList);
 
 					} else {
 						console.log(data);
@@ -593,6 +615,23 @@
 						});
 					}
 				});
+			},
+			findGroupId(arr,id){
+				for(var item of arr){
+					if(item.id==id){
+						
+						this.selectGroupListId.unshift(parseInt(id));
+						console.log("idid",item);
+						console.log("arr",this.selectGroupListId);
+						if(item.parentId=="0"){
+							console.log("stop",this.selectGroupListId);
+						return this.selectGroupListId;
+					}
+						this.findGroupId(arr,item.parentId);
+						
+					}
+					
+				}
 			},
 			/*格式化分组*/
 			formatGroup(val) {
@@ -625,37 +664,92 @@
 				console.log(data);
 				console.log(value);
 				if(!value) return true;
-				return data.label.indexOf(value) !== -1;
+				return data.title.indexOf(value) !== -1;
 			},
 			/*分组查看设备*/
 			selectGroup(obj, node, self) {
+				console.log(obj);
 				this.searchData.groupId = obj.id;
+				this.selectGroupInfo=obj;
+				this.editGroupInfo.groupName=obj.title;
 				this.tableDataLoading = true;
 				this.changeSearch();
 				this.getEquipmentList();
 			},
 			/*添加分组*/
 			addGroup() {
+				this.selectGroupListId=[];
+				this.findGroupId(this.originalGroupList,this.selectGroupInfo.id);
+				this.addGroupInfo.groupArr=this.selectGroupListId;
 				this.dialogGroupAddVisible = true;
 			},
 			/*修改分组*/
 			editGroup() {
-				this.dialogGroupEditVisible = true;
+				if(this.selectGroupInfo.id){
+					this.selectGroupListId=[];
+					this.findGroupId(this.originalGroupList,this.selectGroupInfo.id);
+					this.editGroupInfo.groupArr=this.selectGroupListId;
+					this.dialogGroupEditVisible = true;
+					
+				}else{
+					this.$message({
+						type: 'warning',
+						message: '请先选择分组'
+					});
+				}
+				
 			},
 			/*删除分组*/
 			deleteGroup() {
-				this.$confirm('此操作将删除此分组, 是否继续?', '提示', {
+				if(this.selectGroupInfo.id){
+					this.$confirm('此操作将删除此分组, 是否继续?', '提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '取消',
 					type: 'warning'
-				}).then(() => {
-
+				}).then(() => {   
+					this.getDeleteGroup(this.selectGroupInfo.id);
 				}).catch(() => {
 					this.$message({
 						type: 'info',
 						message: '已取消删除'
 					});
+					
 				});
+				}else{
+					this.$message({
+						type: 'warning',
+						message: '请先选择分组'
+					});
+				}
+				
+			},
+			getDeleteGroup(id){
+				let info={
+					id:id,
+					man:this.$store.state.adminUserInfo.id,
+				}
+				deleteGroup(info).then(data => {
+					let {
+						errMsg,
+						errCode,
+						value,
+						extraInfo,
+						success
+					} = data;
+					if(success) {
+						this.$message({
+							message: errMsg,
+							type: 'success'
+						});
+						this.getSelectGroup();
+					} else {
+						this.$message({
+							message: errMsg,
+							type: 'error'
+						});
+					}
+				});
+				
 			},
 			/*刷新分组*/
 			refreshGroup() {

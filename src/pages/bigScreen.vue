@@ -1,18 +1,21 @@
 <template>
 	<section style="box-sizing: border-box;width: 100%;height: 100%;position: relative;" class="bigScreen" ref="bigScreen">
 		<el-container style="height: 100%;">
-			<el-aside width="200px" style="position: relative;margin-right: 5px;padding-right: 5px;box-sizing: border-box; border: 1px solid #dcdfe6;">
+			<el-aside width="300px">
 				<el-row>
 					<el-input placeholder="输入关键字过滤" size="small" suffix-icon="el-icon-search" v-model="filterText">
-					</el-input>
-					<el-tree :data="data5"  node-key="id" default-expand-all :expand-on-click-node="false" @node-drag-start="handleDragStart" @node-drag-enter="handleDragEnter" @node-drag-leave="handleDragLeave" @node-drag-over="handleDragOver" @node-drag-end="handleDragEnd" @node-drop="handleDrop" :allow-drop="allowDrop" :allow-drag="allowDrag">
-						<span class="custom-tree-node" slot-scope="{ node, data }">
-        			<span v-if="node.icon==1" draggable><i :class="Edata.icon.sitemap"></i> {{ node.label }}</span>
-						<span v-else draggable><i class="fa fa-video-camera"></i> {{ node.label }}</span>
-						</span>
-					</el-tree>
+				</el-input>
 				</el-row>
-				<el-row style="position: absolute;width: 100%;left: 0;bottom: 0;max-height: 300px;">
+				<div style="flex-grow:1;flex-shrink:1;overflow-y:scroll ;">
+					<el-tree :data="groupAndEqu"  node-key="id"   :filter-node-method="filterNode"  default-expand-all :expand-on-click-node="false"  ref="tree2"  @node-drag-start="handleDragStart" @node-drag-enter="handleDragEnter" @node-drag-leave="handleDragLeave" @node-drag-over="handleDragOver" @node-drag-end="handleDragEnd" @node-drop="handleDrop" :allow-drop="allowDrop" :allow-drag="allowDrag">
+					<span class="custom-tree-node" slot-scope="{ node, data }">
+	       				 <span v-if="data.type=='group'"><i :class="Edata.icon.sitemap"></i> {{ data.title }}</span>
+						<span v-else-if="data.type=='equ'" draggable><i :class="Edata.icon.camera"></i> {{ data.title }}</span>
+						<span v-else></span>
+					</span>
+				</el-tree>
+				</div>
+				<div style="flex-grow:0;flex-shrink:0;">
 					<el-card class="box-card videoParameters" :body-style="{ padding: '15px' }">
 						<div slot="header" class="clearfix" @click="visVideoParameters">
 							<span>视频参数</span>
@@ -38,58 +41,18 @@
 							</el-row>
 						</div>
 					</el-card>
-
-				</el-row>
+				</div>
 			</el-aside>
-			<el-container style="height: 100%;" :class="allScreen?'all':''" >
+			<el-container style="height: 100%;overflow-y: hidden !important;" id="dashboard_id">
 				<el-main style="padding: 0;height: 100%;">
-					<!--<div class="operateWin">
-			<el-tooltip class="item" effect="light" content="返回" placement="bottom-end">
-      			<i class="el-icon-back" @click="goBack" style="font-size: 30px;"></i>
-    		</el-tooltip>
-			<el-tooltip class="item" effect="light" content="大屏设置" placement="bottom-end">
-      			<i class="el-icon-setting" @click="showSet" style="font-size: 30px;"></i>
-    		</el-tooltip>
-		</div>-->
-
-					<!--<p>Current Stream: <span class="badge badge-success">{{ currentStream }}</span></p>
-    <p>Current Tech: <span class="badge badge-info">{{ currentTech }}</span></p>-->
-
 					<div v-for="(i,index) in bigNum" @dragover="dragenter($event)" @drop="drop(index)" class="screenItem" :data-index='i' :key="index" :class="'part'+num" @mouseenter="showInfo" @mouseleave="hideInfo">
 						<div class="topInfo">
 							编号:{{listInfo[i-1].number}}&nbsp;&nbsp; 名称:{{listInfo[i-1].name}}
 						</div>
 						<video-player style='width: 100%;height: 100%;' class="vjs-custom-skin" ref="videoPlayer" :options="playerOptions" @ready="onPlayerReadied" @timeupdate="onTimeupdate">
 						</video-player>
+						<div class="mask"></div>
 					</div>
-
-					<!--<el-dialog title="大屏配置" :visible.sync="dialogFormVisible" top='2vh' width="500px">
-						<el-form>
-							<el-card class="box-card">
-								<div slot="header" class="clearfix">
-									<el-form-item label="请选择方阵" label-width="100px">
-										<el-select v-model="bigScreenSet" placeholder="请选择方阵" @change="changeNum">
-											<el-option label="1 × 1" :value=1></el-option>
-											<el-option label="2 × 2" :value=4></el-option>
-											<el-option label="3 × 3" :value=9></el-option>
-										</el-select>
-									</el-form-item>
-
-								</div>
-								<el-form-item v-for="item in Number(bigScreenSet) " :key="item" :label="'第'+(item)+'个'" label-width="100px">
-									<el-select v-model="bigScreenSet" placeholder="请选择监控探头">
-										<el-option label="001" value="shanghai"></el-option>
-										<el-option label="002" value="beijing"></el-option>
-									</el-select>
-								</el-form-item>
-							</el-card>
-
-						</el-form>
-						<div slot="footer" class="dialog-footer">
-							<el-button @click="dialogFormVisible = false">取 消</el-button>
-							<el-button type="primary" @click="submit">确 定</el-button>
-						</div>
-					</el-dialog>-->
 				</el-main>
 				<el-footer height="40px">
 					<div class="btn_pic" style="margin: 3px 0;float: right;">
@@ -97,7 +60,7 @@
 						<img :src="4==btn_H?pic.pic_4_h:pic.pic_4" @click="selectNum(4)" />
 						<img :src="9==btn_H?pic.pic_9_h:pic.pic_9" @click="selectNum(9)" />
 						<img :src="16==btn_H?pic.pic_16_h:pic.pic_16" @click="selectNum(16)" />
-						<img :src="pic.pic_zoom" @click="selectNum('big')" />
+						<img :src="pic.pic_zoom" ref="bigScreeen" @click="selectNum('big')" />
 					</div>
 				</el-footer>
 			</el-container>
@@ -107,46 +70,13 @@
 </template>
 <script>
 	import {Edata} from '../js/Edata';
+	import {formatTreeData} from '../js/formatTreeData';
+	import { selectGroup,selectRoad ,selectAllEquipment} from '../js/api';
 	export default {
 		name: 'live',
 		data() {
-			const data = [{
-				id: 1,
-				label: '一级 1',
-				icon: 1,
-				children: [{
-					id: 4,
-					label: '二级 1-1',
-					icon: 2,
-				}]
-			}, {
-				id: 2,
-				label: '一级 2',
-				icon: 1,
-				children: [{
-					id: 5,
-					label: '二级 2-1',
-					icon: 2,
-				}, {
-					id: 6,
-					label: '二级 2-2',
-					icon: 2,
-				}]
-			}, {
-				id: 3,
-				label: '一级 3',
-				icon: 1,
-				children: [{
-					id: 7,
-					label: '二级 3-1',
-					icon: 2,
-				}, {
-					id: 8,
-					label: '二级 3-2',
-					icon: 2,
-				}]
-			}];
 			return {
+				groupAndEqu:[],
 				Edata:Edata,
 				dialogFormVisible: false,
 				bigScreenSet: 4,
@@ -302,41 +232,12 @@
 				],
 
 				filterText: '',
-				data2: [{
-					id: 1,
-					label: '一级 1',
-					children: [{
-						id: 4,
-						label: '二级 1-1',
-					}]
-				}, {
-					id: 2,
-					label: '一级 2',
-					children: [{
-						id: 5,
-						label: '二级 2-1'
-					}, {
-						id: 6,
-						label: '二级 2-2'
-					}]
-				}, {
-					id: 3,
-					label: '一级 3',
-					children: [{
-						id: 7,
-						label: '二级 3-1'
-					}, {
-						id: 8,
-						label: '二级 3-2'
-					}]
-				}],
 				defaultProps: {
 					children: 'children',
 					label: 'label'
 				},
-				data5: JSON.parse(JSON.stringify(data)),
 				showVideoParameters: true,
-				value1:'',
+				value1:0,
 
 			}
 		},
@@ -382,31 +283,67 @@
 			},
 			selectNum(arg) {
 				if(arg == "big") {
+					
 					this.allScreen = !this.allScreen;
-
-					console.log(window.event.currentTarget);
+					window.event.currentTarget.src = this.pic.pic_zoom_h;
 //					this.allScreen ? window.event.currentTarget.src = './../../static/img/zoom_in.png' : window.event.currentTarget.src = './../../static/img/zoom_out.png'
-					if(this.allScreen) {
-						window.event.currentTarget.src = this.pic.pic_zoom_h;
-
-						var docElm = document.documentElement;
-						//W3C  
-						if(docElm.requestFullscreen) {
-							docElm.requestFullscreen();
-						}
-						//FireFox  
-						else if(docElm.mozRequestFullScreen) {
-							docElm.mozRequestFullScreen();
-						}
-						//Chrome等  
-						else if(docElm.webkitRequestFullScreen) {
-							docElm.webkitRequestFullScreen();
-						}
-						//IE11
-						else if(elem.msRequestFullscreen) {
-							elem.msRequestFullscreen();
-						}
+					if(this.allScreen) {	
+						console.log("全屏");
+		var elem = document.getElementById("dashboard_id");
+        elem.style.width = "100%";
+        elem.style.height = "100%";
+        elem.style.overflowY = "scroll";
+        requestFullScreen(elem); // 某个页面元素
+			function requestFullScreen(element) {
+            // 判断各种浏览器，找到正确的方法
+            var requestMethod = element.requestFullScreen || //W3C
+                element.webkitRequestFullScreen || //FireFox
+                element.mozRequestFullScreen || //Chrome等
+                element.msRequestFullscreen; //IE11
+            if (requestMethod) {
+            	console.log("查到");
+            	console.log(requestMethod);
+                requestMethod.call(element);
+            } else if (typeof window.ActiveXObject !== "undefined") { //for Internet Explorer
+            	console.log("没查到");
+                var wscript = new ActiveXObject("WScript.Shell");
+                if (wscript !== null) {
+                    wscript.SendKeys("{F11}");
+                }
+            }
+        }
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+//						console.log("全屏");
+//						window.event.currentTarget.src = this.pic.pic_zoom_h;
+//
+//						var docElm = document.documentElement;
+//						//W3C  
+//						if(docElm.requestFullscreen) {
+//							docElm.requestFullscreen();
+//						}
+//						//FireFox  
+//						else if(docElm.mozRequestFullScreen) {
+//							docElm.mozRequestFullScreen();
+//						}
+//						//Chrome等  
+//						else if(docElm.webkitRequestFullScreen) {
+//							docElm.webkitRequestFullScreen();
+//						}
+//						//IE11
+//						else if(elem.msRequestFullscreen) {
+//							elem.msRequestFullscreen();
+//						}
 					} else {
+						console.log("退出全屏");
 						window.event.currentTarget.src = this.pic.pic_zoom;
 
 						if(document.exitFullscreen) {
@@ -457,9 +394,85 @@
 				console.log('大屏', this.bigNum);
 
 			},
+					/*获取分组*/
+			getSelectGroup() {
+				let info = {
+					type: "2",
+					groupName: ""
+				};
+				selectGroup(info).then(data => {
+					let {
+						errMsg,
+						errCode,
+						value,
+						extraInfo,
+						success
+					} = data;
+					if(success) {
+						console.log("分组和设备",data);
+						let attributes = {
+					      id: 'id',
+					      parentId: 'parentId',
+					      name: 'groupName',
+					      rootId: "0"
+					  };
+					  let equArray=value.groupAndEquipmentDtoList;
+					function run(chiArr) {
+		if(equArray.length !== 0) {
+			for(let i = 0; i < chiArr.length; i++) {
+				for(let j = 0; j < equArray.length; j++) {
+					if(chiArr[i].id == equArray[j].id && chiArr[i].type=='group') {
+						let obj = {
+							id: equArray[j].eId,
+							title: equArray[j].eName,
+							children: [],
+							type:"equ"
+						};
+						chiArr[i].children.push(obj);
+						equArray.splice(j, 1);
+						j--;
+					}
+				}
+				run(chiArr[i].children);
+			}
+		}
+	}
+					let originalData=value.videoGroupsList;
+					  let groupArray=formatTreeData(originalData,attributes);
+					   
+					  run(groupArray);
+					  this.groupAndEqu=groupArray;
+					  
+					  
+					} else {
+						console.log(data);
+						this.$message({
+							message: errMsg,
+							type: 'error'
+						});
+					}
+				});
+			},	
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			filterNode(value, data) {
 				if(!value) return true;
-				return data.label.indexOf(value) !== -1;
+				return data.title.indexOf(value) !== -1;
 			},
 			drop(index) {
 				console.log(index);
@@ -496,7 +509,8 @@
 			},
 			allowDrag(draggingNode) {
 				return draggingNode.data.label.indexOf('三级 3-1-1') === -1;
-			}
+			},
+
 
 		},
 		watch: {
@@ -505,13 +519,46 @@
 			}
 		},
 		mounted() {
-			$(".screenItem").on('click', '.vjs-tech', function() {
-				alert($(this).html());
-			});
+			
+//			document.getElementsByClassName("vjs-tech")[0].onclick=function(){
+//				console.log(123);
+//			}
+			var  _this=this;
+		/*	document.onkeydown=function(event){
+      var e = event || window.event || arguments.callee.caller.arguments[0];
+      if(e && e.keyCode==27){ // 按 Esc 
+        //要做的事情
+        console.log(123);
+//      _this.allScreen=false;
+      }    
+
+    }; */
+   
+    window.onresize = function() {
+        if (!checkFull()) {
+        	_this.allScreen =false;
+        	_this.$refs.bigScreeen.src=_this.pic.pic_zoom;
+        	console.log(1234);
+            //要执行的动作
+//          $("#dashboard_id").removeClass('expand').addClass('contract');//这里捡个懒，直接用JQ来改className
+        }else{
+        	_this.allScreen =true;
+        	_this.$refs.bigScreeen.src=_this.pic.pic_zoom;
+        }
+    }
+    function checkFull() {
+        var isFull = document.fullscreenEnabled || window.fullScreen || document.webkitIsFullScreen || document.msFullscreenEnabled;
+        //to fix : false || undefined == undefined
+        if (isFull === undefined) {isFull = false;}
+        return isFull;
+    }
 			
 			
 
 			
+		},
+		created(){
+			this.getSelectGroup();
 		},
 	}
 </script>
@@ -641,5 +688,33 @@
 	.VideoParametersClose {
 		transform: rotate(90deg);
 		float: right;
+	}
+	.bigScreen .el-aside{
+		display: -webkit-flex;
+		 display: flex;
+		 flex-direction:column;
+		 margin-right: 5px;
+		 padding-right: 5px;
+		 box-sizing: border-box;
+		 border: 1px solid #dcdfe6;
+		 -webkit-user-select: none;
+	}
+	
+	
+	
+	/*.mask{
+		height: 100%;
+		width: 100%;
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 1;
+	}*/
+	
+	.bigScreen .video-js .vjs-fullscreen-control{
+		position: absolute;
+		left: 0;
+		top: 0;
+		z-index: 2;
 	}
 </style>

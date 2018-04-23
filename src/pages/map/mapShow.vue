@@ -2,15 +2,16 @@
 	<section style="height: 100%;width: 100%;" class="mapShow">
 		<div style="height: 100%;margin-top: 5px;box-sizing: border-box;border-top:1px solid #bfcbd9 ;padding-bottom: 5px;">
 			<div @click="mobileBtn" class="mobileBtn" :class="openMobile?'aside-150':'aside-0'"><i :class="openMobile?'el-icon-arrow-left':'el-icon-arrow-right'" style="font-size: 20px;line-height: 50px;"></i></div>
-			<div :class="openMobile?'left200':'left0'" style="border-right:1px solid #bfcbd9 ;position: fixed;top: 125px;left: 0;z-index: 100;height: 100%;background: #fff;">
+			<div :class="openMobile?'left300':'left0'" style="border-right:1px solid #bfcbd9 ;position: fixed;top: 125px;left: 0;z-index: 100;height: 100%;background: #fff;">
 				<el-input placeholder="输入关键字过滤" size="small" suffix-icon="el-icon-search" v-model="filterText">
 				</el-input>
 				<!--<el-tree class="filter-tree" :data="data2" :props="defaultProps" default-expand-all :filter-node-method="filterNode" ref="tree2">
 				</el-tree>-->
-				<el-tree :data="data5" show-checkbox node-key="id" default-expand-all :expand-on-click-node="false">
+				<el-tree :data="groupAndEqu" :default-checked-keys="defaultCheckedKeys" show-checkbox node-key="id" @check-change="checkChange"  :filter-node-method="filterNode"  default-expand-all :expand-on-click-node="false"  ref="tree2" >
 					<span class="custom-tree-node" slot-scope="{ node, data }">
-       				 <span v-if="node.icon==1"><i :class="Edata.icon.sitemap"></i> {{ node.label }}</span>
-					<span v-else><i :class="Edata.icon.camera"></i> {{ node.label }}</span>
+	       				 <span v-if="data.type=='group'"><i :class="Edata.icon.sitemap"></i> {{ data.title }}</span>
+						<span v-else-if="data.type=='equ'"><i :class="Edata.icon.camera"></i> {{ data.title }}</span>
+						<span v-else></span>
 					</span>
 				</el-tree>
 			</div>
@@ -21,22 +22,24 @@
 					<bm-map-type :map-types="['BMAP_NORMAL_MAP', 'BMAP_HYBRID_MAP']" anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-map-type>
 					<bm-overview-map anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :isOpen="true"></bm-overview-map>
 					<bm-traffic v-if="controlTraffic" :predictDate="trafficData"></bm-traffic>
-					<bm-info-window :position="winInfo.markerPoint" :width="250" :closeOnClick="false" :show="show" @clickclose="infoWindowClose">
+					<bm-info-window :position="{lng: winInfo.longitude,lat: winInfo.latitude}" :width="250" :closeOnClick="false" :show="show" @clickclose="infoWindowClose">
 						<el-row style="margin-top: 5px;">
 							<div style="width: 100%;text-align: center;"><img src="./../../../static/img/aaa.png" style="max-width: 300px;max-height: 150px;margin-top: 5px;" /></div>
-							<p style="margin-top: 5px;">编号：{{winInfo.num}}</p>
-							<p style="margin-top: 5px;">名称：{{winInfo.num}}</p>
+							<p style="margin-top: 5px;">编号：{{winInfo.serial}}</p>
+							<p style="margin-top: 5px;">名称：{{winInfo.name}}</p>
 							<div style="margin-top: 5px;">
-								<el-button type="primary" size="mini" @click="immediate(winInfo.num)" style="padding: 5px;">实时监控</el-button>
-								<el-button type="primary" size="mini" @click="history(winInfo.num)" style="padding: 5px;">历史监控</el-button>
+								<el-button type="primary" size="mini" @click="immediate(winInfo.id)" style="padding: 5px;">实时监控</el-button>
+								<el-button type="primary" size="mini" @click="history(winInfo.id)" style="padding: 5px;">历史监控</el-button>
 							</div>
 						</el-row>
 
 					</bm-info-window>
-					<bm-marker v-for=" (item,index) in market" :key="index" :position="item.markerPoint" @click="infoWindowOpen(index)" :offset="{width: 9,height: -11}" :icon="{url: './static/img/map_camera.png', size: {width: 30, height: 25}}">
+					<!--<bm-marker v-for=" (item,index) in market" :key="index" :position="item.markerPoint" @click="infoWindowOpen(index)" :offset="{width: 9,height: -11}" :icon="{url: './static/img/map_camera.png', size: {width: 30, height: 25}}">
+					</bm-marker>-->
+					<bm-marker v-for=" (item,index) in equipmentData" v-if="item.show" :key="index" :position="{lng: item.longitude,lat: item.latitude}" @click="infoWindowOpen(item)" :offset="{width: 9,height: -11}" :icon="{url: './static/img/map_camera.png', size: {width: 30, height: 25}}">
 					</bm-marker>
-					<!--<bm-polyline v-for="(item,index) in formatAfterLineArr"  v-if="item.show" :path="item.ll" stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="5"></bm-polyline>-->
-					<bm-polyline :path="market|filterMarket " stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="5"></bm-polyline>
+					<bm-polyline v-for="(item,index) in formatAfterLineArr"  v-if="item.show" :path="item.ll" stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="5"></bm-polyline>
+					<!--<bm-polyline :path="market|filterMarket " stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="5"></bm-polyline>-->
 					<bm-control anchor="BMAP_ANCHOR_TOP_RIGHT" :offset="offsetControl">
 						<div style="position: relative;">
 							<div style="float: right;" class="traffic" :class="controlTraffic?'showTraffic':''" @click="traffic">路况</div>
@@ -94,7 +97,7 @@
 	import { BmlCurveLine } from 'vue-baidu-map'
 	import {Edata} from '../../js/Edata';
 	import {formatTreeData} from '../../js/formatTreeData';
-	import { selectGroup,selectRoad } from '../../js/api';
+	import { selectGroup,selectRoad ,selectAllEquipment} from '../../js/api';
 	export default {
 		components: {
 			BmlCurveLine
@@ -138,6 +141,9 @@
 			}];
 
 			return {
+				groupAndEqu:[],
+				equipmentData:[],
+				defaultCheckedKeys:[],
 				showWeather:true,
 				Edata:Edata,
 				zoom: 14,
@@ -372,13 +378,18 @@
 				polylinePath: [],
 				markerTitle: "监控探头信息",
 				winInfo: {
-					markerPoint: {
-						lng: "",
-						lat: ""
-					},
-					num: ""
+					
 				},
-
+				searchData: {
+					serial: "",
+					status: "",
+					name: "",
+					ip: "",
+					address: "",
+					groupId: "",
+					current: 1,
+					size: 999,
+				},
 				filterText: '',
 				defaultProps: {
 					children: 'children',
@@ -411,13 +422,10 @@
 				console.log(this.show);
 				this.show = false;
 			},
-			infoWindowOpen(index) {
+			infoWindowOpen(item) {
 				console.log(this.show);
 				this.show = true;
-				this.winInfo.num = this.market[index].num;
-				this.winInfo.markerPoint.lng = this.market[index].markerPoint.lng;
-				this.winInfo.markerPoint.lat = this.market[index].markerPoint.lat;
-				//				this.winInfo = this.market[index];
+				this.winInfo= item;
 				console.log(this.show);
 			},
 			diaClose() {
@@ -482,8 +490,10 @@
 				this.showPrediction = false;
 			},
 			filterNode(value, data) {
+				console.log(data);
+				console.log(value);
 				if(!value) return true;
-				return data.label.indexOf(value) !== -1;
+				return data.title.indexOf(value) !== -1;
 			},
 			mobileBtn() {
 				this.openMobile = !this.openMobile;
@@ -549,7 +559,53 @@
 					      name: 'groupName',
 					      rootId: "0"
 					  };
-					  console.log("大街",value.videoGroupsList);
+					 
+					  let equArray=value.groupAndEquipmentDtoList;
+
+					function run(chiArr) {
+		if(equArray.length !== 0) {
+			for(let i = 0; i < chiArr.length; i++) {
+				for(let j = 0; j < equArray.length; j++) {
+					if(chiArr[i].id == equArray[j].id && chiArr[i].type=='group') {
+						let obj = {
+							id: equArray[j].eId,
+							title: equArray[j].eName,
+							children: [],
+							type:"equ"
+						};
+						chiArr[i].children.push(obj);
+						equArray.splice(j, 1);
+						j--;
+					}
+				}
+				run(chiArr[i].children);
+			}
+		}
+	}
+					let originalData=value.videoGroupsList;
+					for(var item of originalData){
+					  	this.defaultCheckedKeys.push(item.id);
+					  }
+					  let groupArray=formatTreeData(originalData,attributes);
+					   
+					  run(groupArray);
+					  this.groupAndEqu=groupArray;
+					  console.log("123456789",groupArray);
+					  
+					  
+					  
+					  
+					  
+					  
+					  
+					  
+					  
+					  
+					  
+					  
+					  
+					  console.log("大街",value.videoGroupsList.length);
+					  console.log("大街",JSON.stringify(value.videoGroupsList));
 					  console.log(789,formatTreeData(value.videoGroupsList,attributes));
 //						this.groupArr = this.formatGroup(value);
 //						console.log(this.groupArr);
@@ -563,6 +619,26 @@
 					}
 				});
 			},
+//			 run(chiArr,equArray) {
+//		if(equArray.length !== 0) {
+//			for(let i = 0; i < chiArr.length; i++) {
+//				for(let j = 0; j < equArray.length; j++) {
+//					if(chiArr[i].id == equArray[j].id) {
+//						let obj = {
+//							id: equArray[j].eId,
+//							title: equArray[j].eName,
+//							children: [],
+//							type:"equ"
+//						};
+//						chiArr[i].children.push(obj);
+//						equArray.splice(j, 1);
+//						j--;
+//					}
+//				}
+//				this.run(chiArr[i].children);
+//			}
+//		}
+//	},
 			/*查询线路*/
 			getSelectLine() {
 				let info = {
@@ -613,6 +689,45 @@
 				}
 				return coordinateList;
 			},
+			checkChange(obj,state){
+				if(obj.type==="equ"){
+					for(var index in this.equipmentData){
+						if(obj.id==this.equipmentData[index].id){
+							let item = this.equipmentData[index];
+							item.show=state;
+							this.equipmentData.splice(index,1,item);
+						}
+					}
+				}
+				console.log(this.equipmentData);
+				console.log(obj);
+				console.log(state);
+			},
+			/*获取设备列表*/
+			getEquipmentList() {
+				selectAllEquipment(this.searchData).then(data => {
+					let {
+						errMsg,
+						errCode,
+						value,
+						extraInfo,
+						success
+					} = data;
+					if(success) {
+						console.log(data);
+						this.equipmentData = value;
+						for(var item of this.equipmentData){
+							item.show=true;
+						}
+						
+					} else {
+						this.$message({
+							message: errMsg,
+							type: 'error'
+						});
+					}
+				});
+			},
 
 		},
 		//过滤器
@@ -641,6 +756,7 @@
 		created() {
 			this.getSelectGroup();
 			this.getSelectLine();
+			this.getEquipmentList();
 		},
 		beforeDestroy(){
 //			this.showWeather=false;
@@ -771,14 +887,14 @@
 	}
 	
 	.aside-150 {
-		left: 200px
+		left: 300px
 	}
 	
 	.aside-0 {
 		left: 0px
 	}
-	.left200{
-		width: 200px;
+	.left300{
+		width: 300px;
 		display: block;
 	}
 	.left0{

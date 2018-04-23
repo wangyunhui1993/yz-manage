@@ -405,7 +405,19 @@
 			},
 			/*删除线路分组*/
 			deleteGroup(node) {
-				this.getDeleteLine(node.id);
+				this.$confirm('此操作将删除此线路, 是否继续?', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
+				}).then(() => {
+					this.getDeleteLine(node.id);
+				}).catch(() => {
+					this.$message({
+						type: 'info',
+						message: '已取消删除'
+					});
+				});
+				
 			},
 			/*点击线路*/
 			selectGroup(obj, node, self) {},
