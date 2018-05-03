@@ -196,7 +196,7 @@
 	</section>
 </template>
 <script>
-	import { selectAllEquipment, selectGroup, insertEquipment, deleteEquipment, updateEquipment ,insertGroup,deleteGroup} from '../../js/api';
+	import { selectAllEquipment, selectGroup, insertEquipment, deleteEquipment, updateEquipment ,insertGroup,deleteGroup,updateGroupName} from '../../js/api';
 	import {Edata} from '../../js/Edata';
 	import {formatTreeData} from '../../js/formatTreeData';
 	export default {
@@ -244,6 +244,7 @@
 					id:"",
 					groupArr:[],
 					groupName:"",
+					man: this.$store.state.adminUserInfo.id,
 				},
 				groupArr: [],
 				pageSizes: [15, 100, 200, 500],
@@ -507,7 +508,45 @@
 			},
 			/*提交分组修改信息*/
 			subEditGroupInfo() {
+				var info=Object.assign({},this.editGroupInfo);
+				if(info.groupArr.length==1){
+					info.id=info.groupArr[0];
+					info.parentId=0;
+				}else if(info.groupArr.length>1){
+					info.id=info.groupArr[info.groupArr.length-1];
+					info.parentId=info.groupArr[info.groupArr.length-1];
+				}
+				console.log(333333333,info);
+				this.getUpdateGroupName(info);
+			},
+			/*修改分组信息*/
+			getUpdateGroupName(info){
+				updateGroupName(info).then(data => {
+					let {
+						errMsg,
+						errCode,
+						value,
+						extraInfo,
+						success
+					} = data;
+					if(success) {
+						this.dialogGroupEditVisible = false;
+						console.log(data);
+						this.$message({
+							message: errMsg,
+							type: 'success'
+						});
+						this.getSelectGroup();
 
+					} else {
+						console.log(data);
+						this.$message({
+							message: errMsg,
+							type: 'error'
+						});
+						this.tableDataLoading = false;
+					}
+				});
 			},
 			/*添加设备*/
 			addEqu() {
@@ -701,26 +740,28 @@
 			},
 			/*删除分组*/
 			deleteGroup() {
-				if(this.selectGroupInfo.id){
-					this.$confirm('此操作将删除此分组, 是否继续?', '提示', {
-					confirmButtonText: '确定',
-					cancelButtonText: '取消',
-					type: 'warning'
-				}).then(() => {   
-					this.getDeleteGroup(this.selectGroupInfo.id);
-				}).catch(() => {
-					this.$message({
-						type: 'info',
-						message: '已取消删除'
-					});
-					
-				});
-				}else{
-					this.$message({
-						type: 'warning',
-						message: '请先选择分组'
-					});
-				}
+				console.log(this.selectGroupInfo);
+//				if(this.selectGroupInfo.id){
+//					this.$confirm('此操作将删除此分组, 是否继续?', '提示', {
+//					confirmButtonText: '确定',
+//					cancelButtonText: '取消',
+//					type: 'warning'
+//				}).then(() => {   
+//					
+//					this.getDeleteGroup(this.selectGroupInfo.id);
+//				}).catch(() => {
+//					this.$message({
+//						type: 'info',
+//						message: '已取消删除'
+//					});
+//					
+//				});
+//				}else{
+//					this.$message({
+//						type: 'warning',
+//						message: '请先选择分组'
+//					});
+//				}
 				
 			},
 			getDeleteGroup(id){

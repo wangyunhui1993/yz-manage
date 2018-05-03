@@ -16,27 +16,46 @@
 				</el-tree>
 			</div>
 			<div style="height: 100%;padding: 0;">
-				<baidu-map class="bm-view" :center="center" :zoom="zoom" @mousewheel.native="mousewheelOp"  @ready="handler">
+				<baidu-map class="bm-view" :center="center" :zoom="zoom"  :scroll-wheel-zoom="true"   @ready="handler">
 					<bm-scale anchor="BMAP_ANCHOR_BOTTOM_LEFT"></bm-scale>
 					<bm-city-list anchor="BMAP_ANCHOR_TOP_RIGHT" :offset="offsetCityList"></bm-city-list>
 					<bm-map-type :map-types="['BMAP_NORMAL_MAP', 'BMAP_HYBRID_MAP']" anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-map-type>
 					<bm-overview-map anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :isOpen="true"></bm-overview-map>
 					<bm-traffic v-if="controlTraffic" :predictDate="trafficData"></bm-traffic>
 					<bm-info-window :position="{lng: winInfo.longitude,lat: winInfo.latitude}" :width="250" :closeOnClick="false" :show="show" @clickclose="infoWindowClose">
-						<el-row style="margin-top: 5px;">
+						<el-row style="margin-top: 5px;"  v-if="winInfo.type===1" >
 							<div style="width: 100%;text-align: center;"><img src="./../../../static/img/aaa.png" style="max-width: 300px;max-height: 150px;margin-top: 5px;" /></div>
-							<p style="margin-top: 5px;">编号：{{winInfo.serial}}</p>
+							<p style="margin-top: 5px;">
+							<span >编号：{{winInfo.serial}}</span>
+							<span  :class="winInfo.status==='0'?'stateGre':'stateRed'"></span>
+							</p>
 							<p style="margin-top: 5px;">名称：{{winInfo.name}}</p>
 							<div style="margin-top: 5px;">
 								<el-button type="primary" size="mini" @click="immediate(winInfo.id)" style="padding: 5px;">实时监控</el-button>
-								<el-button type="primary" size="mini" @click="history(winInfo.id)" style="padding: 5px;">历史监控</el-button>
+								<!--<el-button type="primary" size="mini" @click="history(winInfo.id)" style="padding: 5px;">历史监控</el-button>-->
 							</div>
 						</el-row>
-
+						<el-row v-if="winInfo.type===2" style="margin-top: 5px;">
+							<p style="margin-top: 5px;">
+								编号：{{winInfo.serial}}
+								
+								
+							</p>
+							<p style="margin-top: 5px;">名称：{{winInfo.name}}</p>
+						<div style="margin-top: 5px;">
+								<p>过车数量（1小时）：5辆</p>
+								<p>2018-04-26 11:22:56</p>
+								<p>2018-04-26 11:22:56</p>
+								<p>2018-04-26 11:22:56</p>
+								<p>......</p>
+						</div>
+						</el-row>
 					</bm-info-window>
 					<!--<bm-marker v-for=" (item,index) in market" :key="index" :position="item.markerPoint" @click="infoWindowOpen(index)" :offset="{width: 9,height: -11}" :icon="{url: './static/img/map_camera.png', size: {width: 30, height: 25}}">
 					</bm-marker>-->
-					<bm-marker v-for=" (item,index) in equipmentData" v-if="item.show" :key="index" :position="{lng: item.longitude,lat: item.latitude}" @click="infoWindowOpen(item)" :offset="{width: 9,height: -11}" :icon="{url: './static/img/map_camera.png', size: {width: 30, height: 25}}">
+					<bm-marker v-for=" (item,index) in equipmentData" v-if="item.show" :key="index" :position="{lng: item.longitude,lat: item.latitude}" @click="infoWindowOpen(item,1)" :offset="{width: 9,height: -11}" :icon="{url: './static/img/map_camera.png', size: {width: 30, height: 25}}">
+					</bm-marker>
+					<bm-marker :position="{lng: 119.42695,lat: 32.35899}" @click="infoWindowOpen('',2)" :offset="{width: 9,height: -11}" :icon="{url: './static/img/car.png', size: {width: 30, height: 25}}">
 					</bm-marker>
 					<bm-polyline v-for="(item,index) in formatAfterLineArr"  v-if="item.show" :path="item.ll" stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="5"></bm-polyline>
 					<!--<bm-polyline :path="market|filterMarket " stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="5"></bm-polyline>-->
@@ -410,23 +429,31 @@
 					//      this.currentTech = this.player.techName
 				}
 			},
-			mousewheelOp(val) {
-				if(val.deltaY > 0) {
-					this.zoom > 3 ? this.zoom-- : "";
-				} else {
-					this.zoom < 19 ? this.zoom++ : "";
-				}
-			},
+//			mousewheelOp(val) {
+//				if(val.deltaY > 0) {
+//					this.zoom > 3 ? this.zoom-- : "";
+//				} else {
+//					this.zoom < 19 ? this.zoom++ : "";
+//				}
+//			},
 			infoWindowClose() {
 				console.log('0');
 				console.log(this.show);
 				this.show = false;
 			},
-			infoWindowOpen(item) {
-				console.log(this.show);
+			infoWindowOpen(item,type) {
 				this.show = true;
-				this.winInfo= item;
-				console.log(this.show);
+				console.log(type);
+				if(type===1){
+					this.winInfo= item;
+					this.winInfo.type=type;
+				}else if(type===2){
+					this.winInfo.type=type;
+					this.winInfo.serial="11111";
+					this.winInfo.name="22222";
+					this.winInfo.longitude=119.42695;
+					this.winInfo.latitude=32.35899;
+				}
 			},
 			diaClose() {
 				console.log(123456);
@@ -899,5 +926,30 @@
 	}
 	.left0{
 		display: none;
+	}
+	
+	.stateGre{
+		display: inline-block;
+		vertical-align: middle;
+	}
+		.stateGre:after {
+		content: "";
+		width: 16px;
+		height: 16px;
+		display: inline-block;
+		border-radius: 8px;
+		background: green;
+	}
+	.stateRed:after {
+		content: "";
+		width: 16px;
+		height: 16px;
+		display: inline-block;
+		border-radius: 8px;
+		background: red;
+	}
+	.stateRed{
+		display: inline-block;
+		vertical-align: middle;
 	}
 </style>

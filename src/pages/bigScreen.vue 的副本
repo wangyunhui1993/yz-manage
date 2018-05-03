@@ -4,16 +4,16 @@
 			<el-aside width="300px">
 				<el-row>
 					<el-input placeholder="输入关键字过滤" size="small" suffix-icon="el-icon-search" v-model="filterText">
-				</el-input>
+					</el-input>
 				</el-row>
 				<div style="flex-grow:1;flex-shrink:1;overflow-y:scroll ;">
-					<el-tree :data="groupAndEqu"  node-key="id"   :filter-node-method="filterNode"  default-expand-all :expand-on-click-node="false"  ref="tree2"  @node-drag-start="handleDragStart" @node-drag-enter="handleDragEnter" @node-drag-leave="handleDragLeave" @node-drag-over="handleDragOver" @node-drag-end="handleDragEnd" @node-drop="handleDrop" :allow-drop="allowDrop" :allow-drag="allowDrag">
-					<span class="custom-tree-node" slot-scope="{ node, data }">
-	       				 <span v-if="data.type=='group'"><i class="fa fa-sitemap"></i> {{ data.title }}</span>
-						<span v-else-if="data.type=='equ'" draggable><i class="fa fa-video-camera"></i> {{ data.title }}</span>
+					<el-tree :data="groupAndEqu" node-key="id" :filter-node-method="filterNode" default-expand-all :expand-on-click-node="false" ref="tree2" @node-drag-start="handleDragStart" @node-drag-enter="handleDragEnter" @node-drag-leave="handleDragLeave" @node-drag-over="handleDragOver" @node-drag-end="handleDragEnd" @node-drop="handleDrop" :allow-drop="allowDrop" :allow-drag="allowDrag">
+						<span class="custom-tree-node" slot-scope="{ node, data }">
+	       				 <span v-if="data.type=='group'"><i :class="Edata.icon.sitemap"></i> {{ data.title }}</span>
+						<span v-else-if="data.type=='equ'" draggable><i :class="Edata.icon.camera"></i> {{ data.title }}</span>
 						<span v-else></span>
-					</span>
-				</el-tree>
+						</span>
+					</el-tree>
 				</div>
 				<div style="flex-grow:0;flex-shrink:0;">
 					<el-card class="box-card videoParameters" :body-style="{ padding: '15px' }">
@@ -69,14 +69,14 @@
 	</section>
 </template>
 <script>
-//	import {Edata1} from '../js/Edata';
-	import {formatTreeData} from '../js/formatTreeData';
-	import { selectGroup,selectRoad ,selectAllEquipment} from '../js/api';
+	import { Edata } from '../js/Edata';
+	import { formatTreeData } from '../js/formatTreeData';
+	import { selectGroup, selectRoad, selectAllEquipment } from '../js/api';
 	export default {
 		data() {
 			return {
-				groupAndEqu:[],
-//				Edata:Edata,
+				groupAndEqu: [],
+				Edata: Edata,
 				dialogFormVisible: false,
 				bigScreenSet: 4,
 				bigNum: [1, 2, 3, 4],
@@ -236,7 +236,7 @@
 					label: 'label'
 				},
 				showVideoParameters: true,
-				value1:0,
+				value1: 0,
 
 			}
 		},
@@ -282,65 +282,56 @@
 			},
 			selectNum(arg) {
 				if(arg == "big") {
-					
+
 					this.allScreen = !this.allScreen;
 					window.event.currentTarget.src = this.pic.pic_zoom_h;
-//					this.allScreen ? window.event.currentTarget.src = './../../static/img/zoom_in.png' : window.event.currentTarget.src = './../../static/img/zoom_out.png'
-					if(this.allScreen) {	
+					//					this.allScreen ? window.event.currentTarget.src = './../../static/img/zoom_in.png' : window.event.currentTarget.src = './../../static/img/zoom_out.png'
+					if(this.allScreen) {
 						console.log("全屏");
-		var elem = document.getElementById("dashboard_id");
-        elem.style.width = "100%";
-        elem.style.height = "100%";
-        elem.style.overflowY = "scroll";
-        requestFullScreen(elem); // 某个页面元素
-			function requestFullScreen(element) {
-            // 判断各种浏览器，找到正确的方法
-            var requestMethod = element.requestFullScreen || //W3C
-                element.webkitRequestFullScreen || //FireFox
-                element.mozRequestFullScreen || //Chrome等
-                element.msRequestFullscreen; //IE11
-            if (requestMethod) {
-            	console.log("查到");
-            	console.log(requestMethod);
-                requestMethod.call(element);
-            } else if (typeof window.ActiveXObject !== "undefined") { //for Internet Explorer
-            	console.log("没查到");
-                var wscript = new ActiveXObject("WScript.Shell");
-                if (wscript !== null) {
-                    wscript.SendKeys("{F11}");
-                }
-            }
-        }
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-//						console.log("全屏");
-//						window.event.currentTarget.src = this.pic.pic_zoom_h;
-//
-//						var docElm = document.documentElement;
-//						//W3C  
-//						if(docElm.requestFullscreen) {
-//							docElm.requestFullscreen();
-//						}
-//						//FireFox  
-//						else if(docElm.mozRequestFullScreen) {
-//							docElm.mozRequestFullScreen();
-//						}
-//						//Chrome等  
-//						else if(docElm.webkitRequestFullScreen) {
-//							docElm.webkitRequestFullScreen();
-//						}
-//						//IE11
-//						else if(elem.msRequestFullscreen) {
-//							elem.msRequestFullscreen();
-//						}
+						var elem = document.getElementById("dashboard_id");
+						elem.style.width = "100%";
+						elem.style.height = "100%";
+						elem.style.overflowY = "scroll";
+						requestFullScreen(elem); // 某个页面元素
+						function requestFullScreen(element) {
+							// 判断各种浏览器，找到正确的方法
+							var requestMethod = element.requestFullScreen || //W3C
+								element.webkitRequestFullScreen || //FireFox
+								element.mozRequestFullScreen || //Chrome等
+								element.msRequestFullscreen; //IE11
+							if(requestMethod) {
+								console.log("查到");
+								console.log(requestMethod);
+								requestMethod.call(element);
+							} else if(typeof window.ActiveXObject !== "undefined") { //for Internet Explorer
+								console.log("没查到");
+								var wscript = new ActiveXObject("WScript.Shell");
+								if(wscript !== null) {
+									wscript.SendKeys("{F11}");
+								}
+							}
+						}
+
+						//						console.log("全屏");
+						//						window.event.currentTarget.src = this.pic.pic_zoom_h;
+						//
+						//						var docElm = document.documentElement;
+						//						//W3C  
+						//						if(docElm.requestFullscreen) {
+						//							docElm.requestFullscreen();
+						//						}
+						//						//FireFox  
+						//						else if(docElm.mozRequestFullScreen) {
+						//							docElm.mozRequestFullScreen();
+						//						}
+						//						//Chrome等  
+						//						else if(docElm.webkitRequestFullScreen) {
+						//							docElm.webkitRequestFullScreen();
+						//						}
+						//						//IE11
+						//						else if(elem.msRequestFullscreen) {
+						//							elem.msRequestFullscreen();
+						//						}
 					} else {
 						console.log("退出全屏");
 						window.event.currentTarget.src = this.pic.pic_zoom;
@@ -393,7 +384,7 @@
 				console.log('大屏', this.bigNum);
 
 			},
-					/*获取分组*/
+			/*获取分组*/
 			getSelectGroup() {
 				let info = {
 					type: "2",
@@ -408,41 +399,41 @@
 						success
 					} = data;
 					if(success) {
-						console.log("分组和设备",data);
+						console.log("分组和设备", data);
 						let attributes = {
-					      id: 'id',
-					      parentId: 'parentId',
-					      name: 'groupName',
-					      rootId: "0"
-					  };
-					  let equArray=value.groupAndEquipmentDtoList;
-					function run(chiArr) {
-		if(equArray.length !== 0) {
-			for(let i = 0; i < chiArr.length; i++) {
-				for(let j = 0; j < equArray.length; j++) {
-					if(chiArr[i].id == equArray[j].id && chiArr[i].type=='group') {
-						let obj = {
-							id: equArray[j].eId,
-							title: equArray[j].eName,
-							children: [],
-							type:"equ"
+							id: 'id',
+							parentId: 'parentId',
+							name: 'groupName',
+							rootId: "0"
 						};
-						chiArr[i].children.push(obj);
-						equArray.splice(j, 1);
-						j--;
-					}
-				}
-				run(chiArr[i].children);
-			}
-		}
-	}
-					let originalData=value.videoGroupsList;
-					  let groupArray=formatTreeData(originalData,attributes);
-					   
-					  run(groupArray);
-					  this.groupAndEqu=groupArray;
-					  
-					  
+						let equArray = value.groupAndEquipmentDtoList;
+
+						function run(chiArr) {
+							if(equArray.length !== 0) {
+								for(let i = 0; i < chiArr.length; i++) {
+									for(let j = 0; j < equArray.length; j++) {
+										if(chiArr[i].id == equArray[j].id && chiArr[i].type == 'group') {
+											let obj = {
+												id: equArray[j].eId,
+												title: equArray[j].eName,
+												children: [],
+												type: "equ"
+											};
+											chiArr[i].children.push(obj);
+											equArray.splice(j, 1);
+											j--;
+										}
+									}
+									run(chiArr[i].children);
+								}
+							}
+						}
+						let originalData = value.videoGroupsList;
+						let groupArray = formatTreeData(originalData, attributes);
+
+						run(groupArray);
+						this.groupAndEqu = groupArray;
+
 					} else {
 						console.log(data);
 						this.$message({
@@ -451,24 +442,8 @@
 						});
 					}
 				});
-			},	
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
+			},
+
 			filterNode(value, data) {
 				if(!value) return true;
 				return data.title.indexOf(value) !== -1;
@@ -510,7 +485,6 @@
 				return draggingNode.data.label.indexOf('三级 3-1-1') === -1;
 			},
 
-
 		},
 		watch: {
 			filterText(val) {
@@ -518,45 +492,28 @@
 			}
 		},
 		mounted() {
-			
-//			document.getElementsByClassName("vjs-tech")[0].onclick=function(){
-//				console.log(123);
-//			}
-			var  _this=this;
-		/*	document.onkeydown=function(event){
-      var e = event || window.event || arguments.callee.caller.arguments[0];
-      if(e && e.keyCode==27){ // 按 Esc 
-        //要做的事情
-        console.log(123);
-//      _this.allScreen=false;
-      }    
+			var _this = this;
+			window.onresize = function() {
+				if(!checkFull()) {
+					_this.allScreen = false;
+					_this.$refs.bigScreeen.src = _this.pic.pic_zoom;
+				} else {
+					_this.allScreen = true;
+					_this.$refs.bigScreeen.src = _this.pic.pic_zoom;
+				}
+			}
 
-    }; */
-   
-    window.onresize = function() {
-        if (!checkFull()) {
-        	_this.allScreen =false;
-        	_this.$refs.bigScreeen.src=_this.pic.pic_zoom;
-        	console.log(1234);
-            //要执行的动作
-//          $("#dashboard_id").removeClass('expand').addClass('contract');//这里捡个懒，直接用JQ来改className
-        }else{
-        	_this.allScreen =true;
-        	_this.$refs.bigScreeen.src=_this.pic.pic_zoom;
-        }
-    }
-    function checkFull() {
-        var isFull = document.fullscreenEnabled || window.fullScreen || document.webkitIsFullScreen || document.msFullscreenEnabled;
-        //to fix : false || undefined == undefined
-        if (isFull === undefined) {isFull = false;}
-        return isFull;
-    }
-			
-			
+			function checkFull() {
+				var isFull = document.fullscreenEnabled || window.fullScreen || document.webkitIsFullScreen || document.msFullscreenEnabled;
+				//to fix : false || undefined == undefined
+				if(isFull === undefined) {
+					isFull = false;
+				}
+				return isFull;
+			}
 
-			
 		},
-		created(){
+		created() {
 			this.getSelectGroup();
 		},
 	}
@@ -688,19 +645,17 @@
 		transform: rotate(90deg);
 		float: right;
 	}
-	.bigScreen .el-aside{
+	
+	.bigScreen .el-aside {
 		display: -webkit-flex;
-		 display: flex;
-		 flex-direction:column;
-		 margin-right: 5px;
-		 padding-right: 5px;
-		 box-sizing: border-box;
-		 border: 1px solid #dcdfe6;
-		 -webkit-user-select: none;
+		display: flex;
+		flex-direction: column;
+		margin-right: 5px;
+		padding-right: 5px;
+		box-sizing: border-box;
+		border: 1px solid #dcdfe6;
+		-webkit-user-select: none;
 	}
-	
-	
-	
 	/*.mask{
 		height: 100%;
 		width: 100%;
@@ -710,7 +665,7 @@
 		z-index: 1;
 	}*/
 	
-	.bigScreen .video-js .vjs-fullscreen-control{
+	.bigScreen .video-js .vjs-fullscreen-control {
 		position: absolute;
 		left: 0;
 		top: 0;

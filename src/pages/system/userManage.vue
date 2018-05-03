@@ -38,7 +38,7 @@
 				</el-table-column>
 				<el-table-column prop="roleName" label="角色" width="150">
 				</el-table-column>
-				<el-table-column prop="moblie" label="手机号">
+				<el-table-column prop="mobile" label="手机号">
 				</el-table-column>
 				<el-table-column prop="email" label="邮箱">
 				</el-table-column>
@@ -79,7 +79,7 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item label="手机号" >
-					<el-input v-model="formAddInfo.moblie" auto-complete="off"></el-input>
+					<el-input v-model="formAddInfo.mobile" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="邮箱" >
 					<el-input v-model="formAddInfo.email" auto-complete="off"></el-input>
@@ -108,7 +108,7 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item label="手机号" >
-					<el-input v-model="formEditInfo.moblie" auto-complete="off"></el-input>
+					<el-input v-model="formEditInfo.mobile" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="邮箱" >
 					<el-input v-model="formEditInfo.email" auto-complete="off"></el-input>
@@ -225,14 +225,14 @@
 					realName:"",
 					roleId:"",
 					password:"",
-					moblie:"",
+					mobile:"",
 					email:"",
 				},
 				formEditInfo: {
 					username:"",
 					realName:"",
 					roleId:"",
-					moblie:"",
+					mobile:"",
 					email:"",
 				},
 				formResetPwdInfo:{
@@ -353,7 +353,7 @@
 			//显示删除页面
 			showDeleteWin(row) {
 				console.log(row);
-				this.$confirm('此操作将删除此设备, 是否继续?', '提示', {
+				this.$confirm('此操作将删除此用户, 是否继续?', '提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '取消',
 					type: 'warning'

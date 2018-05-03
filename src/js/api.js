@@ -1,5 +1,5 @@
 import axios from 'axios'
-
+axios.defaults.withCredentials=true;
 let base = window.g.base;
 
 
@@ -21,7 +21,7 @@ export const updateEquipment = params => { return axios.post(`${base}/equipment/
 export const insertGroup = params => { return axios.post(`${base}/group/insertGroup`, params).then(res => res.data).catch(error=>error); };
 
 export const deleteGroup = params => { return axios.post(`${base}/group/deleteGroup`, params).then(res => res.data).catch(error=>error); };
-
+export const updateGroupName = params => { return axios.post(`${base}/group/updateGroupName`, params).then(res => res.data).catch(error=>error); };
 
 export const selectLog = params => { return axios.post(`${base}/log/selectLog`, params).then(res => res.data).catch(error=>error); };
 
@@ -30,10 +30,10 @@ export const selectRoad = params => { return axios.post(`${base}/road/selectRoad
 export const updateRoad = params => { return axios.post(`${base}/road/updateRoad`, params).then(res => res.data).catch(error=>error); };
 export const deleteRoad = params => { return axios.post(`${base}/road/deleteRoad`, params).then(res => res.data).catch(error=>error); };
 
-
-
-
-
+export const selectEquipmentHot = params => { return axios.post(`${base}/log/selectEquipmentHot`, params).then(res => res.data).catch(error=>error); };
+export const selectUserLogByTime = params => { return axios.post(`${base}/log/selectUserLogByTime`, params).then(res => res.data).catch(error=>error); };
+export const selectLogByLastWeek = params => { return axios.post(`${base}/log/selectLogByLastWeek`, params).then(res => res.data).catch(error=>error); };
+export const selectSuccessLog = params => { return axios.post(`${base}/log/selectSuccessLog`, params).then(res => res.data).catch(error=>error); };
 
 
 
