@@ -30,7 +30,7 @@
 		</div>
 		<el-row width="100%" v-loading="tableDataLoading">
 			<el-table :data="tableData" border>
-				<el-table-column prop="id" label="ID" width="150">
+				<el-table-column prop="id" label="ID" width="80">
 				</el-table-column>
 				<el-table-column prop="userName" label="用户名" width="150">
 				</el-table-column>
@@ -78,10 +78,10 @@
 						<el-option v-for="item in Edata.roleList" :key="item.id" :label="item.name" :value="item.id"></el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item label="手机号" >
+				<el-form-item label="手机号"   prop="mobile" >
 					<el-input v-model="formAddInfo.mobile" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="邮箱" >
+				<el-form-item label="邮箱"  prop="email" >
 					<el-input v-model="formAddInfo.email" auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
@@ -107,10 +107,10 @@
 						<el-option v-for="item in Edata.roleList" :key="item.id" :label="item.name" :value="item.id"></el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item label="手机号" >
+				<el-form-item label="手机号"  prop="mobile" >
 					<el-input v-model="formEditInfo.mobile" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="邮箱" >
+				<el-form-item label="邮箱" prop="email" >
 					<el-input v-model="formEditInfo.email" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="" >

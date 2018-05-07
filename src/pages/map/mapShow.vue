@@ -10,7 +10,8 @@
 				<el-tree :data="groupAndEqu" :default-checked-keys="defaultCheckedKeys" show-checkbox node-key="id" @check-change="checkChange"  :filter-node-method="filterNode"  default-expand-all :expand-on-click-node="false"  ref="tree2" >
 					<span class="custom-tree-node" slot-scope="{ node, data }">
 	       				 <span v-if="data.type=='group'"><i :class="Edata.icon.sitemap"></i> {{ data.title }}</span>
-						<span v-else-if="data.type=='equ'"><i :class="Edata.icon.camera"></i> {{ data.title }}</span>
+						<span v-else-if="data.type=='0'"><i :class="Edata.icon.camera"></i> {{ data.title }}</span>
+						<span v-else-if="data.type=='1'"><i :class="Edata.icon.car"></i> {{ data.title }}</span>
 						<span v-else></span>
 					</span>
 				</el-tree>
@@ -22,8 +23,8 @@
 					<bm-map-type :map-types="['BMAP_NORMAL_MAP', 'BMAP_HYBRID_MAP']" anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-map-type>
 					<bm-overview-map anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :isOpen="true"></bm-overview-map>
 					<bm-traffic v-if="controlTraffic" :predictDate="trafficData"></bm-traffic>
-					<bm-info-window :position="{lng: winInfo.longitude,lat: winInfo.latitude}" :width="250" :closeOnClick="false" :show="show" @clickclose="infoWindowClose">
-						<el-row style="margin-top: 5px;"  v-if="winInfo.type===1" >
+					<bm-info-window :position="{lng: winInfo.longitude,lat: winInfo.latitude}" :width="250" :closeOnClick="false" :autoPan="true" :show="show" @clickclose="infoWindowClose">
+						<el-row style="margin-top: 5px;"  v-if="winInfo.type==='0'">
 							<div style="width: 100%;text-align: center;"><img src="./../../../static/img/aaa.png" style="max-width: 300px;max-height: 150px;margin-top: 5px;" /></div>
 							<p style="margin-top: 5px;">
 							<span >编号：{{winInfo.serial}}</span>
@@ -35,7 +36,7 @@
 								<!--<el-button type="primary" size="mini" @click="history(winInfo.id)" style="padding: 5px;">历史监控</el-button>-->
 							</div>
 						</el-row>
-						<el-row v-if="winInfo.type===2" style="margin-top: 5px;">
+						<el-row v-if="winInfo.type==='1'" style="margin-top: 5px;">
 							<p style="margin-top: 5px;">
 								编号：{{winInfo.serial}}
 								
@@ -51,11 +52,7 @@
 						</div>
 						</el-row>
 					</bm-info-window>
-					<!--<bm-marker v-for=" (item,index) in market" :key="index" :position="item.markerPoint" @click="infoWindowOpen(index)" :offset="{width: 9,height: -11}" :icon="{url: './static/img/map_camera.png', size: {width: 30, height: 25}}">
-					</bm-marker>-->
-					<bm-marker v-for=" (item,index) in equipmentData" v-if="item.show" :key="index" :position="{lng: item.longitude,lat: item.latitude}" @click="infoWindowOpen(item,1)" :offset="{width: 9,height: -11}" :icon="{url: './static/img/map_camera.png', size: {width: 30, height: 25}}">
-					</bm-marker>
-					<bm-marker :position="{lng: 119.42695,lat: 32.35899}" @click="infoWindowOpen('',2)" :offset="{width: 9,height: -11}" :icon="{url: './static/img/car.png', size: {width: 30, height: 25}}">
+					<bm-marker v-for=" (item,index) in equipmentData" v-if="item.show && item.type!==null" :key="index" :position="{lng: item.longitude,lat: item.latitude}" :icon="item.type==='0'?cameraIcon:item.type==='1'?carIcon:''" @click="infoWindowOpen(item)" :offset="{width: 9,height: -11}" >
 					</bm-marker>
 					<bm-polyline v-for="(item,index) in formatAfterLineArr"  v-if="item.show" :path="item.ll" stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="5"></bm-polyline>
 					<!--<bm-polyline :path="market|filterMarket " stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="5"></bm-polyline>-->
@@ -122,43 +119,6 @@
 			BmlCurveLine
 		},
 		data() {
-			const data = [{
-				id: 1,
-				label: '一级 1',
-				icon: 1,
-				children: [{
-					id: 4,
-					label: '二级 1-1',
-					icon: 2,
-				}]
-			}, {
-				id: 2,
-				label: '一级 2',
-				icon: 1,
-				children: [{
-					id: 5,
-					label: '二级 2-1',
-					icon: 2,
-				}, {
-					id: 6,
-					label: '二级 2-2',
-					icon: 2,
-				}]
-			}, {
-				id: 3,
-				label: '一级 3',
-				icon: 1,
-				children: [{
-					id: 7,
-					label: '二级 3-1',
-					icon: 2,
-				}, {
-					id: 8,
-					label: '二级 3-2',
-					icon: 2,
-				}]
-			}];
-
 			return {
 				groupAndEqu:[],
 				equipmentData:[],
@@ -189,6 +149,9 @@
 					width: 163,
 					height: 8
 				},
+				cameraIcon:{url: './static/img/map_camera.png', size: {width: 30, height: 25}},
+				carIcon:{url: './static/img/car.png', size: {width: 30, height: 25}},
+				
 				times: "",
 				formatAfterLineArr:[],
 				showPrediction: false,
@@ -232,168 +195,7 @@
 					},
 				},
 
-				market: [{
-						markerPoint: {
-							lng: 119.47869,
-							lat: 32.36312
-						},
-						num: '001'
-					},
-					{
-						markerPoint: {
-							lng: 119.48012,
-							lat: 32.36812
-						},
-						num: '002'
-					},
-					{
-						markerPoint: {
-							lng: 119.48084,
-							lat: 32.37142
-						},
-						num: '003'
-					},
-					{
-						markerPoint: {
-							lng: 119.48099,
-							lat: 32.37910
-						},
-						num: '004'
-					},
-					{
-						markerPoint: {
-							lng: 119.48084,
-							lat: 32.38459
-						},
-						num: '005'
-					},
-					{
-						markerPoint: {
-							lng: 119.48314,
-							lat: 32.40154
-						},
-						num: '006'
-					},
-					{
-						markerPoint: {
-							lng: 119.48285,
-							lat: 32.40020
-						},
-						num: '007'
-					},
-					{
-						markerPoint: {
-							lng: 119.48084,
-							lat: 32.38410
-						},
-						num: '008'
-					},
-					{
-						markerPoint: {
-							lng: 119.48099,
-							lat: 32.37922
-						},
-						num: '009'
-					},
-					{
-						markerPoint: {
-							lng: 119.47854,
-							lat: 32.37934
-						},
-						num: '010'
-					},
-					{
-						markerPoint: {
-							lng: 119.47222,
-							lat: 32.37825
-						},
-						num: '011'
-					},
-					{
-						markerPoint: {
-							lng: 119.45411,
-							lat: 32.37410
-						},
-						num: '012'
-					},
-					{
-						markerPoint: {
-							lng: 119.45023,
-							lat: 32.38337
-						},
-						num: '013'
-					},
-					{
-						markerPoint: {
-							lng: 119.43902,
-							lat: 32.38422
-						},
-						num: '014'
-					},
-					{
-						markerPoint: {
-							lng: 119.43672,
-							lat: 32.38459
-						},
-						num: '015'
-					},
-					{
-						markerPoint: {
-							lng: 119.43125,
-							lat: 32.38312
-						},
-						num: '016'
-					},
-					{
-						markerPoint: {
-							lng: 119.42378,
-							lat: 32.37910
-						},
-						num: '017'
-					},
-					{
-						markerPoint: {
-							lng: 119.41243,
-							lat: 32.37605
-						},
-						num: '018'
-					},
-					{
-						markerPoint: {
-							lng: 119.40826,
-							lat: 32.37385
-						},
-						num: '019'
-					},
-					{
-						markerPoint: {
-							lng: 119.40423,
-							lat: 32.37264
-						},
-						num: '020'
-					},
-					{
-						markerPoint: {
-							lng: 119.39619,
-							lat: 32.37166
-						},
-						num: '021'
-					},
-					{
-						markerPoint: {
-							lng: 119.37520,
-							lat: 32.36483
-						},
-						num: '022'
-					},
-					{
-						markerPoint: {
-							lng: 119.35551,
-							lat: 32.34201
-						},
-						num: '023'
-					},
-				],
+				market: [],
 				polylinePath: [],
 				markerTitle: "监控探头信息",
 				winInfo: {
@@ -418,7 +220,6 @@
 				asideWidth: '150px',
 				iconClass: 'el-icon-arrow-left',
 				openMobile: true,
-				data5: JSON.parse(JSON.stringify(data)),
 
 			}
 		},
@@ -441,19 +242,19 @@
 				console.log(this.show);
 				this.show = false;
 			},
-			infoWindowOpen(item,type) {
+			infoWindowOpen(item) {
 				this.show = true;
-				console.log(type);
-				if(type===1){
-					this.winInfo= item;
-					this.winInfo.type=type;
-				}else if(type===2){
-					this.winInfo.type=type;
-					this.winInfo.serial="11111";
-					this.winInfo.name="22222";
-					this.winInfo.longitude=119.42695;
-					this.winInfo.latitude=32.35899;
-				}
+				this.winInfo= item;
+//				if(type==='0'){
+//					this.winInfo= item;
+//					this.winInfo.type=type;
+//				}else if(type==='1'){
+//					this.winInfo.type=type;
+//					this.winInfo.serial="11111";
+//					this.winInfo.name="22222";
+//					this.winInfo.longitude=119.42695;
+//					this.winInfo.latitude=32.35899;
+//				}
 			},
 			diaClose() {
 				console.log(123456);
@@ -478,8 +279,11 @@
 				if(this.controlTraffic) {
 					console.log(new Date().getHours());
 					let t = new Date();
+					var getweek=t.getDay();
+					getweek = getweek===0?7:getweek;
 					this.times = this.getTime(false);
 					this.trafficData.hour = t.getHours();
+					this.trafficData.weekday = getweek;
 					this.nowTime = this.getTime(true);
 				}
 			},
@@ -494,9 +298,13 @@
 			},
 			//选择星期
 			selectWeeks(i, j) {
+				console.log(i, j);
+				this.controlTraffic=false;
 				this.weekdays = j;
 				this.trafficData.weekday = i;
-
+				console.log(this.trafficData);
+				setTimeout(()=>{this.controlTraffic=true;},200);
+				
 			},
 			//格式化小时
 			formaTooltip(val) {
@@ -508,8 +316,10 @@
 			},
 			//刷新时间
 			refreshTime() {
+				this.controlTraffic=false;
 				this.nowTime = this.getTime(true);
 				console.log(this.nowTime);
+				setTimeout(()=>{this.controlTraffic=true;},200);
 			},
 			//关闭交通流量预测窗口
 			closeTraffic() {
@@ -598,7 +408,7 @@
 							id: equArray[j].eId,
 							title: equArray[j].eName,
 							children: [],
-							type:"equ"
+							type:equArray[j].type
 						};
 						chiArr[i].children.push(obj);
 						equArray.splice(j, 1);
@@ -717,7 +527,7 @@
 				return coordinateList;
 			},
 			checkChange(obj,state){
-				if(obj.type==="equ"){
+				if(obj.type==="0" || obj.type==="1"){
 					for(var index in this.equipmentData){
 						if(obj.id==this.equipmentData[index].id){
 							let item = this.equipmentData[index];
@@ -755,7 +565,6 @@
 					}
 				});
 			},
-
 		},
 		//过滤器
 		filters: {
@@ -771,7 +580,10 @@
 			'trafficData.hour': function(newVal) {
 				console.log(newVal);
 				this.times = (newVal > 10 ? newVal : '0' + newVal) + ":00";
-				//				this.controlTraffic=!this.controlTraffic;
+				//this.controlTraffic=!this.controlTraffic;
+				console.log(this.trafficData);
+//				this.controlTraffic=false;
+//				setTimeout(()=>{this.controlTraffic=true;},200);
 			},
 			filterText(val) {
 				this.$refs.tree2.filter(val);
