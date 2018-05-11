@@ -1,5 +1,6 @@
 	import Vue from 'vue'
 	import Router from 'vue-router'
+	import store from './../store'
 	Vue.use(Router)
 	// 懒加载方式，当路由被访问的时候才加载对应组件
 	const Home = resolve => require(['@/pages/Home1'], resolve)
@@ -20,8 +21,10 @@
 	const Log = resolve => require(['@/pages/system/log'], resolve)
 	const LineManagement = resolve => require(['@/pages/system/lineManagement'], resolve)
 	
-	
 	const NotFind = resolve => require(['@/pages/notFind'], resolve)
+
+
+
 
 	import { SStorage } from "../js/LStorage"
 	// 定义并实例化路由
@@ -120,16 +123,20 @@
 			{ path: '*', menuShow: false, component: NotFind }
 		]
 	});
+	
+
 	router.beforeEach((to, from, next) => {
+		console.log(to);
 		if(to.path == '/login') {
 			window.sessionStorage.removeItem('access-user');
 			router.app.$store.commit('keepAdminUserInfo',{});
 			next();
 		} else {
-			if(router.app.$store.state.adminUserInfo.userName){
-				next();
+			if(router.app.$store.state.adminUserInfo.userName){  //判断$store是否有登录信息
+					next();
+				
 			}else{
-				if(!SStorage.getItem('access-user')){
+				if(!SStorage.getItem('access-user')){ //判断本地是否有登录信息
 					next({path: '/login'});
 				}else{
 					router.app.$store.commit('keepAdminUserInfo',SStorage.getItem('access-user'));

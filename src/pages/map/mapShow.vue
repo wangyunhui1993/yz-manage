@@ -22,7 +22,8 @@
 					<bm-city-list anchor="BMAP_ANCHOR_TOP_RIGHT" :offset="offsetCityList"></bm-city-list>
 					<bm-map-type :map-types="['BMAP_NORMAL_MAP', 'BMAP_HYBRID_MAP']" anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-map-type>
 					<bm-overview-map anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :isOpen="true"></bm-overview-map>
-					<bm-traffic v-if="controlTraffic" :predictDate="trafficData"></bm-traffic>
+					<!--<bm-traffic v-if="controlTraffic" :predictDate="trafficData"></bm-traffic>-->
+					<bm-traffic v-if="controlTraffic" :pridictDate="{weekday: 5, hour: 12}"></bm-traffic>
 					<bm-info-window :position="{lng: winInfo.longitude,lat: winInfo.latitude}" :width="250" :closeOnClick="false" :autoPan="true" :show="show" @clickclose="infoWindowClose">
 						<el-row style="margin-top: 5px;"  v-if="winInfo.type==='0'">
 							<div style="width: 100%;text-align: center;"><img src="./../../../static/img/aaa.png" style="max-width: 300px;max-height: 150px;margin-top: 5px;" /></div>
@@ -65,7 +66,7 @@
 									<el-tab-pane label="实时路况" name="first">
 										更新时间：{{nowTime}}<i class="el-icon-refresh refresh" @click="refreshTime"></i>
 									</el-tab-pane>
-									<el-tab-pane label="路况预测" name="second">
+									<!--<el-tab-pane label="路况预测" name="second">
 										<el-form label-width="50px">
 											<span style="color: #666;font-size: 14px;">
 								星期{{weekdays}}  {{times}}
@@ -86,7 +87,7 @@
 												</el-slider>
 											</el-form-item>
 										</el-form>
-									</el-tab-pane>
+									</el-tab-pane>-->
 								</el-tabs>
 							</div>
 						</div>
@@ -113,11 +114,12 @@
 	import { BmlCurveLine } from 'vue-baidu-map'
 	import {Edata} from '../../js/Edata';
 	import {formatTreeData} from '../../js/formatTreeData';
-	import { selectGroup,selectRoad ,selectAllEquipment} from '../../js/api';
+	import { selectGroup,selectRoad ,selectAllEquipment,selectIndexEquipment} from '../../js/api';
 	export default {
 		components: {
 			BmlCurveLine
 		},
+//		props:["predictDate"],
 		data() {
 			return {
 				groupAndEqu:[],
@@ -202,14 +204,14 @@
 					
 				},
 				searchData: {
-					serial: "",
-					status: "",
-					name: "",
-					ip: "",
-					address: "",
-					groupId: "",
-					current: 1,
-					size: 999,
+//					serial: "",
+//					status: "",
+//					name: "",
+//					ip: "",
+//					address: "",
+//					groupId: "",
+//					current: 1,
+//					size: 999,
 				},
 				filterText: '',
 				defaultProps: {
@@ -542,7 +544,8 @@
 			},
 			/*获取设备列表*/
 			getEquipmentList() {
-				selectAllEquipment(this.searchData).then(data => {
+				console.log("22222222222222222222");
+				selectIndexEquipment(this.searchData).then(data => {
 					let {
 						errMsg,
 						errCode,

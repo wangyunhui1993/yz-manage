@@ -487,6 +487,11 @@
 		created() {
 			this.getSelectLine();
 		},
+		beforeCreate(){
+			if(this.$store.state.adminUserInfo.roleId!=7){
+				this.$router.push("/map/mapShow");
+			}
+		},
 	}
 </script>
 <style>

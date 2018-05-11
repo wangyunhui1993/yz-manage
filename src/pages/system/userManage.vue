@@ -498,7 +498,12 @@
 			window.onpopstate=function (){
 				history.go(0);
 			}
-		}
+		},
+		beforeCreate(){
+			if(this.$store.state.adminUserInfo.roleId!=7){
+				this.$router.push("/map/mapShow");
+			}
+		},
 	}
 </script>
 <style scoped>

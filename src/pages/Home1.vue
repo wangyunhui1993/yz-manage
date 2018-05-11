@@ -26,14 +26,14 @@
 							</ul>
 							<ul class="">
 								<li style="margin-right:15px;">
-									<a href="#" class="topFontColor" style="font-weight: bold;">
-										<div style="height: 60px;font-size: 20px; color: rgb(60, 60, 60); font-weight: bold; line-height:60px;"><label style="font-size: 16px;  font-style: italic; font-weight: normal;">
-							欢迎您
-						</label>
-											<!-- <a href="/perInfo">{{sysUserName}}</a> -->
-											<router-link to='/perInfo'>{{sysUserName}}</router-link>
-											<label style="font-size: 16px;  font-weight: normal;">  </label></div>
-									</a>
+									<!--<a href="#" class="topFontColor" style="font-weight: bold;">-->
+										<div style="height: 60px;font-size: 20px; color: rgb(60, 60, 60); font-weight: bold; line-height:60px;">
+											<label style="font-size: 16px;  font-style: italic; font-weight: normal;">欢迎您</label>
+											 <span>{{sysUserName}}</span> 
+											<!--<router-link to='/perInfo'>{{sysUserName}}</router-link>-->
+											<!--<label style="font-size: 16px;  font-weight: normal;"></label>-->
+										</div>
+									<!--</a>-->
 								</li>
 							</ul>
 
@@ -103,13 +103,13 @@
       {{myDataForm.realName}}
     </el-form-item>
     <el-form-item label="手机号：">
-      {{myDataForm.moblie}}
+      {{myDataForm.mobile}}
     </el-form-item>
      <el-form-item label="邮箱：">
       {{myDataForm.email}}
     </el-form-item>
      <el-form-item label="最后登录时间：">
-      {{myDataForm.createTime}}
+      {{myDataForm.lastLogin}}
     </el-form-item>
      <el-form-item label="最后登录IP：">
       {{myDataForm.lastIp}}
@@ -176,6 +176,7 @@
 				password:"",
 				newPassword:"",
 				newPassword1:"",
+				man:this.$store.state.adminUserInfo.id,
 			},
 			rules:{
 				newPassword1:[

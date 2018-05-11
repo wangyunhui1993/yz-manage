@@ -9,9 +9,8 @@
 				<div style="flex-grow:1;flex-shrink:1;overflow-y:scroll ;">
 					<el-tree :data="groupAndEqu"  node-key="id"   :filter-node-method="filterNode"  default-expand-all :expand-on-click-node="false"  ref="tree2"  @node-drag-start="handleDragStart" @node-drag-enter="handleDragEnter" @node-drag-leave="handleDragLeave" @node-drag-over="handleDragOver" @node-drag-end="handleDragEnd" @node-drop="handleDrop" :allow-drop="allowDrop" :allow-drag="allowDrag">
 					<span class="custom-tree-node" slot-scope="{ node, data }">
-	       				 <span v-if="data.type=='group'"><i class="fa fa-sitemap"></i> {{ data.title }}</span>
-						<span v-else-if="data.type=='equ'" draggable><i class="fa fa-video-camera"></i> {{ data.title }}</span>
-						<span v-else></span>
+	       				 <span v-if="data.type==='group'"><i class="fa fa-sitemap"></i> {{ data.title }}</span>
+						<span v-if="data.type==='0'" draggable><i class="fa fa-video-camera"></i> {{ data.title }}</span>
 					</span>
 				</el-tree>
 				</div>
@@ -282,7 +281,6 @@
 			},
 			selectNum(arg) {
 				if(arg == "big") {
-					
 					this.allScreen = !this.allScreen;
 					window.event.currentTarget.src = this.pic.pic_zoom_h;
 //					this.allScreen ? window.event.currentTarget.src = './../../static/img/zoom_in.png' : window.event.currentTarget.src = './../../static/img/zoom_out.png'
@@ -408,24 +406,23 @@
 						success
 					} = data;
 					if(success) {
-						console.log("分组和设备",data);
 						let attributes = {
 					      id: 'id',
 					      parentId: 'parentId',
 					      name: 'groupName',
 					      rootId: "0"
-					  };
+					 };
 					  let equArray=value.groupAndEquipmentDtoList;
 					function run(chiArr) {
 		if(equArray.length !== 0) {
 			for(let i = 0; i < chiArr.length; i++) {
 				for(let j = 0; j < equArray.length; j++) {
-					if(chiArr[i].id == equArray[j].id && chiArr[i].type=='group') {
+					if(chiArr[i].id == equArray[j].id && chiArr[i].type=='group' && equArray[j].type!=="1") {
 						let obj = {
 							id: equArray[j].eId,
 							title: equArray[j].eName,
 							children: [],
-							type:"equ"
+							type:equArray[j].type
 						};
 						chiArr[i].children.push(obj);
 						equArray.splice(j, 1);
@@ -437,11 +434,17 @@
 		}
 	}
 					let originalData=value.videoGroupsList;
+//					for(var index in originalData){
+//						console.log(originalData[index]);
+//						if(originalData[index].type==="1"){
+//							originalData.splice(index,1);
+//						}
+//					}
 					  let groupArray=formatTreeData(originalData,attributes);
 					   
 					  run(groupArray);
 					  this.groupAndEqu=groupArray;
-					  
+					  console.log("9999999999999",this.groupAndEqu);
 					  
 					} else {
 						console.log(data);

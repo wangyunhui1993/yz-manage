@@ -47,8 +47,8 @@
 	var myChartPart2 = "";
 	var myChartPart3 = "";
 	var myChartPart4 = "";
-	var dataAxisPart3 = ['12a', '1a', '2a', '3a', '4a', '5a', '6a','7a', '8a', '9a', '10a', '11a','12p', '1p', '2p', '3p', '4p', '5p','6p', '7p', '8p', '9p', '10p', '11p'];
-	var hours = ['12a', '1a', '2a', '3a', '4a', '5a', '6a','7a', '8a', '9a', '10a', '11a','12p', '1p', '2p', '3p', '4p', '5p','6p', '7p', '8p', '9p', '10p', '11p'];
+	var dataAxisPart3 = ['12a', '1a', '2a', '3a', '4a', '5a', '6a', '7a', '8a', '9a', '10a', '11a', '12p', '1p', '2p', '3p', '4p', '5p', '6p', '7p', '8p', '9p', '10p', '11p'];
+	var hours = ['12a', '1a', '2a', '3a', '4a', '5a', '6a', '7a', '8a', '9a', '10a', '11a', '12p', '1p', '2p', '3p', '4p', '5p', '6p', '7p', '8p', '9p', '10p', '11p'];
 	var dataPart1 = [];
 	var geoCoordMap = {};
 	var newdate = new Date();
@@ -61,7 +61,7 @@
 		data() {
 			return {
 				days: [],
-				day:[],
+				day: [],
 				formatAfterLineArr: [],
 				part1Title: {
 					width: 20,
@@ -323,8 +323,8 @@
 							var timeTepItem = timeTep - 3600 * 1000 * 24 * i;
 							this.days.push(formatTime(new Date(timeTepItem), true));
 						}
-						this.day=[];
-						for(var item of this.days){
+						this.day = [];
+						for(var item of this.days) {
 							this.day.push(item.substring(5));
 						}
 						console.log(this.day);
@@ -421,7 +421,7 @@
 
 						console.log("this.successdata4", this.successdata4);
 						console.log("this.errordata4", this.errordata4);
-						this.percentdata4=[];
+						this.percentdata4 = [];
 						for(var jj = 0; jj < days4; jj++) {
 							if(this.errordata4[jj] === 0) {
 								this.percentdata4.push(100);
@@ -483,15 +483,15 @@
 					grid: {
 						height: '50%',
 						y: '10%',
-						tooltip :{
-							show:true,
-							 formatter:function(params){
-							 	console.log(params);
-							 	
-            var relVal = "访问次数：<br/>";
-            relVal+="&nbsp;&nbsp;"+params.data[2]+"次"
-            return relVal;
-            }
+						tooltip: {
+							show: true,
+							formatter: function(params) {
+								console.log(params);
+
+								var relVal = "访问次数：<br/>";
+								relVal += "&nbsp;&nbsp;" + params.data[2] + "次"
+								return relVal;
+							}
 						},
 					},
 					xAxis: {
@@ -543,134 +543,131 @@
 					yMax = 5;
 				} else {
 					yMax = Math.ceil(yMax * 1.2);
-					yMax=yMax%2===0?yMax:yMax+1;
+					yMax = yMax % 5 === 0 ? yMax : Math.ceil(yMax/5)*5;
 				}
-//				var dataShadow = [];
-//				for(var i = 0; i < this.dataPart3.length; i++) {
-//					dataShadow.push(yMax);
-//				}
+				//				var dataShadow = [];
+				//				for(var i = 0; i < this.dataPart3.length; i++) {
+				//					dataShadow.push(yMax);
+				//				}
 				var optionPart3 = {
 					title: {
 						text: '系统访问时间分布',
 						x: 'center',
 					},
-					 grid: {
-        left: '3%',
-        right: '4%',
-        bottom: '3%',
-        containLabel: true,
-    },
-     tooltip : {
-        trigger: 'axis',
-        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
-            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-        },
-formatter:function(params)//数据格式
-            {
-            	console.log(params);
-            var relVal = "访问次数:<br/>";
-            relVal += "&nbsp;&nbsp;"+params[0].data+"次";
-            return relVal;
-            }
-    },
-					xAxis: [
-						 {
-            type : 'category',
-            data : dataAxisPart3,
-            axisTick: {
-                alignWithLabel: true
-            }
-        }
-						
-						
-//						data: dataAxisPart3,
-//						axisLabel: {
-//							inside: true,
-//							textStyle: {
-//								color: '#333'
-//							}
-//						},
-//						axisTick: {
-//							show: false
-//						},
-//						axisLine: {
-//							show: false
-//						},
-//						z: 10
+					grid: {
+						left: '3%',
+						right: '4%',
+						bottom: '3%',
+						containLabel: true,
+					},
+					tooltip: {
+						trigger: 'axis',
+						axisPointer: { // 坐标轴指示器，坐标轴触发有效
+							type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+						},
+						formatter: function(params) //数据格式
+						{
+							console.log(params);
+							var relVal = "访问次数:<br/>";
+							relVal += "&nbsp;&nbsp;" + params[0].data + "次";
+							return relVal;
+						}
+					},
+					xAxis: [{
+							type: 'category',
+							data: dataAxisPart3,
+							axisTick: {
+								alignWithLabel: true
+							}
+						}
+
+						//						data: dataAxisPart3,
+						//						axisLabel: {
+						//							inside: true,
+						//							textStyle: {
+						//								color: '#333'
+						//							}
+						//						},
+						//						axisTick: {
+						//							show: false
+						//						},
+						//						axisLine: {
+						//							show: false
+						//						},
+						//						z: 10
 					],
-					yAxis: [
-						 {
-            type : 'value',
-            max: yMax,
-        }
-//						axisLine: {
-//							show: false
-//						},
-//						axisTick: {
-//							show: false
-//						},
-//						axisLabel: {
-//							textStyle: {
-//								color: '#999'
-//							}
-//						}
+					yAxis: [{
+							type: 'value',
+							max: yMax,
+						}
+						//						axisLine: {
+						//							show: false
+						//						},
+						//						axisTick: {
+						//							show: false
+						//						},
+						//						axisLabel: {
+						//							textStyle: {
+						//								color: '#999'
+						//							}
+						//						}
 					],
-//					dataZoom: [{
-//						type: 'inside'
-//					}],
+					//					dataZoom: [{
+					//						type: 'inside'
+					//					}],
 					series: [{ // For shadow
 							type: 'bar',
-//							itemStyle: {
-//								normal: {
-//									color: 'rgba(0,0,0,0.05)'
-//								}
-//							},
-//							barGap: '-100%',
-//							barCategoryGap: '40%',
+							//							itemStyle: {
+							//								normal: {
+							//									color: 'rgba(0,0,0,0.05)'
+							//								}
+							//							},
+							//							barGap: '-100%',
+							//							barCategoryGap: '40%',
 							data: this.dataPart3,
-							 barWidth: '60%',
+							barWidth: '60%',
 							animation: false
 						},
-//						{
-//							type: 'bar',
-//							itemStyle: {
-//								normal: {
-//									color: new echarts.graphic.LinearGradient(
-//										0, 0, 0, 1, [{
-//												offset: 0,
-//												color: '#83bff6'
-//											},
-//											{
-//												offset: 0.5,
-//												color: '#188df0'
-//											},
-//											{
-//												offset: 1,
-//												color: '#188df0'
-//											}
-//										]
-//									)
-//								},
-//								emphasis: {
-//									color: new echarts.graphic.LinearGradient(
-//										0, 0, 0, 1, [{
-//												offset: 0,
-//												color: '#2378f7'
-//											},
-//											{
-//												offset: 0.7,
-//												color: '#2378f7'
-//											},
-//											{
-//												offset: 1,
-//												color: '#83bff6'
-//											}
-//										]
-//									)
-//								}
-//							},
-//							data: this.dataPart3
-//						}
+						//						{
+						//							type: 'bar',
+						//							itemStyle: {
+						//								normal: {
+						//									color: new echarts.graphic.LinearGradient(
+						//										0, 0, 0, 1, [{
+						//												offset: 0,
+						//												color: '#83bff6'
+						//											},
+						//											{
+						//												offset: 0.5,
+						//												color: '#188df0'
+						//											},
+						//											{
+						//												offset: 1,
+						//												color: '#188df0'
+						//											}
+						//										]
+						//									)
+						//								},
+						//								emphasis: {
+						//									color: new echarts.graphic.LinearGradient(
+						//										0, 0, 0, 1, [{
+						//												offset: 0,
+						//												color: '#2378f7'
+						//											},
+						//											{
+						//												offset: 0.7,
+						//												color: '#2378f7'
+						//											},
+						//											{
+						//												offset: 1,
+						//												color: '#83bff6'
+						//											}
+						//										]
+						//									)
+						//								}
+						//							},
+						//							data: this.dataPart3
+						//						}
 					]
 				};
 				myChartPart3 = echarts.init(document.getElementById('part3'));
@@ -988,10 +985,11 @@ formatter:function(params)//数据格式
 		z-index: 1;
 	}
 	
-	.statsScreen .el-range__close-icon{
+	.statsScreen .el-range__close-icon {
 		display: none !important;
 	}
-	.statsScreen .el-input__suffix{
+	
+	.statsScreen .el-input__suffix {
 		display: none !important;
 	}
 </style>

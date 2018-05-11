@@ -124,16 +124,16 @@
 				<el-form-item label="名称" prop="name" :rules="[{ required: true, message: '名称不能为空', trigger: 'blur'}]">
 					<el-input v-model="formInfo.name" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="经度" prop="longitude" :rules="[{ required: true, message: '经度不能为空', trigger: 'blur'}]">
+				<el-form-item label="经度" prop="longitude">
 					<el-input v-model="formInfo.longitude" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="纬度" prop="latitude" :rules="[{ required: true, message: '纬度不能为空', trigger: 'blur'}]">
+				<el-form-item label="纬度" prop="latitude">
 					<el-input v-model="formInfo.latitude" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="分组" prop="groupArr" :rules="[{ required: true, message: '请选择分组', trigger: 'change'}]">
 					<el-cascader placeholder="选择分组" v-model="formInfo.groupArr" :options="groupArr" :props="{value:'id',label:'title',children:'children'}" filterable change-on-select></el-cascader>
 				</el-form-item>
-				<el-form-item label="IP地址" prop="ip" :rules="[{ required: true, message: '请填写IP地址', trigger: 'blur'}]">
+				<el-form-item label="IP地址" prop="ip">
 					<el-input v-model="formInfo.ip" auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
@@ -155,16 +155,16 @@
 				<el-form-item label="名称" prop="name" :rules="[{ required: true, message: '名称不能为空', trigger: 'blur'}]">
 					<el-input v-model="formEditInfo.name" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="经度" prop="longitude" :rules="[{ required: true, message: '经度不能为空', trigger: 'blur'}]">
+				<el-form-item label="经度" prop="longitude">
 					<el-input v-model="formEditInfo.longitude" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="纬度" prop="latitude" :rules="[{ required: true, message: '纬度不能为空', trigger: 'blur'}]">
+				<el-form-item label="纬度" prop="latitude">
 					<el-input v-model="formEditInfo.latitude" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="分组" prop="groupArr" clearable :rules="[{ required: true, message: '请选择分组', trigger: 'change'}]">
 					<el-cascader placeholder="选择分组" v-model="formEditInfo.groupArr" :options="groupArr" :props="{value:'id',label:'title',children:'children'}" filterable change-on-select></el-cascader>
 				</el-form-item>
-				<el-form-item label="IP地址" prop="ip" :rules="[{ required: true, message: '请填写IP地址', trigger: 'blur'}]">
+				<el-form-item label="IP地址" prop="ip" >
 					<el-input v-model="formEditInfo.ip" auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
@@ -888,7 +888,12 @@
 			window.onpopstate = function() {
 				history.go(0);
 			}
-		}
+		},
+		beforeCreate(){
+			if(this.$store.state.adminUserInfo.roleId!=7){
+				this.$router.push("/map/mapShow");
+			}
+		},
 	}
 </script>
 

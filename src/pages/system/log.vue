@@ -80,7 +80,6 @@
 				tableDataLoading: false,
 				pageSizes: [15, 100, 200, 500],
 				total: 0,
-				currentPage: 2,
 				tableData: [],
 				searchData: {
 					username: "",
@@ -227,20 +226,28 @@
 
 		},
 		mounted() {
-
+//			this.searchData.current=JSON.parse(this.$route.query.keywords).current;
 		},
 		created() {
 			this.tableDataLoading = true;
 			try {
 				if(this.$route.query.keywords) {
-					this.searchData = JSON.parse(this.$route.query.keywords);
+					
+					this.searchData = Object.assign(this.searchData,JSON.parse(this.$route.query.keywords));
+					
 				}
 			} finally {}
+			console.log(this.searchData);
 			this.getLog();
 			window.onpopstate = function() {
 				history.go(0);
 			}
-		}
+		},
+		beforeCreate(){
+			if(this.$store.state.adminUserInfo.roleId!=7){
+				this.$router.push("/map/mapShow");
+			}
+		},
 	}
 </script>
 

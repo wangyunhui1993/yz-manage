@@ -9,7 +9,7 @@
 			</el-menu>-->
 			<template v-for="(child, index) in $router.options.routes" v-if="child.menuShow">
 				<el-menu :background-color="backgroundColor" :text-color="textColor" :active-text-color="activeTextColor" :default-active="$route.path" unique-opened class="el-menu-vertical-demo"  mode="horizontal"  @select='secPath' :collapse="isCollapse">
-					<el-submenu v-for="children in child.children" v-if="children.menuShow && children.children.length>1" :index='children.path' :key='children.path'>
+					<el-submenu v-for="children in child.children" v-if="children.menuShow && children.children.length>1 && systemShow" :index='children.path' :key='children.path'>
 						<template slot="title">
 							<i :class="children.iconCls" v-if="enableMenuIcon"></i>
 							<span slot="title">{{children.name}}</span>
@@ -54,6 +54,7 @@
 	export default {
 		data() {
 			return {
+				systemShow:true,
 				secnav: [],
 				bNav: '',
 				isCollapse: false,
@@ -93,6 +94,10 @@
 
 		},
 		mounted() {
+			console.log("111111",this.$store.state.adminUserInfo.roleId);
+			if(this.$store.state.adminUserInfo.roleId!=='7'){
+				this.systemShow=false;
+			}
 			//			console.log('当前路径', this.$router.path);
 		},
 		methods: {

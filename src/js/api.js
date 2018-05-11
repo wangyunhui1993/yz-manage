@@ -13,6 +13,8 @@ export const updatePassword = params => { return axios.post(`${base}/user/update
 export const login = params => { return axios.post(`${base}/user/login`, params).then(res => res.data).catch(error=>error); };
 
 export const selectAllEquipment = params => { return axios.post(`${base}/equipment/selectAllEquipment`, params).then(res => res.data).catch(error=>error); };
+export const selectIndexEquipment = params => { return axios.post(`${base}/equipment/selectIndexEquipment`, params).then(res => res.data).catch(error=>error); };
+
 export const selectGroup = params => { return axios.post(`${base}/group/selectGroup`, params).then(res => res.data).catch(error=>error); };
 export const insertEquipment = params => { return axios.post(`${base}/equipment/insertEquipment`, params).then(res => res.data).catch(error=>error); };
 export const deleteEquipment = params => { return axios.post(`${base}/equipment/deleteEquipment`, params).then(res => res.data).catch(error=>error); };
