@@ -12,7 +12,7 @@
 	       				 <span v-if="data.type=='group'"><i :class="Edata.icon.sitemap"></i> {{ data.title }}</span>
 						<span v-else-if="data.type=='0'"><i :class="Edata.icon.camera"></i> {{ data.title }}</span>
 						<span v-else-if="data.type=='1'"><i :class="Edata.icon.car"></i> {{ data.title }}</span>
-						<span v-else></span>
+						<span v-else>1</span>
 					</span>
 				</el-tree>
 			</div>

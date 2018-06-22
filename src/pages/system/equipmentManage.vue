@@ -113,8 +113,8 @@
 		</el-container>
 		<el-dialog title="添加设备" :visible.sync="dialogFormAddVisible" width="500px" top="5vh" @close="closeAddWin" :close-on-click-modal="false">
 			<el-form :model="formInfo" status-icon label-width="100px" ref="formInfo">
-				<el-form-item label="设备类型" prop="type" :rules="[{ required: true, message: '请选择设备类型', trigger: 'change'}]">
-					<el-select v-model="formInfo.type" placeholder="请选择设备类型">
+				<el-form-item label="设备类型" prop="type">
+					<el-select v-model="formInfo.type" placeholder="请选择设备类型" disabled>
 							<el-option v-for="item in equType" :label="item.name" :value="item.type"></el-option>
 					</el-select>
 				</el-form-item>

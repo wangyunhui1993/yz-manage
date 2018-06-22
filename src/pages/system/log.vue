@@ -16,6 +16,7 @@
 						</el-form-item>
 						<el-form-item>
 							<el-button type="primary" @click="search">查询</el-button>
+							<!--<el-button type="primary" @click="test" >测试</el-button>-->
 						</el-form-item>
 					</el-form>
 				</el-row>
@@ -45,7 +46,7 @@
 	</section>
 </template>
 <script>
-	import { selectLog } from '../../js/api';
+	import { selectLog ,synchroEquipmentNumber} from '../../js/api';
 	export default {
 		data() {
 			return {
@@ -91,6 +92,31 @@
 			}
 		},
 		methods: {
+			test(){
+				synchroEquipmentNumber().then(data => {
+						let {
+							errMsg,
+							errCode,
+							value,
+							extraInfo,
+							success
+						} = data;
+						if(success) {
+							console.log(data);
+							this.$message({
+								message: JSON.stringify(data),
+								type: 'success'
+							});
+						} else {
+							console.log(data);
+							this.$message({
+								message: errMsg,
+								type: 'error'
+							});
+						}
+					});
+			},
+			
 			/*改变查询串*/
 			changeSearch() {
 

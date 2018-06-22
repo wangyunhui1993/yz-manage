@@ -23,15 +23,15 @@
 						<div class="text item" style="font-size:12px;" v-if="showVideoParameters">
 							<div class="block">
 								<span class="demonstration">亮度</span>
-								<el-slider v-model="value1"></el-slider>
+								<el-slider v-model="videoParameters.brightness" @change="arametersChange"></el-slider>
 							</div>
 							<div class="block">
 								<span class="demonstration">对比度</span>
-								<el-slider v-model="value1"></el-slider>
+								<el-slider v-model="videoParameters.contrast" @change="contrastChange"></el-slider>
 							</div>
 							<div class="block">
 								<span class="demonstration">饱和度</span>
-								<el-slider v-model="value1"></el-slider>
+								<el-slider v-model="videoParameters.saturation" @change="saturationChange"></el-slider>
 							</div>
 							<el-row>
 								<el-button type="success" style="width: 100%;">
@@ -42,15 +42,24 @@
 					</el-card>
 				</div>
 			</el-aside>
-			<el-container style="height: 100%;overflow-y: hidden !important;" id="dashboard_id">
+			<el-container style="height: 100%;" id="dashboard_id">
 				<el-main style="padding: 0;height: 100%;">
-					<div v-for="(i,index) in bigNum" @dragover="dragenter($event)" @drop="drop(index)" class="screenItem" :data-index='i' :key="index" :class="'part'+num" @mouseenter="showInfo" @mouseleave="hideInfo">
+					<div v-for="(i,index) in bigNum" @dragover="dragenter($event)" @drop="drop(index)"  class="screenItem"   :data-index='i' :key="index" :class="'part'+num">
+						<div class="selectScreenItem" :class="index==radio?'screenItemIndex':''"  @mouseenter="showInfo" @mouseleave="hideInfo">
+						<div class="selectRadio">
+							<el-radio v-model="radio" :label="index"></el-radio>
+						</div>
 						<div class="topInfo">
 							编号:{{listInfo[i-1].number}}&nbsp;&nbsp; 名称:{{listInfo[i-1].name}}
 						</div>
+						
+						 
 						<video-player style='width: 100%;height: 100%;' class="vjs-custom-skin" ref="videoPlayer" :options="playerOptions" @ready="onPlayerReadied" @timeupdate="onTimeupdate">
+							<div>123</div>
 						</video-player>
 						<div class="mask"></div>
+						</div>
+
 					</div>
 				</el-main>
 				<el-footer height="40px">
@@ -74,6 +83,7 @@
 	export default {
 		data() {
 			return {
+				radio:0,
 				groupAndEqu:[],
 //				Edata:Edata,
 				dialogFormVisible: false,
@@ -88,7 +98,7 @@
 				playerOptions: {
 					overNative: true,
 					autoplay: true,
-					controls: false,
+					controls: true,
 					techOrder: ['flash', 'html5'],
 					sourceOrder: true,
 					flash: {
@@ -109,13 +119,13 @@
 						type: 'application/x-mpegURL',
 						src: 'http://playertest.longtailvideo.com/adaptive/bipbop/gear4/prog_index.m3u8'
 					}],
-					fullscreenToggle: true, // 全屏
+					// fullscreenToggle: true, // 全屏
 					controlBar: {
-						//           timeDivider: false, // 时间分割线
-						//           durationDisplay: false, // 总时间
-						//           progressControl: true, // 进度条
-						//           customControlSpacer: true, // 未知
-						//						           fullscreenToggle: true // 全屏
+						          timeDivider: false, // 时间分割线
+						          durationDisplay: false, // 总时间
+						          progressControl: false, // 进度条
+						          customControlSpacer: false, // 未知
+									fullscreenToggle: true // 全屏
 					},
 				},
 				pic: {
@@ -236,6 +246,11 @@
 				},
 				showVideoParameters: true,
 				value1:0,
+				videoParameters:{
+					brightness:50,
+					contrast:50,
+					saturation:50,
+				},
 
 			}
 		},
@@ -274,15 +289,15 @@
 			},
 
 			showInfo(even) {
-				//				even.currentTarget.firstElementChild.style.display = 'block'
+								even.currentTarget.firstElementChild.style.display = 'block'
 			},
 			hideInfo(even) {
-				//				even.currentTarget.firstElementChild.style.display = 'none'
+								even.currentTarget.firstElementChild.style.display = 'none'
 			},
 			selectNum(arg) {
 				if(arg == "big") {
 					this.allScreen = !this.allScreen;
-					window.event.currentTarget.src = this.pic.pic_zoom_h;
+//					window.event.currentTarget.src = this.pic.pic_zoom_h;
 //					this.allScreen ? window.event.currentTarget.src = './../../static/img/zoom_in.png' : window.event.currentTarget.src = './../../static/img/zoom_out.png'
 					if(this.allScreen) {	
 						console.log("全屏");
@@ -512,6 +527,23 @@
 			allowDrag(draggingNode) {
 				return draggingNode.data.label.indexOf('三级 3-1-1') === -1;
 			},
+			arametersChange(val){
+				let ele = document.getElementsByClassName("vjs-tech")[this.radio];
+				let num="brightness("+(50+val)+"%)";
+				ele.style.webkitFilter=num;
+			},
+			contrastChange(val){
+				let ele = document.getElementsByClassName("vjs-tech")[this.radio];
+				let num="contrast("+(50+val)+"%)";
+				ele.style.webkitFilter=num;
+			},
+			saturationChange(val){
+				let ele = document.getElementsByClassName("vjs-tech")[this.radio];
+				let value=0;
+				value = val >=50 ? 100+(val-50)*6 : val*2;
+				let num="saturate("+value+"%)";
+				ele.style.webkitFilter=num;
+			},
 
 
 		},
@@ -545,13 +577,13 @@
 //          $("#dashboard_id").removeClass('expand').addClass('contract');//这里捡个懒，直接用JQ来改className
         }else{
         	_this.allScreen =true;
-        	_this.$refs.bigScreeen.src=_this.pic.pic_zoom;
+        	_this.$refs.bigScreeen.src=_this.pic.pic_zoom_h;
         }
     }
     function checkFull() {
         var isFull = document.fullscreenEnabled || window.fullScreen || document.webkitIsFullScreen || document.msFullscreenEnabled;
         //to fix : false || undefined == undefined
-        if (isFull === undefined) {isFull = false;}
+        if (isFull === undefined) {console.log("不是全屏");isFull = false;}
         return isFull;
     }
 			
@@ -669,8 +701,14 @@
 		box-sizing: border-box;
 		position: relative;
 	}
+	.selectScreenItem{
+		border: 2px solid #fff;
+		box-sizing: border-box;
+		height:100%;
+		width: 100%;
+	}
 	
-	.screenItem:first-child {
+	.screenItemIndex {
 		border: 2px solid #00ff00;
 	}
 	
@@ -713,10 +751,26 @@
 		z-index: 1;
 	}*/
 	
-	.bigScreen .video-js .vjs-fullscreen-control{
+	/*.bigScreen .video-js .vjs-fullscreen-control{
 		position: absolute;
 		left: 0;
 		top: 0;
 		z-index: 2;
+	}*/
+	.selectRadio{
+		height:30px;
+		width:30px;
+		position:absolute;	 
+		top: 5px;
+		left: 5px;
+		z-index: 101;
+		display: none;
+	}
+	.selectRadio .el-radio__label{
+		display: none;
+	}
+	.selectRadio .el-radio__inner{
+		height:20px;
+		width: 20px;
 	}
 </style>

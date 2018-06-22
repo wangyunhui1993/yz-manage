@@ -7,7 +7,7 @@
 			</div>
 			<baidu-map class="bm-view" :center="center" :zoom="zoom" :scroll-wheel-zoom="true">
 				<bm-control anchor="BMAP_ANCHOR_TOP_RIGHT" :offset="part1Title">
-					<h3 style="color:#333">车流量统计</h3>
+					<h3 style="color:#333">设备访问热度</h3>
 				</bm-control>
 				<bm-polyline v-for="(item,index) in formatAfterLineArr" :path="item.ll" stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="5"></bm-polyline>
 				<bml-heatmap :data="heatData" :max="5" :radius="20"></bml-heatmap>
@@ -103,37 +103,39 @@
 							start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
 							picker.$emit('pick', [start, end]);
 						}
-					}, {
-						text: '本年',
-						onClick(picker) {
-							const end = new Date();
-							const start = new Date(y + "-" + "01-01 00:00:00");
-							picker.$emit('pick', [start, end]);
-						}
-					}, {
-						text: '去年',
-						onClick(picker) {
-							const end = new Date(y + "-" + "01-01 00:00:00");
-							const start = new Date((y - 1) + "-" + "01-01 00:00:00");
-							picker.$emit('pick', [start, end]);
-						}
-					}, {
-						text: '近三年',
-						onClick(picker) {
-							const end = new Date();
-							const start = new Date();
-							start.setTime(start.getTime() - 3600 * 1000 * 24 * 365 * 3);
-							picker.$emit('pick', [start, end]);
-						}
-					}, {
-						text: '近七年',
-						onClick(picker) {
-							const end = new Date();
-							const start = new Date();
-							start.setTime(start.getTime() - 3600 * 1000 * 24 * 365 * 7);
-							picker.$emit('pick', [start, end]);
-						}
-					}, ]
+					}, 
+//					{
+//						text: '本年',
+//						onClick(picker) {
+//							const end = new Date();
+//							const start = new Date(y + "-" + "01-01 00:00:00");
+//							picker.$emit('pick', [start, end]);
+//						}
+//					}, {
+//						text: '去年',
+//						onClick(picker) {
+//							const end = new Date(y + "-" + "01-01 00:00:00");
+//							const start = new Date((y - 1) + "-" + "01-01 00:00:00");
+//							picker.$emit('pick', [start, end]);
+//						}
+//					}, {
+//						text: '近三年',
+//						onClick(picker) {
+//							const end = new Date();
+//							const start = new Date();
+//							start.setTime(start.getTime() - 3600 * 1000 * 24 * 365 * 3);
+//							picker.$emit('pick', [start, end]);
+//						}
+//					}, {
+//						text: '近七年',
+//						onClick(picker) {
+//							const end = new Date();
+//							const start = new Date();
+//							start.setTime(start.getTime() - 3600 * 1000 * 24 * 365 * 7);
+//							picker.$emit('pick', [start, end]);
+//						}
+//					}, 
+					]
 				},
 				pickerOptions2: {
 					firstDayOfWeek: 1
