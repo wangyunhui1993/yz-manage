@@ -54,6 +54,8 @@
 	var newdate = new Date();
 	var y = newdate.getFullYear();
 	var m = newdate.getMonth() + 1;
+	m=m>9?m:"0"+m;
+	console.log(m);
 	export default {
 		components: {
 			BmlHeatmap
@@ -140,7 +142,7 @@
 				pickerOptions2: {
 					firstDayOfWeek: 1
 				},
-				value1: [new Date(y + '-' + m), newdate],
+				value1: [new Date(y + '-' + m + "-01"), newdate],
 				value2: "",
 				value3: newdate,
 				value4: newdate,

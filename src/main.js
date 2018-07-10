@@ -29,7 +29,6 @@ Vue.use(BaiduMap, {
   ak: 'MEBiZk1g1whGxGor9XZdUnyb4L2ZD9Hh'
 })
 
-
  //引入视屏播放插件
 import VueVideoPlayer from 'vue-video-player'
 import 'video.js/dist/video-js.css'
@@ -37,6 +36,9 @@ import 'vue-video-player/src/custom-theme.css'
 import 'videojs-flash'
 //import 'videojs-contrib-hls/dist/videojs-contrib-hls'
 Vue.use(VueVideoPlayer)
+
+
+
  
 import Icon from 'vue-awesome/components/Icon'
  import $ from 'jquery'

@@ -26,14 +26,14 @@
 					<bm-traffic v-if="controlTraffic" :pridictDate="{weekday: 5, hour: 12}"></bm-traffic>
 					<bm-info-window :position="{lng: winInfo.longitude,lat: winInfo.latitude}" :width="250" :closeOnClick="false" :autoPan="true" :show="show" @clickclose="infoWindowClose">
 						<el-row style="margin-top: 5px;"  v-if="winInfo.type==='0'">
-							<div style="width: 100%;text-align: center;"><img src="./../../../static/img/aaa.png" style="max-width: 300px;max-height: 150px;margin-top: 5px;" /></div>
+							<div style="width: 100%;text-align: center;"><a :href="winInfo.img" target="_blank"><img :src="winInfo.img" style="max-width: 300px;max-height: 150px;margin-top: 5px;" /></a></div>
 							<p style="margin-top: 5px;">
 							<span >编号：{{winInfo.serial}}</span>
 							<span  :class="winInfo.status==='0'?'stateGre':'stateRed'"></span>
 							</p>
 							<p style="margin-top: 5px;">名称：{{winInfo.name}}</p>
 							<div style="margin-top: 5px;">
-								<el-button type="primary" size="mini" @click="immediate(winInfo.id)" style="padding: 5px;">实时监控</el-button>
+								<el-button type="primary" size="mini" @click="immediate(winInfo)" style="padding: 5px;">实时监控</el-button>
 								<!--<el-button type="primary" size="mini" @click="history(winInfo.id)" style="padding: 5px;">历史监控</el-button>-->
 							</div>
 						</el-row>
@@ -104,24 +104,31 @@
 		</div>
 		<!--实时视频播放窗口-->
 		<el-dialog v-if="showWin" :visible.sync="dialogFormVisible" :center="true" :modal-append-to-body="true" :close-on-click-modal="false" top="5vh" width="90%" @close="diaClose">
-			<video-player style='width: 100%;height: 100%;' class="vjs-custom-skin" ref="videoPlayer" :options="playerOptions" @ready="onPlayerReadied">
-			</video-player>
+			<!--<video-player style='width: 100%;height: 100%;' class="vjs-custom-skin" ref="videoPlayer" :options="playerOptions" @ready="onPlayerReadied">
+			</video-player>-->
+			<Vplayer  :VOptions="options" :VIndex="index"  type="map"></Vplayer>
 		</el-dialog>
 
 	</section>
 </template>
 <script>
+	
 	import { BmlCurveLine } from 'vue-baidu-map'
 	import {Edata} from '../../js/Edata';
 	import {formatTreeData} from '../../js/formatTreeData';
-	import { selectGroup,selectRoad ,selectAllEquipment,selectIndexEquipment} from '../../js/api';
+	
+	import { selectGroup,selectRoad ,selectAllEquipment,selectIndexEquipment,insertPlayVideo} from '../../js/api';
+	import  Vplayer  from './../components/videoPlayer';
 	export default {
 		components: {
-			BmlCurveLine
+			BmlCurveLine,
+			Vplayer
 		},
 //		props:["predictDate"],
 		data() {
 			return {
+				index:0,
+				options:{},
 				groupAndEqu:[],
 				equipmentData:[],
 				defaultCheckedKeys:[],
@@ -181,6 +188,7 @@
 					},
 					sources: [{
 						type: 'rtmp/mp4',
+//						src: 'rtmp://dxftech.asuscomm.com/hls/mystream'
 						src: 'rtmp://184.72.239.149/vod/&mp4:BigBuckBunny_115k.mov'
 					}, {
 						withCredentials: false,
@@ -226,6 +234,27 @@
 			}
 		},
 		methods: {
+			//监控播放次数
+			insertPlayVideoNum(id){
+				let info={id:id}
+				insertPlayVideo(info).then(data => {
+					let {
+						errMsg,
+						errCode,
+						value,
+						extraInfo,
+						success
+					} = data;
+//					if(success) {
+//						console.log("gg");
+//					} else {
+//						this.$message({
+//							message: errMsg,
+//							type: 'error'
+//						});
+//					}
+				});
+			},
 			onPlayerReadied() {
 				if(!this.initialized) {
 					this.initialized = true
@@ -264,11 +293,19 @@
 				this.dialogFormVisible = false;
 			},
 			//即使播放
-			immediate(id) {
-				//				console.log(id);
+			immediate(row) {
+				console.log(row);
 				this.showWin = true;
 				this.dialogFormVisible = true;
-
+				this.options={
+					serial:"rtmp://dxftech.asuscomm.com/hls/mystream",
+					id:row.id,
+					title:row.name,
+				}
+				console.log(this.options);
+				this.insertPlayVideoNum(row.id);
+				
+				
 			},
 			//历史记录
 			history(id) {
@@ -594,6 +631,7 @@
 		},
 		mounted() {
 			this.handler();
+
 		},
 		created() {
 			this.getSelectGroup();
@@ -766,5 +804,11 @@
 	.stateRed{
 		display: inline-block;
 		vertical-align: middle;
+	}
+	.mapShow .el-dialog__body{
+		height: calc(100% - 90px);
+	}
+	.mapShow .closeBtn{
+		display: none;
 	}
 </style>

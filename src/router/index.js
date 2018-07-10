@@ -13,8 +13,8 @@
 	const MapShow = resolve => require(['@/pages/map/mapShow'], resolve)
 	const EquipmentList = resolve => require(['@/pages/equipmentList'], resolve)
 	const QueryStats = resolve => require(['@/pages/queryStats'], resolve)
-	const BigScreen = resolve => require(['@/pages/bigScreen'], resolve)
-	
+//	const BigScreen = resolve => require(['@/pages/bigScreen'], resolve)
+	import BigScreen from '@/pages/bigScreen';
 	const UserManage = resolve => require(['@/pages/system/userManage'], resolve)
 	const EquipmentManage = resolve => require(['@/pages/system/equipmentManage'], resolve)
 	const Authority = resolve => require(['@/pages/system/authority'], resolve)
@@ -126,7 +126,7 @@
 	
 
 	router.beforeEach((to, from, next) => {
-		console.log(to);
+//		console.log(to);
 		if(to.path == '/login') {
 			window.sessionStorage.removeItem('access-user');
 			router.app.$store.commit('keepAdminUserInfo',{});
