@@ -37,7 +37,8 @@ export const selectUserLogByTime = params => { return axios.post(`${base}/log/se
 export const selectLogByLastWeek = params => { return axios.post(`${base}/log/selectLogByLastWeek`, params).then(res => res.data).catch(error=>error); };
 export const selectSuccessLog = params => { return axios.post(`${base}/log/selectSuccessLog`, params).then(res => res.data).catch(error=>error); };
 
-export const insertPlayVideo = params => { return axios.post(`${base}//log/insertPlayVideo`, params).then(res => res.data).catch(error=>error); };
+export const insertPlayVideo = params => { return axios.post(`${base}/log/insertPlayVideo`, params).then(res => res.data).catch(error=>error);};
+export const ptzControl = params => { return axios.post(`${base}/video/ptzControl`, params).then(res => res.data).catch(error=>error); };
 //ceshi
 export const synchroEquipmentNumber = params => { return axios.post(`${base}/psql/synchroEquipmentNumber`, params).then(res => res.data).catch(error=>error); };
 

@@ -92,6 +92,8 @@
 							</el-table-column>
 							<el-table-column prop="ip" label="IP地址">
 							</el-table-column>
+							<el-table-column prop="port" label="端口号">
+							</el-table-column>
 							<!--<el-table-column prop="address" label="安装位置">
 					</el-table-column>-->
 							<el-table-column label="操作" width="150">
@@ -136,6 +138,15 @@
 				<el-form-item label="IP地址" prop="ip">
 					<el-input v-model="formInfo.ip" auto-complete="off"></el-input>
 				</el-form-item>
+				<el-form-item label="端口号" prop="port">
+					<el-input v-model="formInfo.port" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="用户名" prop="account"  :rules="[{ required: true, message: '请输入用户名', trigger: 'blur'}]">
+					<el-input v-model="formInfo.account" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="密码" prop="password"  :rules="[{ required: true, message: '请输入密码', trigger: 'blur'}]" >
+					<el-input v-model="formInfo.password"  type="password"  auto-complete="off"></el-input>
+				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="dialogFormAddVisible = false">取 消</el-button>
@@ -166,6 +177,15 @@
 				</el-form-item>
 				<el-form-item label="IP地址" prop="ip" >
 					<el-input v-model="formEditInfo.ip" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="端口号" prop="port">
+					<el-input v-model="formEditInfo.port" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="用户名" prop="account"  :rules="[{ required: true, message: '请输入用户名', trigger: 'blur'}]">
+					<el-input v-model="formEditInfo.account" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="密码" prop="password"  :rules="[{ required: true, message: '请输入密码', trigger: 'blur'}]" >
+					<el-input v-model="formEditInfo.password"   auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -233,6 +253,9 @@
 					latitude: "",
 					type: "0",
 					ip: "",
+					port:"",
+					account:"",
+					password:"",
 					groupId: "",
 					groupArr: [],
 					man: this.$store.state.adminUserInfo.id,

@@ -41,17 +41,17 @@
     </el-tab-pane>
     <el-tab-pane label="云镜控制" name="second">
     	<div class="ptzCtrl" style="height: 250px;">
-			<div class="ptzCircle" style="background-position: -684px 0px;">
+			<div class="ptzCircle" style="background-position: 0px 0px;">
 				<div><span class="ptzC1" title="1"></span><span class="ptzC2" title="2"></span><span class="ptzC3" title="3"></span><span class="ptzC4" title="4"></span><span class="ptzC5" title="5"></span><span class="ptzC6" title="6"></span><span class="ptzC7" title="7"></span></div>
-				<a href="javascript:void(0)" ctrlcmd="21" class="ptzT1" title="上移"></a>
-				<a href="javascript:void(0)" ctrlcmd="24" class="ptzT2" title="右移"></a>
-				<a href="javascript:void(0)" ctrlcmd="22" class="ptzT3" title="下移"></a>
-				<a href="javascript:void(0)" ctrlcmd="23" class="ptzT4" title="左移"></a>
-				<a href="javascript:void(0)" class="ptzB1"><span ctrlcmd="25" title="左上移动"></span></a>
+				<a href="javascript:void(0)" ctrlcmd="21" class="ptzT1" title="上移" @click="controlDirection('21')"></a>
+				<a href="javascript:void(0)" ctrlcmd="24" class="ptzT2" title="右移" @click="controlDirection('24')"></a>
+				<a href="javascript:void(0)" ctrlcmd="22" class="ptzT3" title="下移" @click="controlDirection('22')"></a>
+				<a href="javascript:void(0)" ctrlcmd="23" class="ptzT4" title="左移" @click="controlDirection('23')"></a>
+				<!--<a href="javascript:void(0)" class="ptzB1"><span ctrlcmd="25" title="左上移动"></span></a>
 				<a href="javascript:void(0)" class="ptzB2"><span ctrlcmd="26" title="右上移动"></span></a>
 				<a href="javascript:void(0)" class="ptzB3"><span ctrlcmd="28" title="右下移动"></span></a>
-				<a href="javascript:void(0)" class="ptzB4"><span ctrlcmd="27" title="左下移动"></span></a>
-				<a href="javascript:void(0)" ctrlcmd="29" class="ptzBtn ptzAutoScanMark" title="自动扫描"></a>
+				<a href="javascript:void(0)" class="ptzB4"><span ctrlcmd="27" title="左下移动"></span></a>-->
+				<!--<a href="javascript:void(0)" ctrlcmd="29" class="ptzBtn ptzAutoScanMark" title="自动扫描"></a>-->
 			</div>
 			<ul class="ptzHandle">
 				<li class="ptzM1">
@@ -133,7 +133,7 @@
 <script>
 	import '../../static/css/traffic.min.css'
 	import { formatTreeData } from '../js/formatTreeData';
-	import { selectGroup, selectRoad, selectAllEquipment ,insertPlayVideo} from '../js/api';
+	import { selectGroup, selectRoad, selectAllEquipment ,insertPlayVideo,ptzControl} from '../js/api';
 	import  Vplayer  from './components/videoPlayer';
 	export default {
 		components:{
@@ -186,12 +186,45 @@
 				},
 				
 				videoParametersArr:[],
+				movingSpeed:10,
 
 			}
 		},
 		computed: {
 		},
 		methods: {
+			//控制摄像头
+			controlMonitoring(id,dwSpeed,direction){
+				let info={id:id,dwSpeed:dwSpeed,direction:direction};
+				ptzControl(info).then(data => {
+					let {
+						errMsg,
+						errCode,
+						value,
+						extraInfo,
+						success
+					} = data;
+					if(success) {
+						console.log(errMsg);
+					} else {
+						this.$message({
+							message: errMsg,
+							type: 'error'
+						});
+					}
+			});
+			},
+			controlDirection(dir){
+				if(this.options[this.index].id){
+					this.controlMonitoring(this.options[this.index].id,this.movingSpeed,dir);
+				}else{
+					this.$message({
+							message: '请先选中播放中的设备',
+							type: 'warning'
+						});
+				}
+				
+			},
 			handleClick(){
 				
 			},
@@ -481,6 +514,15 @@
 			}
 		},
 		mounted() {
+			var _this=this;
+			$(".ptzCircle>div>span").click(function(){
+				
+				_this.movingSpeed=this.title * 10;
+				console.log('移动速度',_this.movingSpeed);
+				let val=(-(this.title-1)*171)+'px 0px';
+				$('.ptzCircle').css('background-position',val);
+			});
+			
 			
 //			var objEle=$("object");
 //			console.log(objEle);

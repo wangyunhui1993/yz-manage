@@ -1,0 +1,374 @@
+﻿.ptzCtrl .ptzCircle,
+.ptzCtrl .ptzHandle li a i,
+.ptzCtrl a {
+	background: url(../images/ptz.png) no-repeat
+}
+
+.ptzCtrl {
+	margin: 0 auto;
+	padding: 5px;
+	display: inline-block
+}
+
+.ptzCtrl .ptzHandle li,
+.ptzCtrl a {
+	display: inline-block
+}
+
+.ptzCtrl .ptzCircle {
+	width: 171px;
+	height: 170px;
+	position: relative;
+	background-position: 0 0;
+	margin: 0 0 12px 28px
+}
+
+.ptzCtrl .ptzCircle>div span {
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	position: absolute;
+	z-index: 9
+}
+
+.ptzCtrl .ptzCircle>div span:hover {
+	cursor: pointer
+}
+
+.ptzCtrl .ptzCircle>div span.ptzC1 {
+	left: 25px;
+	bottom: 24px
+}
+
+.ptzCtrl .ptzCircle>div span.ptzC2 {
+	left: 3px;
+	top: 75px
+}
+
+.ptzCtrl .ptzCircle>div span.ptzC3 {
+	left: 25px;
+	top: 24px
+}
+
+.ptzCtrl .ptzCircle>div span.ptzC4 {
+	left: 77px;
+	top: 3px
+}
+
+.ptzCtrl .ptzCircle>div span.ptzC5 {
+	right: 25px;
+	top: 24px
+}
+
+.ptzCtrl .ptzCircle>div span.ptzC6 {
+	right: 3px;
+	top: 75px
+}
+
+.ptzCtrl .ptzCircle>div span.ptzC7 {
+	right: 25px;
+	bottom: 24px
+}
+
+.ptzCtrl .ptzCircle a {
+	position: absolute
+}
+
+.ptzCtrl .ptzCircle a:hover {
+	cursor: pointer
+}
+
+.ptzCtrl .ptzCircle .ptzT1,
+.ptzCtrl .ptzCircle .ptzT3 {
+	width: 48px;
+	height: 30px
+}
+
+.ptzCtrl .ptzCircle .ptzT2,
+.ptzCtrl .ptzCircle .ptzT4 {
+	width: 30px;
+	height: 48px
+}
+
+.ptzCtrl .ptzCircle .ptzT1 {
+	top: 24px;
+	left: 61px;
+	background-position: -137px -281px
+}
+
+.ptzCtrl .ptzCircle .ptzT1.active,
+.ptzCtrl .ptzCircle .ptzT1:hover {
+	background-position: -137px -330px
+}
+
+.ptzCtrl .ptzCircle .ptzT2 {
+	top: 62px;
+	right: 20px;
+	background-position: -238px -266px
+}
+
+.ptzCtrl .ptzCircle .ptzT2.active,
+.ptzCtrl .ptzCircle .ptzT2:hover {
+	background-position: -238px -315px
+}
+
+.ptzCtrl .ptzCircle .ptzT3 {
+	bottom: 20px;
+	left: 63px;
+	background-position: -323px -278px
+}
+
+.ptzCtrl .ptzCircle .ptzT3.active,
+.ptzCtrl .ptzCircle .ptzT3:hover {
+	background-position: -323px -326px
+}
+
+.ptzCtrl .ptzCircle .ptzT4 {
+	top: 62px;
+	left: 24px;
+	background-position: -57px -267px
+}
+
+.ptzCtrl .ptzCircle .ptzT4.active,
+.ptzCtrl .ptzCircle .ptzT4:hover {
+	background-position: -57px -316px
+}
+
+.ptzCtrl .ptzCircle .ptzB1,
+.ptzCtrl .ptzCircle .ptzB2,
+.ptzCtrl .ptzCircle .ptzB3,
+.ptzCtrl .ptzCircle .ptzB4 {
+	width: 44px;
+	height: 44px
+}
+
+.ptzCtrl .ptzCircle .ptzB1 {
+	top: 34px;
+	left: 28px;
+	background-position: -94px -274px
+}
+
+.ptzCtrl .ptzCircle .ptzB1.active {
+	background-position: -94px -323px
+}
+
+.ptzCtrl .ptzCircle .ptzB2 {
+	top: 30px;
+	right: 24px;
+	background-position: -187px -269px
+}
+
+.ptzCtrl .ptzCircle a.active:hover {
+	cursor: pointer!important
+}
+
+.ptzCtrl .ptzCircle .ptzB2.active {
+	background-position: -187px -318px
+}
+
+.ptzCtrl .ptzCircle .ptzB3 {
+	bottom: 26px;
+	right: 27px;
+	background-position: -276px -271px
+}
+
+.ptzCtrl .ptzCircle .ptzB3.active {
+	background-position: -276px -320px
+}
+
+.ptzCtrl .ptzCircle .ptzB4 {
+	bottom: 28px;
+	left: 27px;
+	background-position: 0 -265px
+}
+
+.ptzCtrl .ptzCircle .ptzB4.active {
+	background-position: 0 -314px
+}
+
+.ptzCtrl .ptzCircle .ptzBtn {
+	width: 44px;
+	height: 44px;
+	bottom: 65px;
+	left: 63px;
+	background-position: -537px -174px
+}
+
+.ptzCtrl .ptzCircle .ptzBtn:hover {
+	background-position: -537px -222px
+}
+
+.ptzCtrl .ptzCircle a span {
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	margin: 12px
+}
+
+.ptzCtrl .ptzCircle a.ptzB1:hover,
+.ptzCtrl .ptzCircle a.ptzB2:hover,
+.ptzCtrl .ptzCircle a.ptzB3:hover,
+.ptzCtrl .ptzCircle a.ptzB4:hover {
+	cursor: default
+}
+
+.ptzCtrl .ptzCircle a.ptzB2 span {
+	margin: 12px 16px 12px 8px
+}
+
+.ptzCtrl .ptzCircle a.ptzB3 span {
+	margin: 8px 16px 16px 8px
+}
+
+.ptzCtrl .ptzCircle a.ptzB4 span {
+	margin: 8px 8px 16px 16px
+}
+
+.ptzCtrl ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0
+}
+
+.ptzCtrl .ptzHandle li {
+	margin-left: 5px;
+	position: relative
+}
+
+.ptzCtrl .ptzHandle li:hover {
+	background-position: -2px -212px
+}
+
+.ptzCtrl .ptzHandle li a {
+	position: relative;
+	width: 36px;
+	height: 32px
+}
+
+.ptzCtrl .ptzHandle li.ptzM1 a:first-child,
+.ptzCtrl .ptzHandle li.ptzM2 a:first-child,
+.ptzCtrl .ptzHandle li.ptzM3 a:first-child {
+	background-position: -3px -177px
+}
+
+.ptzCtrl .ptzHandle li.ptzM1 a:first-child+a,
+.ptzCtrl .ptzHandle li.ptzM2 a:first-child+a,
+.ptzCtrl .ptzHandle li.ptzM3 a:first-child+a {
+	background-position: -39px -177px
+}
+
+.ptzCtrl .ptzHandle li.ptzM1 a:first-child:hover,
+.ptzCtrl .ptzHandle li.ptzM2 a:first-child:hover,
+.ptzCtrl .ptzHandle li.ptzM3 a:first-child:hover {
+	background-position: -3px -212px
+}
+
+.ptzCtrl .ptzHandle li.ptzM1 a:first-child+a:hover,
+.ptzCtrl .ptzHandle li.ptzM2 a:first-child+a:hover,
+.ptzCtrl .ptzHandle li.ptzM3 a:first-child+a:hover {
+	background-position: -39px -212px
+}
+
+.ptzCtrl .ptzConfig a,
+.ptzCtrl .ptzHandle li a i {
+	display: inline-block;
+	width: 21px;
+	height: 21px
+}
+
+.ptzCtrl .ptzHandle li a i {
+	position: absolute
+}
+
+.ptzCtrl .ptzHandle li.ptzM1 a:first-child i {
+	background-position: -93px -188px;
+	top: 7px;
+	left: 12px
+}
+
+.ptzCtrl .ptzHandle li.ptzM1 a:first-child+a i {
+	background-position: -125px -186px;
+	right: 9px;
+	top: 4px
+}
+
+.ptzCtrl .ptzHandle li.ptzM2 a:first-child i {
+	background-position: -168px -188px;
+	top: 7px;
+	left: 11px
+}
+
+.ptzCtrl .ptzHandle li.ptzM2 a:first-child+a i {
+	background-position: -198px -186px;
+	right: 9px;
+	top: 5px
+}
+
+.ptzCtrl .ptzHandle li.ptzM3 a:first-child i {
+	background-position: -276px -186px;
+	top: 6px;
+	left: 12px
+}
+
+.ptzCtrl .ptzHandle li.ptzM3 a:first-child+a i {
+	background-position: -245px -186px;
+	right: 10px;
+	top: 6px
+}
+
+.ptzCtrl .ptzHandle li:first-child {
+	margin: 0
+}
+
+.ptzCtrl .ptzConfig {
+	margin-top: 15px
+}
+
+.ptzCtrl .ptzConfig a {
+	margin-left: 20px
+}
+
+.ptzCtrl .ptzConfig a.ptzG1 {
+	background-position: -326px -186px
+}
+
+.ptzCtrl .ptzConfig a.ptzG1.active,
+.ptzCtrl .ptzConfig a.ptzG1:hover {
+	background-position: -326px -223px
+}
+
+.ptzCtrl .ptzConfig a.ptzG2 {
+	background-position: -366px -186px
+}
+
+.ptzCtrl .ptzConfig a.ptzG2.active,
+.ptzCtrl .ptzConfig a.ptzG2:hover {
+	background-position: -366px -223px
+}
+
+.ptzCtrl .ptzConfig a.ptzG3 {
+	background-position: -406px -186px
+}
+
+.ptzCtrl .ptzConfig a.ptzG3.active,
+.ptzCtrl .ptzConfig a.ptzG3:hover {
+	background-position: -406px -223px
+}
+
+.ptzCtrl .ptzConfig a.ptzG4 {
+	background-position: -446px -186px
+}
+
+.ptzCtrl .ptzConfig a.ptzG4.active,
+.ptzCtrl .ptzConfig a.ptzG4:hover {
+	background-position: -446px -223px
+}
+
+.ptzCtrl .ptzConfig a.ptzG5 {
+	background-position: -486px -186px
+}
+
+.ptzCtrl .ptzConfig a.ptzG5.active,
+.ptzCtrl .ptzConfig a.ptzG5:hover {
+	background-position: -486px -223px
+}
