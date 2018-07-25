@@ -28,7 +28,7 @@ Vue.use(BaiduMap, {
   // ak 是在百度地图开发者平台申请的密钥 详见 http://lbsyun.baidu.com/apiconsole/key */
   ak: 'MEBiZk1g1whGxGor9XZdUnyb4L2ZD9Hh'
 })
-
+console.log(BaiduMap.init);
  //引入视屏播放插件
 import VueVideoPlayer from 'vue-video-player'
 import 'video.js/dist/video-js.css'
@@ -45,7 +45,7 @@ import Icon from 'vue-awesome/components/Icon'
 // globally (in your main .js file)
    Vue.component('icon', Icon)
 
-import '@/assets/iconfont.css'
+import '@/assets/iconfont/iconfont.css'
 import router from './router'
 import Validator from 'vue-validator'
 Vue.use(Validator)
@@ -54,7 +54,6 @@ Vue.use(ElementUI)
 // Vue.use(Fontawesome)
 /* eslint-disable no-new */
 // 创建和挂载根实例
-
 
 
 

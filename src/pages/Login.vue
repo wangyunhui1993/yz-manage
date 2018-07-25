@@ -22,6 +22,7 @@
 <script>
 	import {login} from '../js/api'
 	import { LStorage ,SStorage} from "../js/LStorage"
+	import { opCookie} from "../js/cookie"
 	export default {
 		data() {
 			return {
@@ -49,16 +50,24 @@
 					if (valid) {
 						this.logining = true;
 //						var loginParams = { username: this.account.username, password: this.account.password };
-						console.log(JSON.stringify(this.account));
+//						console.log(JSON.stringify(this.account));
 						
 						login(this.account).then(data=>{
 							this.logining = false;
 							let { errMsg, errCode, value, extralInfo,success} = data;
-							console.log(data);
+//							console.log(data);
 							if (success) {
 								console.log(value);
-								SStorage.setItem('access-user', value);
-								this.$store.commit('keepAdminUserInfo',value);
+								for(var item in value){
+									opCookie.setCookie(item, value[item],30);
+								}
+								
+								this.$store.commit('keepAdminUserInfo',{
+									id:value.id,
+									roleId:value.roleId,
+									userName:value.userName,
+								});
+								console.log(this.$store.state);
 //								let info={
 //									adminId:adminUserInfo.adminId
 //								}
@@ -93,7 +102,6 @@
 		},
 		mounted: function () {
 			let LocalUserInfo=LStorage.getItem("localaccess-user");
-			console.log(LocalUserInfo);
 			if(LocalUserInfo!=null){
 				this.account.username=LocalUserInfo.username;
 				this.account.password=LocalUserInfo.password;

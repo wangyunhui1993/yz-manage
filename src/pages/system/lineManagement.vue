@@ -33,7 +33,9 @@
 					</div>
 				</el-card>-->
 				<baidu-map class="bm-view" :center="center" :zoom="zoom1" @mousewheel.native="mousewheelOp('zoom1')">
-					<bm-polyline v-for="item in formatAfterLineArr" :key="item.id" v-if="item.show" :path="item.ll" stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="5"></bm-polyline>
+					<!--<bm-polyline v-for="item in formatAfterLineArr" :key="item.id" v-if="item.show" :path="item.ll" stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="5"></bm-polyline>-->
+					<bm-polyline v-for="item in formatAfterLineArr"  :key="item.id" v-if="item.show" :path="item.ll"  strokeDasharray="5,10,5"   stroke-color="#0066FF" :stroke-opacity="1"  :stroke-weight="5"></bm-polyline>
+					 <!--<bml-curve-line v-for="item in formatAfterLineArr" :key="item.id" v-if="item.show"  :points="item.ll" :editing="true"></bml-curve-line>-->
 				</baidu-map>
 			</el-main>
 		</el-container>
@@ -55,7 +57,7 @@
 			</el-row>
 			<el-row class="lineReview">
 				<baidu-map class="bm-view" :center="center" :zoom="zoom2" @mousewheel.native="mousewheelOp('zoom2')">
-					<bm-polyline :path="addPolylinePath" stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="5"></bm-polyline>
+					<bm-polyline :path="addPolylinePath"  stroke-color="#0066FF" :stroke-opacity="1"  :stroke-weight="5"></bm-polyline>
 				</baidu-map>
 			</el-row>
 		</el-dialog>
@@ -78,7 +80,6 @@
 			</el-row>
 			<el-row class="lineReview">
 				<baidu-map class="bm-view" :center="center" :zoom="zoom3" @mousewheel.native="mousewheelOp('zoom3')">
-					
 					<bm-polyline :path="editPolylinePath" stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="5"></bm-polyline>
 				</baidu-map>
 			</el-row>
@@ -87,7 +88,9 @@
 	</section>
 </template>
 <script>
+	
 	import { BmlCurveLine } from 'vue-baidu-map'
+	import BaiduMap from 'vue-baidu-map'
 	import { insertRoad, updateRoad, deleteRoad, selectRoad } from '../../js/api';
 	export default {
 		components: {
@@ -482,6 +485,10 @@
 			}
 		},
 		mounted() {
+//			var xx = 120.1755556;
+//			var yy = 35.94;
+//			var gpsPoint = new BMap.Point(xx,yy);
+//			console.log(gpsPoint);
 
 		},
 		created() {

@@ -39,4 +39,19 @@
 		bottom: 0;
 		width: 100%;
 	}
+	
+/*修改滚动条样式*/
+/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+::-webkit-scrollbar
+{
+  width: 8px;
+  height: 8px;
+}
+/*定义滑块 内阴影+圆角*/
+::-webkit-scrollbar-thumb
+{
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+  background-color: #1D8CE0;
+}
 </style>

@@ -6,19 +6,21 @@
 					<el-input placeholder="输入关键字过滤" size="small" suffix-icon="el-icon-search" v-model="filterText">
 					</el-input>
 				</el-row>
-				<div style="flex-grow:1;flex-shrink:1;overflow-y:scroll ;">
+				<div style="flex-grow:1;flex-shrink:1;overflow-y:scroll ; ">
 					<el-tree :data="groupAndEqu"  class="qwertyuuiio" node-key="id"  :filter-node-method="filterNode"   default-expand-all draggable :expand-on-click-node="false"  ref="tree2"   @node-drag-start="handleDragStart" @node-drag-enter="handleDragEnter" @node-drag-leave="handleDragLeave" @node-drag-over="handleDragOver" @node-drag-end="handleDragEnd" @node-drop="handleDrop" :allow-drop="allowDrop" :allow-drag="allowDrag">
 						<span class="custom-tree-node" slot-scope="{ node, data }" >
 	       				 <span v-if="data.type==='group'"><i class="fa fa-sitemap"></i> {{ data.title }}</span>
-						<span v-if="data.type==='0'"  @dblclick="dblclickBtn(data)" ><i class="fa fa-video-camera"></i> {{ data.title }}</span>
+						<span v-else-if="data.type==='0'"  @dblclick="dblclickBtn(data)" ><i  :class="Edata.icon.cameravideo"></i> {{ data.title }}</span>
+						<span v-else  @dblclick="dblclickBtn(data)" ><i  :class="Edata.icon.domecamera"></i> {{ data.title }}</span>
 						</span>
 					</el-tree>
 				</div>
-				<div style="flex-grow:0;flex-shrink:0;">
+				<div style="flex-grow:0;flex-shrink:0;position: relative;">
+					<i class="el-icon-d-arrow-left"  @click="visVideoParameters" :class="showVideoParameters?'VideoParametersOpen':'VideoParametersClose'"></i>
 					<el-card class="box-card videoParameters" :body-style="{ padding: '10px'}">
 						<el-tabs v-model="activeOp" type="card" @tab-click="handleClick">
     <el-tab-pane label="视频参数" name="first">
-    	<div style="height: 250px;padding: 5px;">
+    	<div style="height: 250px;padding: 5px 12px;"  v-show="showVideoParameters">
     		<div class="block">
 								<span class="demonstration">亮度</span>
 								<el-slider v-model="videoParameters.brightness" @change="arametersChange" :max="200"></el-slider>
@@ -39,33 +41,33 @@
     	</div>
     	
     </el-tab-pane>
-    <el-tab-pane label="云镜控制" name="second">
-    	<div class="ptzCtrl" style="height: 250px;">
+    <el-tab-pane label="云镜控制" name="second" v-if="controlModule">
+    	<div class="ptzCtrl" style="height: 250px;"  v-show="showVideoParameters">
 			<div class="ptzCircle" style="background-position: 0px 0px;">
-				<div><span class="ptzC1" title="1"></span><span class="ptzC2" title="2"></span><span class="ptzC3" title="3"></span><span class="ptzC4" title="4"></span><span class="ptzC5" title="5"></span><span class="ptzC6" title="6"></span><span class="ptzC7" title="7"></span></div>
-				<a href="javascript:void(0)" ctrlcmd="21" class="ptzT1" title="上移" @click="controlDirection('21')"></a>
-				<a href="javascript:void(0)" ctrlcmd="24" class="ptzT2" title="右移" @click="controlDirection('24')"></a>
-				<a href="javascript:void(0)" ctrlcmd="22" class="ptzT3" title="下移" @click="controlDirection('22')"></a>
-				<a href="javascript:void(0)" ctrlcmd="23" class="ptzT4" title="左移" @click="controlDirection('23')"></a>
+				<div><span class="ptzC1" title="1" @click="controlSpeed($event)"></span><span class="ptzC2" title="2"  @click="controlSpeed($event)"></span><span class="ptzC3" title="3"  @click="controlSpeed($event)"></span><span class="ptzC4" title="4"  @click="controlSpeed($event)"></span><span class="ptzC5" title="5"  @click="controlSpeed($event)"></span><span class="ptzC6" title="6"  @click="controlSpeed($event)"></span><span class="ptzC7" title="7"  @click="controlSpeed($event)"></span></div>
+				<a href="javascript:void(0)" ctrlcmd="21" class="ptzT1" title="上移" @click="controlDirection($event)"></a>
+				<a href="javascript:void(0)" ctrlcmd="24" class="ptzT2" title="右移" @click="controlDirection($event)"></a>
+				<a href="javascript:void(0)" ctrlcmd="22" class="ptzT3" title="下移" @click="controlDirection($event)"></a>
+				<a href="javascript:void(0)" ctrlcmd="23" class="ptzT4" title="左移" @click="controlDirection($event)"></a>
 				<!--<a href="javascript:void(0)" class="ptzB1"><span ctrlcmd="25" title="左上移动"></span></a>
 				<a href="javascript:void(0)" class="ptzB2"><span ctrlcmd="26" title="右上移动"></span></a>
 				<a href="javascript:void(0)" class="ptzB3"><span ctrlcmd="28" title="右下移动"></span></a>
 				<a href="javascript:void(0)" class="ptzB4"><span ctrlcmd="27" title="左下移动"></span></a>-->
-				<!--<a href="javascript:void(0)" ctrlcmd="29" class="ptzBtn ptzAutoScanMark" title="自动扫描"></a>-->
+				<a href="javascript:void(0)" ctrlcmd="29" class="ptzBtn ptzAutoScanMark" title="自动扫描" @click="automaticScanning($event)"></a>
 			</div>
-			<ul class="ptzHandle">
+			<ul class="ptzHandle" style="margin-left: 30px;">
 				<li class="ptzM1">
-					<a ctrlcmd="12" href="javascript:void(0)" title="变小焦距"><i></i></a>
-					<a href="javascript:void(0)" ctrlcmd="11" title="变大焦距"><i></i></a>
+					<a ctrlcmd="12" href="javascript:void(0)" title="变小焦距" @click="controlDirection($event)"><i></i></a>
+					<a href="javascript:void(0)" ctrlcmd="11" title="变大焦距" @click="controlDirection($event)"><i></i></a>
 				</li>
 				<li class="ptzM2">
-					<a href="javascript:void(0)" ctrlcmd="13" title="前调焦点"><i></i></a>
-					<a href="javascript:void(0)" ctrlcmd="14" title="后调焦点"><i></i></a>
+					<a href="javascript:void(0)" ctrlcmd="13" title="前调焦点" @click="controlDirection($event)"><i></i></a>
+					<a href="javascript:void(0)" ctrlcmd="14" title="后调焦点" @click="controlDirection($event)"><i></i></a>
 				</li>
-				<li class="ptzM3">
+				<!--<li class="ptzM3">
 					<a href="javascript:void(0)" ctrlcmd="16" title="扩大光圈"><i></i></a>
 					<a href="javascript:void(0)" ctrlcmd="15" title="缩小光圈"><i></i></a>
-				</li>
+				</li>-->
 			</ul>
 			<div class="ptzConfig"></div>
 		</div>
@@ -133,7 +135,8 @@
 <script>
 	import '../../static/css/traffic.min.css'
 	import { formatTreeData } from '../js/formatTreeData';
-	import { selectGroup, selectRoad, selectAllEquipment ,insertPlayVideo,ptzControl} from '../js/api';
+	import {Edata} from '../js/Edata';
+	import { selectGroup, selectRoad, selectAllEquipment ,insertPlayVideo,ptzControl,jButtonAutoActionPerformed} from '../js/api';
 	import  Vplayer  from './components/videoPlayer';
 	export default {
 		components:{
@@ -141,6 +144,8 @@
 		},
 		data() {
 			return {
+				Edata:Edata,
+				controlModule:false,
 				activeOp:"first",
 				index:0,
 				dragUrl:{},
@@ -187,12 +192,46 @@
 				
 				videoParametersArr:[],
 				movingSpeed:10,
+				isAtuo:false,
 
 			}
 		},
 		computed: {
 		},
 		methods: {
+			//自动扫描
+			automaticScanning(){
+				if(this.options[this.index].id){
+					this.isAtuo=!this.isAtuo;
+				let info={id:this.options[this.index].id,dwSpeed:this.movingSpeed,isAtuo:this.isAtuo};
+				console.log('自动扫描',info);
+				jButtonAutoActionPerformed(info).then(data => {
+					let {
+						errMsg,
+						errCode,
+						value,
+						extraInfo,
+						success
+					} = data;
+					if(success) {
+						console.log(errMsg);
+					} else {
+						this.$message({
+							message: errMsg,
+							type: 'error'
+						});
+					}
+			});
+				}else{
+					this.$message({
+							message: '请先选中播放中的设备',
+							type: 'warning'
+						});
+				}
+				
+				
+				
+			},
 			//控制摄像头
 			controlMonitoring(id,dwSpeed,direction){
 				let info={id:id,dwSpeed:dwSpeed,direction:direction};
@@ -214,7 +253,9 @@
 					}
 			});
 			},
-			controlDirection(dir){
+			controlDirection(event){
+				let obj = event.srcElement ? event.srcElement : event.target;
+				let dir=obj.getAttribute('ctrlcmd');
 				if(this.options[this.index].id){
 					this.controlMonitoring(this.options[this.index].id,this.movingSpeed,dir);
 				}else{
@@ -233,8 +274,19 @@
 				this.videoParameters=Object.assign({},val);
 				console.log(val);
 			},
+			showControl(index){
+				if(this.$store.state.adminUserInfo.roleId==7 && 'type' in this.options[index] && this.options[index].type==1){
+					this.controlModule=true;
+				}else{
+					this.activeOp="first";
+					this.controlModule=false;
+				}
+			},
 			indexFn(val){
 				this.index=val;
+				this.showControl(val);
+				
+				
 				console.log('当前item',val)
 				console.log('参数数据',this.videoParametersArr[val]);
 				console.log('所有数据',this.videoParametersArr);
@@ -321,16 +373,29 @@
 				} else {
 					
 					this.btn_H = arg;
-					this.bigNum = [];
-					this.num = arg;
-					this.options=[];
-					this.videoParametersArr=[];
-					for(var i = 1; i <= arg; i++) {
-						console.log('大屏', i);
-						this.bigNum.push(i);
-						this.options.push({id:"",serial:"",title:""});
-						this.videoParametersArr.push({brightness: 100,contrast: 100,saturation: 100});
+					if(this.num>arg){
+						for(var i=arg;i<this.num;i++){
+							this.options.pop();
+							this.videoParametersArr.pop();
+							this.bigNum.pop();
+						}
+					}else if(this.num<arg){
+						for(var i=this.num;i<arg;i++){
+							this.options.push({id:"",serial:"",title:"",type:""});
+							this.videoParametersArr.push({brightness: 100,contrast: 100,saturation: 100});
+							this.bigNum.push(i+1);
+						}
 					}
+					this.num = arg;
+//					this.bigNum = [];
+//					this.options=[];
+//					this.videoParametersArr=[];
+//					for(var i = 1; i <= arg; i++) {
+//						console.log('大屏', i);
+//						this.bigNum.push(i);
+//						this.options.push({id:"",serial:"",title:"",type:""});
+//						this.videoParametersArr.push({brightness: 100,contrast: 100,saturation: 100});
+//					}
 				}
 
 			},
@@ -361,13 +426,14 @@
 							if(equArray.length !== 0) {
 								for(let i = 0; i < chiArr.length; i++) {
 									for(let j = 0; j < equArray.length; j++) {
-										if(chiArr[i].id == equArray[j].id && chiArr[i].type == 'group' && equArray[j].type !== "1") {
+										if(chiArr[i].id == equArray[j].id && chiArr[i].type == 'group' ) {
 											let obj = {
 												id: equArray[j].eId,
 												title: equArray[j].eName,
 												children: [],
 												type: equArray[j].type,
-												serial:i%2==0?"rtmp://dxftech.asuscomm.com/hls/mystream":"rtmp://184.72.239.149/vod/&mp4:BigBuckBunny_115k.mov"
+												serial:equArray[j].serial,
+//												serial:i%2==0?"rtmp://dxftech.asuscomm.com/hls/mystream":"rtmp://184.72.239.149/vod/&mp4:BigBuckBunny_115k.mov"
 											};
 											console.log(i%2);
 											chiArr[i].children.push(obj);
@@ -428,14 +494,19 @@
 			},
 			drop(index) {
 				console.log(index);
+				console.log(this.index);
 				console.log(this.dragUrl);
 				this.options.splice(index,1,this.dragUrl);
 				this.insertPlayVideoNum(this.dragUrl.id);
+				if(index==this.index){
+					this.showControl(this.index);
+				}
 			},
 			dblclickBtn(data){
 				console.log(data);
 				console.log(this.index);
 				this.options.splice(this.index,1,data);
+				this.showControl(this.index);
 			},
 			dragenter(ev) {
 //				console.log(ev);
@@ -449,7 +520,7 @@
 			handleDragStart(node, ev) {
 				console.log('drag start', node);
 				this.dragUrl={
-					id:node.data.id,serial:node.data.serial,title:node.data.title
+					id:node.data.id,serial:node.data.serial,title:node.data.title,type:node.data.type,
 				};
 			},
 			handleDragEnter(draggingNode, dropNode, ev) {
@@ -506,6 +577,13 @@
 				this.videoParametersArr[this.index].contrast=100;
 				this.videoParametersArr[this.index].saturation=100;
 			},
+			controlSpeed(event){
+				let obj = event.srcElement ? event.srcElement : event.target;
+				console.log(obj);
+				this.movingSpeed=obj.title * 10;
+				let val=(-(obj.title-1)*171)+'px 0px';
+				$('.ptzCircle').css('background-position',val);
+			},
 
 		},
 		watch: {
@@ -514,14 +592,14 @@
 			}
 		},
 		mounted() {
-			var _this=this;
-			$(".ptzCircle>div>span").click(function(){
-				
-				_this.movingSpeed=this.title * 10;
-				console.log('移动速度',_this.movingSpeed);
-				let val=(-(this.title-1)*171)+'px 0px';
-				$('.ptzCircle').css('background-position',val);
-			});
+//			var _this=this;
+//			$(".ptzCircle>div>span").click(function(){
+//				
+//				_this.movingSpeed=this.title * 10;
+//				console.log('移动速度',_this.movingSpeed);
+//				let val=(-(this.title-1)*171)+'px 0px';
+//				$('.ptzCircle').css('background-position',val);
+//			});
 			
 			
 //			var objEle=$("object");
@@ -568,7 +646,7 @@
 </script>
 
 <style>
-	liveView {
+	.liveView {
 		position: relative;
 	}
 	
@@ -697,12 +775,22 @@
 	
 	.VideoParametersOpen {
 		transform: rotate(-90deg);
-		float: right;
+		position: absolute;
+		right: 5px;
+		top: 9px;
+		cursor: pointer;
+		z-index: 999;
+		padding: 5px;
 	}
 	
 	.VideoParametersClose {
 		transform: rotate(90deg);
-		float: right;
+		position: absolute;
+		right: 5px;
+		top: 9px;
+		cursor: pointer;
+		z-index: 999;
+		padding: 5px;
 	}
 	
 	.bigScreen .el-aside {
@@ -754,4 +842,7 @@
 		min-height: 300px !important;
 		min-width: 400px !important;
 	}*/
+	.ptzCtrl .ptzHandle li a {
+    cursor: pointer;
+}
 </style>

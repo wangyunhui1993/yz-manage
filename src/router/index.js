@@ -1,6 +1,7 @@
 	import Vue from 'vue'
 	import Router from 'vue-router'
 	import store from './../store'
+	
 	Vue.use(Router)
 	// 懒加载方式，当路由被访问的时候才加载对应组件
 	const Home = resolve => require(['@/pages/Home1'], resolve)
@@ -27,6 +28,7 @@
 
 
 	import { SStorage } from "../js/LStorage"
+	import {opCookie} from './../js/cookie'
 	// 定义并实例化路由
 	let router = new Router({
 		/*mode: 'history',*/
@@ -36,7 +38,7 @@
 		{
 				path: '/',
 				menuShow: false,
-				component: Login
+				redirect:"/map/mapShow",
 		},
 		{
 				path: '/login',
@@ -124,39 +126,40 @@
 		]
 	});
 	
-
 	router.beforeEach((to, from, next) => {
-//		console.log(to);
+		console.log(to);
+		console.log(from);
 		if(to.path == '/login') {
-			window.sessionStorage.removeItem('access-user');
-			router.app.$store.commit('keepAdminUserInfo',{});
+			
 			next();
 		} else {
-			if(router.app.$store.state.adminUserInfo.userName){  //判断$store是否有登录信息
+			/*if(router.app.$store.state.adminUserInfo.userName){  //判断$store是否有登录信息
 					next();
-				
 			}else{
-				if(!SStorage.getItem('access-user')){ //判断本地是否有登录信息
-					next({path: '/login'});
-				}else{
-					router.app.$store.commit('keepAdminUserInfo',SStorage.getItem('access-user'));
+				if(opCookie.getCookie('id') && opCookie.getCookie('roleId')!==undefined && opCookie.getCookie('userName')!==undefined){ //判断本地是否有登录信息
+					router.app.$store.commit('keepAdminUserInfo',{
+						id:opCookie.getCookie('id'),
+						roleId:opCookie.getCookie('roleId'),
+						userName:opCookie.getCookie('userName')
+					});
 					next();
+				}else{
+					next("/login");
 				}
-			}
+				
+			}*/
 			
-			
-			
-//			let user = SStorage.getItem('access-user');
-////			let user = JSON.parse(window.sessionStorage.getItem('access-user'));
-//			if(!user) {
-//				next({
-//					path: '/login'
-//				});
-//			} else {
-////				router.app.$store.commit('keepAdminUserInfo',SStorage.getItem('access-user'));
-//				next();
-//			}
-			next();
+			if(opCookie.getCookie('id') && opCookie.getCookie('userName')!=undefined  && opCookie.getCookie('roleId')!=undefined){ //判断cookie是否有登录信息
+					router.app.$store.commit('keepAdminUserInfo',{
+					id:opCookie.getCookie('id'),
+					roleId:opCookie.getCookie('roleId'),
+					userName:opCookie.getCookie('userName')
+					});
+					next();
+				}else{
+					next("/login");
+				}
+
 			
 			
 			

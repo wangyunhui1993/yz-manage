@@ -133,6 +133,7 @@
 	import { bus } from '../bus.js'
 	import {formatTime} from '../js/formatTime';
 	import {updatePassword,selectAllUser} from '../js/api';
+	import { opCookie} from "../js/cookie"
 	export default {
 		name: 'home',
 		data() {
@@ -206,7 +207,13 @@
 				this.$confirm('确认退出吗?', '提示', {
 					type: 'info'
 				}).then(() => {
-					sessionStorage.removeItem('access-user');
+//					sessionStorage.removeItem('access-user');
+//			console.log(opCookie.delCookie);
+			opCookie.delCookie("id");
+			opCookie.delCookie("realName");
+			opCookie.delCookie("roleId");
+			opCookie.delCookie("userName");
+			this.$store.commit('keepAdminUserInfo',{});
 					this.$router.push({path:"/login"});
 				}).catch((e) => {
 				});
@@ -280,6 +287,7 @@
 
 		created() {
 			var user = this.$store.state.adminUserInfo;
+			console.log("useruseruser",user);
 			if(user) {
 				this.sysUserName = user.userName || '';
 			}

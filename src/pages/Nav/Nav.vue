@@ -39,7 +39,6 @@
 						<el-breadcrumb-item v-for='item in bNav.children' v-if='item.path==$route.path' :key='item.path'>{{item.name}}</el-breadcrumb-item>
 					</el-breadcrumb>-->
 					<transition name="fade" mode="out-in">
-
 						<section class="rightcontent">
 							<router-view></router-view>
 						</section>
@@ -62,8 +61,6 @@
 //				backgroundColor:"#fff",
 //				textColor:"#333333",
 //				activeTextColor:"#0f67cc",
-				
-				
 				backgroundColor:"#1D8CE0",
 				textColor:"#fff",
 				activeTextColor:"#ccc",
@@ -71,7 +68,6 @@
 		},
 
 		beforeRouteEnter(to, from, next) {
-
 			next(vm => {
 				var vmRouter = vm.$router.options.routes;
 				for(var i = 0; i < vmRouter.length; i++) {
@@ -94,7 +90,7 @@
 
 		},
 		mounted() {
-			console.log("111111",this.$store.state.adminUserInfo.roleId);
+			console.log("111111",this.$store.state.adminUserInfo);
 			if(this.$store.state.adminUserInfo.roleId!=='7'){
 				this.systemShow=false;
 			}

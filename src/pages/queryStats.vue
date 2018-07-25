@@ -9,8 +9,8 @@
 				<bm-control anchor="BMAP_ANCHOR_TOP_RIGHT" :offset="part1Title">
 					<h3 style="color:#333">设备访问热度</h3>
 				</bm-control>
-				<bm-polyline v-for="(item,index) in formatAfterLineArr" :path="item.ll" stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="5"></bm-polyline>
-				<bml-heatmap :data="heatData" :max="5" :radius="20"></bml-heatmap>
+				<bm-polyline v-for="(item,index) in formatAfterLineArr"  :path="item.ll"  stroke-color="#0066FF" :stroke-opacity="1"  :stroke-weight="5"></bm-polyline>
+				<bml-heatmap :data="heatData" :max="hotMax" :radius="20"></bml-heatmap>
 			</baidu-map>
 		</div>
 		<div class="part">
@@ -62,6 +62,7 @@
 		},
 		data() {
 			return {
+				hotMax:10,
 				days: [],
 				day: [],
 				formatAfterLineArr: [],
@@ -264,7 +265,13 @@
 								lat: item.latitude,
 								count: parseInt(item.coun),
 							});
+							console.log(item);
+							if(this.hotMax<parseInt(item.coun)){
+								this.hotMax=parseInt(item.coun);
+							}
+							
 						}
+						console.log('最大的次数',this.hotMax);
 						console.log(this.heatData);
 					} else {
 						console.log(data);

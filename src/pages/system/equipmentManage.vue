@@ -113,13 +113,20 @@
 			</el-main>
 
 		</el-container>
-		<el-dialog title="添加设备" :visible.sync="dialogFormAddVisible" width="500px" top="5vh" @close="closeAddWin" :close-on-click-modal="false">
-			<el-form :model="formInfo" status-icon label-width="100px" ref="formInfo">
-				<el-form-item label="设备类型" prop="type">
-					<el-select v-model="formInfo.type" placeholder="请选择设备类型" disabled>
-							<el-option v-for="item in equType" :label="item.name" :value="item.type"></el-option>
+		<el-dialog title="添加设备" :visible.sync="dialogFormAddVisible"  top="5vh" @close="closeAddWin" :close-on-click-modal="false">
+			<el-form :model="formInfo" status-icon label-width="100px" ref="formInfo"  :inline="true" class="demo-form-inline">
+				<el-rwo>
+					<el-form-item label="设备类型" prop="type">
+					<el-select v-model="formInfo.type" placeholder="请选择设备类型">
+							<el-option v-for="(item,index) in equType" :key="index" :label="item.name" :value="item.type"></el-option>
 					</el-select>
 				</el-form-item>
+				</el-rwo>
+				<el-row>
+					<el-form-item label="分组" prop="groupArr" :rules="[{ required: true, message: '请选择分组', trigger: 'change'}]">
+					<el-cascader placeholder="选择分组" v-model="formInfo.groupArr" :options="groupArr" :props="{value:'id',label:'title',children:'children'}" filterable change-on-select></el-cascader>
+				</el-form-item>
+				</el-row>
 				<el-form-item label="序列号" prop="serial" :rules="[{ required: true, message: '序列号不能为空', trigger: 'blur'}]">
 					<el-input v-model="formInfo.serial" auto-complete="off"></el-input>
 				</el-form-item>
@@ -132,19 +139,17 @@
 				<el-form-item label="纬度" prop="latitude">
 					<el-input v-model="formInfo.latitude" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="分组" prop="groupArr" :rules="[{ required: true, message: '请选择分组', trigger: 'change'}]">
-					<el-cascader placeholder="选择分组" v-model="formInfo.groupArr" :options="groupArr" :props="{value:'id',label:'title',children:'children'}" filterable change-on-select></el-cascader>
-				</el-form-item>
+				
 				<el-form-item label="IP地址" prop="ip">
 					<el-input v-model="formInfo.ip" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="端口号" prop="port">
 					<el-input v-model="formInfo.port" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="用户名" prop="account"  :rules="[{ required: true, message: '请输入用户名', trigger: 'blur'}]">
+				<el-form-item label="用户名" prop="account">
 					<el-input v-model="formInfo.account" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="密码" prop="password"  :rules="[{ required: true, message: '请输入密码', trigger: 'blur'}]" >
+				<el-form-item label="密码" prop="password">
 					<el-input v-model="formInfo.password"  type="password"  auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
@@ -154,12 +159,19 @@
 			</div>
 		</el-dialog>
 
-		<el-dialog title="编辑设备" :visible.sync="dialogFormEditVisible" width="500px" top="5vh" @close="closeEditWin" :close-on-click-modal="false">
-			<el-form :model="formEditInfo" status-icon label-width="100px" ref="formEditInfo">
-				<el-form-item label="设备类型：">
+		<el-dialog title="编辑设备" :visible.sync="dialogFormEditVisible"  top="5vh" @close="closeEditWin" :close-on-click-modal="false">
+			<el-form :model="formEditInfo" status-icon label-width="100px" ref="formEditInfo"  :inline="true" class="demo-form-inline">
+				<el-row>
+					<el-form-item label="设备类型：">
 					{{formEditInfo.type|filterEquType}}
 					<!--<el-input v-model="formEditInfo.type" disabled auto-complete="off"></el-input>-->
 				</el-form-item>
+				</el-row>
+				<el-row>
+					<el-form-item label="分组" prop="groupArr" clearable :rules="[{ required: true, message: '请选择分组', trigger: 'change'}]">
+					<el-cascader placeholder="选择分组" v-model="formEditInfo.groupArr" :options="groupArr" :props="{value:'id',label:'title',children:'children'}" filterable change-on-select></el-cascader>
+				</el-form-item>
+				</el-row>
 				<el-form-item label="序列号" prop="serial" :rules="[{ required: true, message: '序列号不能为空', trigger: 'blur'}]">
 					<el-input v-model="formEditInfo.serial" auto-complete="off"></el-input>
 				</el-form-item>
@@ -172,20 +184,18 @@
 				<el-form-item label="纬度" prop="latitude">
 					<el-input v-model="formEditInfo.latitude" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="分组" prop="groupArr" clearable :rules="[{ required: true, message: '请选择分组', trigger: 'change'}]">
-					<el-cascader placeholder="选择分组" v-model="formEditInfo.groupArr" :options="groupArr" :props="{value:'id',label:'title',children:'children'}" filterable change-on-select></el-cascader>
-				</el-form-item>
+				
 				<el-form-item label="IP地址" prop="ip" >
 					<el-input v-model="formEditInfo.ip" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="端口号" prop="port">
 					<el-input v-model="formEditInfo.port" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="用户名" prop="account"  :rules="[{ required: true, message: '请输入用户名', trigger: 'blur'}]">
+				<el-form-item label="用户名" prop="account">
 					<el-input v-model="formEditInfo.account" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="密码" prop="password"  :rules="[{ required: true, message: '请输入密码', trigger: 'blur'}]" >
-					<el-input v-model="formEditInfo.password"   auto-complete="off"></el-input>
+				<el-form-item label="密码" prop="password">
+					<el-input v-model="formEditInfo.password"  type="password"   auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -231,8 +241,8 @@
 	import { Edata } from '../../js/Edata';
 	import { formatTreeData } from '../../js/formatTreeData';
 	var equType=[
-					{type:"0",name:"监控设备"},
-					{type:"1",name:"车检设备"}
+					{type:"0",name:"枪机"},
+					{type:"1",name:"球机"}
 				];
 	export default {
 		data() {

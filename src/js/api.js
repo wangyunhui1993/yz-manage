@@ -39,6 +39,7 @@ export const selectSuccessLog = params => { return axios.post(`${base}/log/selec
 
 export const insertPlayVideo = params => { return axios.post(`${base}/log/insertPlayVideo`, params).then(res => res.data).catch(error=>error);};
 export const ptzControl = params => { return axios.post(`${base}/video/ptzControl`, params).then(res => res.data).catch(error=>error); };
+export const jButtonAutoActionPerformed = params => { return axios.post(`${base}/video/jButtonAutoActionPerformed`, params).then(res => res.data).catch(error=>error); };
 //ceshi
 export const synchroEquipmentNumber = params => { return axios.post(`${base}/psql/synchroEquipmentNumber`, params).then(res => res.data).catch(error=>error); };
 

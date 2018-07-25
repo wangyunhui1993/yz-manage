@@ -5,8 +5,8 @@ export const Edata={
 	],
 	icon:{
 		sitemap:"fa fa-sitemap",
-		camera:"fa fa-video-camera",
-		car:"fa fa-car"
+		cameravideo:"iconfont icon-cameravideo",
+		domecamera:"iconfont icon-domecamera"
 	},
 	
 }

@@ -10,22 +10,25 @@
 				<el-tree :data="groupAndEqu" :default-checked-keys="defaultCheckedKeys" show-checkbox node-key="id" @check-change="checkChange"  :filter-node-method="filterNode"  default-expand-all :expand-on-click-node="false"  ref="tree2" >
 					<span class="custom-tree-node" slot-scope="{ node, data }">
 	       				 <span v-if="data.type=='group'"><i :class="Edata.icon.sitemap"></i> {{ data.title }}</span>
-						<span v-else-if="data.type=='0'"><i :class="Edata.icon.camera"></i> {{ data.title }}</span>
-						<span v-else-if="data.type=='1'"><i :class="Edata.icon.car"></i> {{ data.title }}</span>
+						<span v-else-if="data.type=='0'"><i :class="Edata.icon.cameravideo"></i> {{ data.title }}</span>
+						<span v-else-if="data.type=='1'"><i :class="Edata.icon.domecamera"></i> {{ data.title }}</span>
 						<span v-else>1</span>
 					</span>
 				</el-tree>
 			</div>
 			<div style="height: 100%;padding: 0;">
-				<baidu-map class="bm-view" :center="center" :zoom="zoom"  :scroll-wheel-zoom="true"   @ready="handler">
+				<baidu-map class="map bm-view" :center="center" :zoom="zoom"  :scroll-wheel-zoom="true"   @ready="handler">
 					<bm-scale anchor="BMAP_ANCHOR_BOTTOM_LEFT"></bm-scale>
-					<bm-city-list anchor="BMAP_ANCHOR_TOP_RIGHT" :offset="offsetCityList"></bm-city-list>
-					<bm-map-type :map-types="['BMAP_NORMAL_MAP', 'BMAP_HYBRID_MAP']" anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-map-type>
+					
+					
 					<bm-overview-map anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :isOpen="true"></bm-overview-map>
-					<!--<bm-traffic v-if="controlTraffic" :predictDate="trafficData"></bm-traffic>-->
-					<bm-traffic v-if="controlTraffic" :pridictDate="{weekday: 5, hour: 12}"></bm-traffic>
-					<bm-info-window :position="{lng: winInfo.longitude,lat: winInfo.latitude}" :width="250" :closeOnClick="false" :autoPan="true" :show="show" @clickclose="infoWindowClose">
-						<el-row style="margin-top: 5px;"  v-if="winInfo.type==='0'">
+					<bm-traffic v-if="controlTraffic" :predictDate="trafficData"></bm-traffic>
+					<!--<bm-traffic v-if="controlTraffic" :pridictDate="{weekday: 5, hour: 12}"></bm-traffic>-->
+					<bm-city-list anchor="BMAP_ANCHOR_TOP_RIGHT" :offset="offsetCityList"></bm-city-list>
+					<bm-map-type class="map-type" :map-types="['BMAP_NORMAL_MAP', 'BMAP_HYBRID_MAP']" anchor="BMAP_ANCHOR_TOP_RIGHT" type="BMAP_MAPTYPE_CONTROL_MAP"  :offset="{width: 0,height: 0}" ></bm-map-type>
+					
+					<bm-info-window :position="{lng: winInfo.longitude,lat: winInfo.latitude}" :width="250" :closeOnClick="false" :autoPan="true" :show="show" @clickclose="infoWindowClose" :offset="{width: -7,height: 2}">
+						<el-row style="margin-top: 5px;">
 							<div style="width: 100%;text-align: center;"><a :href="winInfo.img" target="_blank"><img :src="winInfo.img" style="max-width: 300px;max-height: 150px;margin-top: 5px;" /></a></div>
 							<p style="margin-top: 5px;">
 							<span >编号：{{winInfo.serial}}</span>
@@ -37,7 +40,7 @@
 								<!--<el-button type="primary" size="mini" @click="history(winInfo.id)" style="padding: 5px;">历史监控</el-button>-->
 							</div>
 						</el-row>
-						<el-row v-if="winInfo.type==='1'" style="margin-top: 5px;">
+						<!--<el-row v-if="winInfo.type==='1'" style="margin-top: 5px;">
 							<p style="margin-top: 5px;">
 								编号：{{winInfo.serial}}
 								
@@ -51,11 +54,11 @@
 								<p>2018-04-26 11:22:56</p>
 								<p>......</p>
 						</div>
-						</el-row>
+						</el-row>-->
 					</bm-info-window>
-					<bm-marker v-for=" (item,index) in equipmentData" v-if="item.show && item.type!==null" :key="index" :position="{lng: item.longitude,lat: item.latitude}" :icon="item.type==='0'?cameraIcon:item.type==='1'?carIcon:''" @click="infoWindowOpen(item)" :offset="{width: 9,height: -11}" >
+					<bm-marker v-for=" (item,index) in equipmentData" v-if="item.show && item.type!==null" :key="index" :position="{lng: item.longitude,lat: item.latitude}" :icon="item.type==='0'?cameraIcon:item.type==='1'?carIcon:''" @click="infoWindowOpen(item)" :offset="iconOffset" >
 					</bm-marker>
-					<bm-polyline v-for="(item,index) in formatAfterLineArr"  v-if="item.show" :path="item.ll" stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="5"></bm-polyline>
+					<bm-polyline v-for="(item,index) in formatAfterLineArr"   v-if="item.show" :path="item.ll" stroke-color="#0066FF" :stroke-opacity="1" :stroke-weight="5"></bm-polyline>
 					<!--<bm-polyline :path="market|filterMarket " stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="5"></bm-polyline>-->
 					<bm-control anchor="BMAP_ANCHOR_TOP_RIGHT" :offset="offsetControl">
 						<div style="position: relative;">
@@ -127,6 +130,7 @@
 //		props:["predictDate"],
 		data() {
 			return {
+				iconOffset:{width: 5,height: -8},
 				index:0,
 				options:{},
 				groupAndEqu:[],
@@ -147,19 +151,19 @@
 					hour: NaN
 				},
 				offsetCityList: {
-					width: 90,
+					width: 174,
 					height: 8
 				},
 				offsetW: {
-					width: 217,
+					width: 247,
 					height: 5
 				},
 				offsetControl: {
-					width: 163,
+					width: 120,
 					height: 8
 				},
-				cameraIcon:{url: './static/img/map_camera.png', size: {width: 30, height: 25}},
-				carIcon:{url: './static/img/car.png', size: {width: 30, height: 25}},
+				cameraIcon:{url: './static/img/map_camera.png', size: {width: 32, height: 32}},
+				carIcon:{url: './static/img/car.png', size: {width: 32, height: 32}},
 				
 				times: "",
 				formatAfterLineArr:[],
@@ -298,7 +302,7 @@
 				this.showWin = true;
 				this.dialogFormVisible = true;
 				this.options={
-					serial:"rtmp://dxftech.asuscomm.com/hls/mystream",
+					serial:row.ssVideo,
 					id:row.id,
 					title:row.name,
 				}
@@ -329,9 +333,9 @@
 			getTime(h) {
 				let t = new Date();
 				if(h) {
-					return(t.getHours() > 10 ? t.getHours() : '0' + t.getHours()) + ":" + (t.getMinutes() > 10 ? t.getMinutes() : '0' + t.getMinutes());
+					return(t.getHours() >= 10 ? t.getHours() : '0' + t.getHours()) + ":" + (t.getMinutes() >= 10 ? t.getMinutes() : '0' + t.getMinutes());
 				} else {
-					return(t.getHours() > 10 ? t.getHours() : '0' + t.getHours()) + ":00";
+					return(t.getHours() >= 10 ? t.getHours() : '0' + t.getHours()) + ":00";
 				}
 				console.log(h, m);
 			},
@@ -581,7 +585,6 @@
 			},
 			/*获取设备列表*/
 			getEquipmentList() {
-				console.log("22222222222222222222");
 				selectIndexEquipment(this.searchData).then(data => {
 					let {
 						errMsg,
@@ -806,9 +809,15 @@
 		vertical-align: middle;
 	}
 	.mapShow .el-dialog__body{
-		height: calc(100% - 90px);
+		height: calc(100% - 94px);
 	}
 	.mapShow .closeBtn{
 		display: none;
+	}
+	span[title='显示三维地图']{
+		display: none;
+	}
+	.mapShow .modeBorder{
+		border: none !important;
 	}
 </style>
