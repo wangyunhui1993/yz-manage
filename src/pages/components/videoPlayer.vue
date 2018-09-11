@@ -84,8 +84,8 @@
 					//					notSupportedMessage: '此视频暂无法播放，请稍后再试', //允许覆盖Video.js无法播放媒体源时显示的默认信息。
 					techOrder: ['flash', 'html5'],
 					sourceOrder: true,
-					fluid:true,
-					aspectRatio:"16:9",
+// 					fluid:true,
+// 					aspectRatio:"16:9",
 					flash: {
 						hls: {
 							withCredentials: false
@@ -132,6 +132,7 @@
 			},
 			onPlayerReadied() {
 				console.log("onPlayerReadied");
+				$('.videoItem').css({padding:'1px'});
 				if(!this.initialized) {
 					this.initialized = true
 					//      this.currentTech = this.player.techName
@@ -185,6 +186,7 @@
 
 			},
 			onPlayerPlaying(player) {
+				// $('.videoItem').css({padding:'0px'});
 				this.VLoading = false;
 				console.log('player Playing!', player)
 
@@ -276,6 +278,7 @@
 
 			},
 			onPlayerCanplay(player) {
+				$('.videoItem').css({padding:'0px'});
 				console.log('player Canplay!', player)
 			},
 			onPlayerCanplaythrough(player) {
@@ -437,6 +440,7 @@
 	.videoItem {
 		height: 100%;
 		width: 100%;
+		box-sizing: border-box;
 	}
 	
 	.obMode {
