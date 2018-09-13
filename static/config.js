@@ -3,6 +3,7 @@ window.g = {
 //	base : 'http://dxftech.asuscomm.com:8081/yz',    /*API接口前缀 - for 外网*/
 //	base : 'http://192.168.1.122:8081/yz',    /*API接口前缀*/
 //	base : 'http://192.168.1.250:8081',
-base : 'http://dxftech.asuscomm.com:9988/yz', 
+// base : 'http://192.168.11.81:9988/yz',    //正式
+base : 'http://dxftech.asuscomm.com:9988/yz',  //测试
 }
 	

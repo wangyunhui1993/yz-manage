@@ -602,10 +602,18 @@
 					} = data;
 					if(success) {
 						console.log(data);
-						this.equipmentData = value;
-						for(var item of this.equipmentData){
-							item.show=true;
+						let arr=[];
+						for(var item of value){
+							if(item.latitude||item.longitude){
+									item.show=true;
+									arr.push(item);
+							}
 						}
+						this.equipmentData = arr;
+						console.log(this.equipmentData);
+// 						for(var item of this.equipmentData){
+// 							item.show=true;
+// 						}
 						
 					} else {
 						this.$message({

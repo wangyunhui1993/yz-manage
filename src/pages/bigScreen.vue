@@ -615,6 +615,7 @@
 				console.log(index);
 				console.log(this.index);
 				console.log(this.dragUrl);
+				// this.dragUrl.index=index;
 				this.options.splice(index,1,this.dragUrl);
 				this.insertPlayVideoNum(this.dragUrl.id);
 				if(index==this.index){
@@ -624,6 +625,7 @@
 			dblclickBtn(data){
 				console.log(data);
 				console.log(this.index);
+				// data.index=this.index;
 				this.options.splice(this.index,1,data);
 				if(this.index>=this.num-1){
 					this.index=0;
@@ -743,7 +745,7 @@
 				if(!checkFull()) {
 					_this.allScreen = false;
 					_this.$refs.bigScreeen.src = _this.pic.pic_zoom;
-					console.log(1234);
+					// console.log(1234);
 					//要执行的动作
 					//          $("#dashboard_id").removeClass('expand').addClass('contract');//这里捡个懒，直接用JQ来改className
 				} else {
@@ -756,7 +758,7 @@
 				var isFull = document.fullscreenEnabled || window.fullScreen || document.webkitIsFullScreen || document.msFullscreenEnabled;
 				//to fix : false || undefined == undefined
 				if(isFull === undefined) {
-					console.log("不是全屏");
+					// console.log("不是全屏");
 					isFull = false;
 				}
 				return isFull;

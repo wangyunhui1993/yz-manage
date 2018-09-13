@@ -51,7 +51,7 @@
 		data() {
 			return {
 
-				
+				eleIndex:0,
 				VLoading: false,
 				index: "",
 				modeClass: "",
@@ -85,7 +85,7 @@
 					techOrder: ['flash', 'html5'],
 					sourceOrder: true,
 // 					fluid:true,
-// 					aspectRatio:"16:9",
+					// aspectRatio:"16:9",
 					flash: {
 						hls: {
 							withCredentials: false
@@ -105,7 +105,7 @@
 					}, {
 						withCredentials: false,
 						type: 'application/x-mpegURL',
-						src: 'http://playertest.longtailvideo.com/adaptive/bipbop/gear4/prog_index.m3u8'
+						src: ''
 					}],
 					//					 fullscreenToggle: true, // 全屏
 					controlBar: {
@@ -132,7 +132,8 @@
 			},
 			onPlayerReadied() {
 				console.log("onPlayerReadied");
-				$('.videoItem').css({padding:'1px'});
+// 				$('.videoItem').css({width:'99%'});
+				// $($('.videoItem')[this.eleIndex]).css({height:'99%'});
 				if(!this.initialized) {
 					this.initialized = true
 					//      this.currentTech = this.player.techName
@@ -186,7 +187,12 @@
 
 			},
 			onPlayerPlaying(player) {
-				// $('.videoItem').css({padding:'0px'});
+				// setTimeout(()=>{
+					// console.log('延迟运行了吗？',this.eleIndex,$('.videoItem'));
+// 					$('.videoItem').css({width:'100%'});
+					// $($('.videoItem')[this.eleIndex]).css({height:'100%'});
+				// },2000);
+				
 				this.VLoading = false;
 				console.log('player Playing!', player)
 
@@ -278,7 +284,7 @@
 
 			},
 			onPlayerCanplay(player) {
-				$('.videoItem').css({padding:'0px'});
+				// $('.videoItem').css({padding:'0.5px'});
 				console.log('player Canplay!', player)
 			},
 			onPlayerCanplaythrough(player) {
@@ -349,6 +355,8 @@
 //				console.log("index变化了",this.testIndex);
 				
 				this.playerOptions.sources[0].src = val.serial;
+				this.eleIndex=val.index;
+				console.log("element",this.eleIndex);
 				if(this.type === 'bigScreen') {
 					if(publicMethods.judgmentFlash()) {
 						this.modeShow = true;
@@ -371,12 +379,15 @@
 			},
 
 		},
-		mounted() {
+		created(){
 			this.options = Object.assign({}, this.VOptions);
 			this.playerOptions.sources[0].src = this.VOptions.serial;
 			console.log('aaaaaaaaaaaa', this.options);
 			this.parameters = Object.assign({}, this.VParameters);
 			this.index = this.VIndex;
+		},
+		mounted() {
+			
 
 			$(".mode").bind("contextmenu", function() {
 				return false;
