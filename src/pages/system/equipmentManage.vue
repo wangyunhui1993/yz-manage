@@ -242,7 +242,8 @@
 	import { formatTreeData } from '../../js/formatTreeData';
 	var equType=[
 					{type:"0",name:"枪机"},
-					{type:"1",name:"球机"}
+					{type:"1",name:"球机"},
+					// {type:"2",name:"鹰眼"}
 				];
 	export default {
 		data() {

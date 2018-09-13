@@ -80,6 +80,7 @@
 								}else{
 									LStorage.removeItem('localaccess-user');
 								}
+								console.log(this.$router);
 								this.$router.push({ path: '/map/mapShow' });
 							} else {
 								this.$message({

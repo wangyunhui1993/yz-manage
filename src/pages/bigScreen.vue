@@ -6,12 +6,13 @@
 					<el-input placeholder="输入关键字过滤" size="small" suffix-icon="el-icon-search" v-model="filterText">
 					</el-input>
 				</el-row>
-				<div style="flex-grow:1;flex-shrink:1;overflow-y:scroll ; ">
+				<div style="flex-grow:1;flex-shrink:1;overflow-y:scroll;">
 					<el-tree :data="groupAndEqu"  class="qwertyuuiio" node-key="id"  :filter-node-method="filterNode"   default-expand-all draggable :expand-on-click-node="false"  ref="tree2"   @node-drag-start="handleDragStart" @node-drag-enter="handleDragEnter" @node-drag-leave="handleDragLeave" @node-drag-over="handleDragOver" @node-drag-end="handleDragEnd" @node-drop="handleDrop" :allow-drop="allowDrop" :allow-drag="allowDrag">
 						<span class="custom-tree-node" slot-scope="{ node, data }" >
 	       				 <span v-if="data.type==='group'"><i class="fa fa-sitemap"></i> {{ data.title }}</span>
 						<span v-else-if="data.type==='0'"  @dblclick="dblclickBtn(data)" ><i  :class="Edata.icon.cameravideo"></i> {{ data.title }}</span>
-						<span v-else  @dblclick="dblclickBtn(data)" ><i  :class="Edata.icon.domecamera"></i> {{ data.title }}</span>
+						<span v-else-if="data.type==='1'"  @dblclick="dblclickBtn(data)" ><i  :class="Edata.icon.domecamera"></i> {{ data.title }}</span>
+						<span v-else-if="data.type==='2'"  @dblclick="dblclickBtn(data)" ><i  :class="Edata.icon.hawkeye"></i> {{ data.title }}</span>
 						</span>
 					</el-tree>
 				</div>
@@ -45,10 +46,10 @@
     	<div class="ptzCtrl" style="height: 250px;"  v-show="showVideoParameters">
 			<div class="ptzCircle" style="background-position: 0px 0px;">
 				<div><span class="ptzC1" title="1" @click="controlSpeed($event)"></span><span class="ptzC2" title="2"  @click="controlSpeed($event)"></span><span class="ptzC3" title="3"  @click="controlSpeed($event)"></span><span class="ptzC4" title="4"  @click="controlSpeed($event)"></span><span class="ptzC5" title="5"  @click="controlSpeed($event)"></span><span class="ptzC6" title="6"  @click="controlSpeed($event)"></span><span class="ptzC7" title="7"  @click="controlSpeed($event)"></span></div>
-				<a href="javascript:void(0)" ctrlcmd="21" class="ptzT1" title="上移" @click="controlDirection($event)"></a>
-				<a href="javascript:void(0)" ctrlcmd="24" class="ptzT2" title="右移" @click="controlDirection($event)"></a>
-				<a href="javascript:void(0)" ctrlcmd="22" class="ptzT3" title="下移" @click="controlDirection($event)"></a>
-				<a href="javascript:void(0)" ctrlcmd="23" class="ptzT4" title="左移" @click="controlDirection($event)"></a>
+				<a href="javascript:void(0)" ctrlcmd="21" class="ptzT1" title="上移" @click="controlDirection($event)" @mousedown="mousedownControlDirection($event)"  @mouseup="mouseupControlDirection($event)"></a>
+				<a href="javascript:void(0)" ctrlcmd="24" class="ptzT2" title="右移" @click="controlDirection($event)" @mousedown="mousedownControlDirection($event)"  @mouseup="mouseupControlDirection($event)"></a>
+				<a href="javascript:void(0)" ctrlcmd="22" class="ptzT3" title="下移" @click="controlDirection($event)" @mousedown="mousedownControlDirection($event)"  @mouseup="mouseupControlDirection($event)"></a>
+				<a href="javascript:void(0)" ctrlcmd="23" class="ptzT4" title="左移" @click="controlDirection($event)" @mousedown="mousedownControlDirection($event)"  @mouseup="mouseupControlDirection($event)"></a>
 				<!--<a href="javascript:void(0)" class="ptzB1"><span ctrlcmd="25" title="左上移动"></span></a>
 				<a href="javascript:void(0)" class="ptzB2"><span ctrlcmd="26" title="右上移动"></span></a>
 				<a href="javascript:void(0)" class="ptzB3"><span ctrlcmd="28" title="右下移动"></span></a>
@@ -57,12 +58,12 @@
 			</div>
 			<ul class="ptzHandle" style="margin-left: 30px;">
 				<li class="ptzM1">
-					<a ctrlcmd="12" href="javascript:void(0)" title="变小焦距" @click="controlDirection($event)"><i></i></a>
-					<a href="javascript:void(0)" ctrlcmd="11" title="变大焦距" @click="controlDirection($event)"><i></i></a>
+					<a ctrlcmd="12" href="javascript:void(0)" title="变小焦距" @click="controlDirection($event)" @mousedown="mousedownControlDirection($event)"  @mouseup="mouseupControlDirection($event)"><i ctrlcmd="12"></i></a>
+					<a href="javascript:void(0)" ctrlcmd="11" title="变大焦距" @click="controlDirection($event)" @mousedown="mousedownControlDirection($event)"  @mouseup="mouseupControlDirection($event)"><i ctrlcmd="11"></i></a>
 				</li>
 				<li class="ptzM2">
-					<a href="javascript:void(0)" ctrlcmd="13" title="前调焦点" @click="controlDirection($event)"><i></i></a>
-					<a href="javascript:void(0)" ctrlcmd="14" title="后调焦点" @click="controlDirection($event)"><i></i></a>
+					<a href="javascript:void(0)" ctrlcmd="13" title="前调焦点" @click="controlDirection($event)" @mousedown="mousedownControlDirection($event)"  @mouseup="mouseupControlDirection($event)"><i ctrlcmd="13"></i></a>
+					<a href="javascript:void(0)" ctrlcmd="14" title="后调焦点" @click="controlDirection($event)" @mousedown="mousedownControlDirection($event)"  @mouseup.native="mouseupControlDirection($event)"><i ctrlcmd="14"></i></a>
 				</li>
 				<!--<li class="ptzM3">
 					<a href="javascript:void(0)" ctrlcmd="16" title="扩大光圈"><i></i></a>
@@ -101,7 +102,7 @@
 			</el-aside>
 			<el-container style="height: 100%;" id="dashboard_id">
 				<el-main style="padding: 0;height: 100%;">
-					<div v-for="(i,index) in bigNum" @dragover="dragenter($event)" @drop="drop(index)" class="screenItem" :data-index='i' :key="index" :class="'part'+num">
+					<div v-for="(i,index) in bigNum" @dragover="dragenter($event)" @drop="drop(index)" class="screenItem" :data-index='i' :key="index" :class="'part'+btn_H">
 						<!--<div class="selectScreenItem" :class="index==radio?'screenItemIndex':''"  @mouseenter="showInfo" @mouseleave="hideInfo">
 						<div class="selectRadio">
 							<el-radio v-model="radio" :label="index"></el-radio>
@@ -124,6 +125,8 @@
 						<img :src="4==btn_H?pic.pic_4_h:pic.pic_4" @click="selectNum(4)" />
 						<img :src="9==btn_H?pic.pic_9_h:pic.pic_9" @click="selectNum(9)" />
 						<img :src="16==btn_H?pic.pic_16_h:pic.pic_16" @click="selectNum(16)" />
+						<img :src="'3a'==btn_H?pic.pic_3a_h:pic.pic_3a" @click="selectNum('3a')" />
+						<img :src="'3b'==btn_H?pic.pic_3b_h:pic.pic_3b" @click="selectNum('3b')" />
 						<img :src="pic.pic_zoom" ref="bigScreeen" @click="selectNum('big')" />
 					</div>
 				</el-footer>
@@ -138,6 +141,9 @@
 	import {Edata} from '../js/Edata';
 	import { selectGroup, selectRoad, selectAllEquipment ,insertPlayVideo,ptzControl,jButtonAutoActionPerformed} from '../js/api';
 	import  Vplayer  from './components/videoPlayer';
+	
+	var timeStart,timeEnd,timer;
+	
 	export default {
 		components:{
 			Vplayer
@@ -152,11 +158,10 @@
 				radio: 0,
 				groupAndEqu: [],
 				dialogFormVisible: false,
-				bigScreenSet: 4,
 				bigNum: [1, 2, 3, 4],
 				allScreen: false,
-				num: 4,
-				btn_H: 4,
+				num: 4,    //窗口个数
+				btn_H: 4,  //设置的窗口的个数
 				outBorder: 1,
 				options:[
 					{id:"",serial:"",title:""},
@@ -166,11 +171,15 @@
 				],
 				pic: {
 					pic_1: "static/img/1_1.png",
+					pic_3a: "static/img/3a_1.png",
+					pic_3b: "static/img/3b_1.png",
 					pic_4: "static/img/4_1.png",
 					pic_9: "static/img/9_1.png",
 					pic_16: "static/img/16_1.png",
 					pic_zoom: "static/img/zoom_out.png",
 					pic_1_h: "static/img/1_2.png",
+					pic_3a_h: "static/img/3a_2.png",
+					pic_3b_h: "static/img/3b_2.png",
 					pic_4_h: "static/img/4_2.png",
 					pic_9_h: "static/img/9_2.png",
 					pic_16_h: "static/img/16_2.png",
@@ -192,8 +201,13 @@
 				
 				videoParametersArr:[],
 				movingSpeed:10,
-				isAtuo:false,
-
+				isAuto:false,
+				
+				//方向控制相关
+				control:{
+					cycle:500,    	//多长时间运行一次（毫秒）
+					state:false,    //防止频繁点击响应
+				},
 			}
 		},
 		computed: {
@@ -202,8 +216,8 @@
 			//自动扫描
 			automaticScanning(){
 				if(this.options[this.index].id){
-					this.isAtuo=!this.isAtuo;
-				let info={id:this.options[this.index].id,dwSpeed:this.movingSpeed,isAtuo:this.isAtuo};
+					this.isAuto=!this.isAuto;
+				let info={id:this.options[this.index].id,dwSpeed:this.movingSpeed,isAuto:this.isAuto,lChannel:"1"};
 				console.log('自动扫描',info);
 				jButtonAutoActionPerformed(info).then(data => {
 					let {
@@ -233,8 +247,8 @@
 				
 			},
 			//控制摄像头
-			controlMonitoring(id,dwSpeed,direction){
-				let info={id:id,dwSpeed:dwSpeed,direction:direction};
+			controlMonitoring(id,dwSpeed,direction,lChannel,action){
+				let info={id:id,dwSpeed:dwSpeed,direction:direction,lChannel:lChannel,action:action};
 				ptzControl(info).then(data => {
 					let {
 						errMsg,
@@ -253,11 +267,31 @@
 					}
 			});
 			},
+			//控制方向
 			controlDirection(event){
+				
+//				let obj = event.srcElement ? event.srcElement : event.target;
+//				let dir=obj.getAttribute('ctrlcmd');
+//				if(this.options[this.index].id){
+//					this.controlMonitoring(this.options[this.index].id,this.movingSpeed,dir);
+//				}else{
+//					this.$message({
+//							message: '请先选中播放中的设备',
+//							type: 'warning'
+//						});
+//				}
+				
+			},
+			//连续控制方向
+			mousedownControlDirection(event){
+				timeStart=new Date();
+				if(this.control.state) return false;
 				let obj = event.srcElement ? event.srcElement : event.target;
+				console.log("dir",obj);
 				let dir=obj.getAttribute('ctrlcmd');
+				
 				if(this.options[this.index].id){
-					this.controlMonitoring(this.options[this.index].id,this.movingSpeed,dir);
+					this.controlMonitoring(this.options[this.index].id,this.movingSpeed,dir,"1","0");
 				}else{
 					this.$message({
 							message: '请先选中播放中的设备',
@@ -265,6 +299,59 @@
 						});
 				}
 				
+				
+				
+//				if(this.control.state) return false;
+//				let obj = event.srcElement ? event.srcElement : event.target;
+//				let dir=obj.getAttribute('ctrlcmd');
+//				if(this.options[this.index].id){
+//					this.controlMonitoring(this.options[this.index].id,this.movingSpeed,dir);
+//					console.log(111111);
+//					timer=setInterval(()=>{
+//						console.log(2222222);
+//					this.controlMonitoring(this.options[this.index].id,this.movingSpeed,dir);
+//				},this.control.cycle);
+//				}else{
+//					this.$message({
+//							message: '请先选中播放中的设备',
+//							type: 'warning'
+//						});
+//				}
+//				this.control.state=true;
+//				var timeSate=setTimeout(()=>{
+//					this.control.state=false;
+//					clearTimeout(timeSate);
+//				},this.control.cycle);
+				
+				
+				
+
+				
+			},
+			mouseupControlDirection(event){
+				let difference=new Date() - timeStart;
+				if(this.options[this.index].id){
+				let obj = event.srcElement ? event.srcElement : event.target;
+				let dir=obj.getAttribute('ctrlcmd');
+				if(difference>this.control.cycle){
+					
+				
+					this.controlMonitoring(this.options[this.index].id,this.movingSpeed,dir,"1","1");
+				
+				}else{
+				var timeSate=setTimeout(()=>{
+					this.control.state=false;
+					clearTimeout(timeSate);
+					this.controlMonitoring(this.options[this.index].id,this.movingSpeed,dir,"1","1");
+				},this.control.cycle-difference);
+				}
+//				clearInterval(timer);
+				}
+			},
+			//获取当前时间
+			getTimeNow(){
+				var now=new Date();
+                return now.getTime();
 			},
 			handleClick(){
 				
@@ -370,6 +457,38 @@
 							document.msExitFullscreen();
 						}
 					}
+				}else if(arg == "3a"){
+					this.btn_H = "3a";
+					if(this.num>3){
+						for(var i=3;i<this.num;i++){
+							this.options.pop();
+							this.videoParametersArr.pop();
+							this.bigNum.pop();
+						}
+					}else if(this.num<3){
+						for(var i=this.num;i<3;i++){
+							this.options.push({id:"",serial:"",title:"",type:""});
+							this.videoParametersArr.push({brightness: 100,contrast: 100,saturation: 100});
+							this.bigNum.push(i+1);
+						}
+					}
+					this.num = 3;
+				} else if(arg == "3b"){
+					this.btn_H = "3b";
+					if(this.num>3){
+						for(var i=3;i<this.num;i++){
+							this.options.pop();
+							this.videoParametersArr.pop();
+							this.bigNum.pop();
+						}
+					}else if(this.num<3){
+						for(var i=this.num;i<3;i++){
+							this.options.push({id:"",serial:"",title:"",type:""});
+							this.videoParametersArr.push({brightness: 100,contrast: 100,saturation: 100});
+							this.bigNum.push(i+1);
+						}
+					}
+					this.num = 3;
 				} else {
 					
 					this.btn_H = arg;
@@ -496,6 +615,7 @@
 				console.log(index);
 				console.log(this.index);
 				console.log(this.dragUrl);
+				// this.dragUrl.index=index;
 				this.options.splice(index,1,this.dragUrl);
 				this.insertPlayVideoNum(this.dragUrl.id);
 				if(index==this.index){
@@ -505,8 +625,17 @@
 			dblclickBtn(data){
 				console.log(data);
 				console.log(this.index);
+				// data.index=this.index;
 				this.options.splice(this.index,1,data);
-				this.showControl(this.index);
+				if(this.index>=this.num-1){
+					this.index=0;
+				}else{
+					this.index++;
+				}
+				console.log("index啊index啊",this.index);
+				$(".mode").css("border", "none");
+				$(".mode")[this.index].style.border = "2px solid #00FF00";
+//				this.showControl(this.index);
 			},
 			dragenter(ev) {
 //				console.log(ev);
@@ -616,7 +745,7 @@
 				if(!checkFull()) {
 					_this.allScreen = false;
 					_this.$refs.bigScreeen.src = _this.pic.pic_zoom;
-					console.log(1234);
+					// console.log(1234);
 					//要执行的动作
 					//          $("#dashboard_id").removeClass('expand').addClass('contract');//这里捡个懒，直接用JQ来改className
 				} else {
@@ -629,7 +758,7 @@
 				var isFull = document.fullscreenEnabled || window.fullScreen || document.webkitIsFullScreen || document.msFullscreenEnabled;
 				//to fix : false || undefined == undefined
 				if(isFull === undefined) {
-					console.log("不是全屏");
+					// console.log("不是全屏");
 					isFull = false;
 				}
 				return isFull;
@@ -674,7 +803,24 @@
 		width: 100%;
 		background: #000;
 	}
-	
+	.part3a{
+		background: #000;
+		height: 50%;
+		width: 50%;
+	}
+	.part3a:nth-child(3){
+		width: 50%;
+		margin-left: 25%;
+	}
+	.part3b{
+		background: #000;
+		height: 33.33%;
+		width: 100%;
+	}
+	.part3b:nth-child(3){
+		width: 50%;
+		margin-left: 25%;
+	}
 	.part4 {
 		height: 50%;
 		width: 50%;

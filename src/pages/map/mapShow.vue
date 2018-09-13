@@ -12,24 +12,21 @@
 	       				 <span v-if="data.type=='group'"><i :class="Edata.icon.sitemap"></i> {{ data.title }}</span>
 						<span v-else-if="data.type=='0'"><i :class="Edata.icon.cameravideo"></i> {{ data.title }}</span>
 						<span v-else-if="data.type=='1'"><i :class="Edata.icon.domecamera"></i> {{ data.title }}</span>
-						<span v-else>1</span>
+						<span v-else-if="data.type=='2'"><i :class="Edata.icon.hawkeye"></i> {{ data.title }}</span>
 					</span>
 				</el-tree>
 			</div>
 			<div style="height: 100%;padding: 0;">
 				<baidu-map class="map bm-view" :center="center" :zoom="zoom"  :scroll-wheel-zoom="true"   @ready="handler">
 					<bm-scale anchor="BMAP_ANCHOR_BOTTOM_LEFT"></bm-scale>
-					
-					
 					<bm-overview-map anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :isOpen="true"></bm-overview-map>
 					<bm-traffic v-if="controlTraffic" :predictDate="trafficData"></bm-traffic>
 					<!--<bm-traffic v-if="controlTraffic" :pridictDate="{weekday: 5, hour: 12}"></bm-traffic>-->
 					<bm-city-list anchor="BMAP_ANCHOR_TOP_RIGHT" :offset="offsetCityList"></bm-city-list>
 					<bm-map-type class="map-type" :map-types="['BMAP_NORMAL_MAP', 'BMAP_HYBRID_MAP']" anchor="BMAP_ANCHOR_TOP_RIGHT" type="BMAP_MAPTYPE_CONTROL_MAP"  :offset="{width: 0,height: 0}" ></bm-map-type>
-					
 					<bm-info-window :position="{lng: winInfo.longitude,lat: winInfo.latitude}" :width="250" :closeOnClick="false" :autoPan="true" :show="show" @clickclose="infoWindowClose" :offset="{width: -7,height: 2}">
 						<el-row style="margin-top: 5px;">
-							<div style="width: 100%;text-align: center;"><a :href="winInfo.img" target="_blank"><img :src="winInfo.img" style="max-width: 300px;max-height: 150px;margin-top: 5px;" /></a></div>
+							<div style="width: 100%;text-align: center;"><a :href="winInfo.img" target="_blank"><img :src="winInfo.img" @error="screenshot" style="max-width: 300px; max-height: 150px;margin-top: 5px;" /></a></div>
 							<p style="margin-top: 5px;">
 							<span >编号：{{winInfo.serial}}</span>
 							<span  :class="winInfo.status==='0'?'stateGre':'stateRed'"></span>
@@ -56,7 +53,7 @@
 						</div>
 						</el-row>-->
 					</bm-info-window>
-					<bm-marker v-for=" (item,index) in equipmentData" v-if="item.show && item.type!==null" :key="index" :position="{lng: item.longitude,lat: item.latitude}" :icon="item.type==='0'?cameraIcon:item.type==='1'?carIcon:''" @click="infoWindowOpen(item)" :offset="iconOffset" >
+					<bm-marker v-for=" (item,index) in equipmentData" v-if="item.show && item.type!==null" :key="index" :position="{lng: item.longitude,lat: item.latitude}" :icon="item.type==='0'?cameraIcon:item.type==='1'?carIcon:hawkeye" @click="infoWindowOpen(item)" :offset="iconOffset" >
 					</bm-marker>
 					<bm-polyline v-for="(item,index) in formatAfterLineArr"   v-if="item.show" :path="item.ll" stroke-color="#0066FF" :stroke-opacity="1" :stroke-weight="5"></bm-polyline>
 					<!--<bm-polyline :path="market|filterMarket " stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="5"></bm-polyline>-->
@@ -109,7 +106,7 @@
 		<el-dialog v-if="showWin" :visible.sync="dialogFormVisible" :center="true" :modal-append-to-body="true" :close-on-click-modal="false" top="5vh" width="90%" @close="diaClose">
 			<!--<video-player style='width: 100%;height: 100%;' class="vjs-custom-skin" ref="videoPlayer" :options="playerOptions" @ready="onPlayerReadied">
 			</video-player>-->
-			<Vplayer  :VOptions="options" :VIndex="index"  type="map"></Vplayer>
+			<Vplayer  :VOptions="options" :VIndex="index" @CcloseWin="closeWin"  type="map"></Vplayer>
 		</el-dialog>
 
 	</section>
@@ -164,6 +161,7 @@
 				},
 				cameraIcon:{url: './static/img/map_camera.png', size: {width: 32, height: 32}},
 				carIcon:{url: './static/img/car.png', size: {width: 32, height: 32}},
+				hawkeye:{url: './static/img/Hawkeye.png', size: {width: 32, height: 32}},
 				
 				times: "",
 				formatAfterLineArr:[],
@@ -238,6 +236,13 @@
 			}
 		},
 		methods: {
+			closeWin(){
+				this.showWin = false;
+				this.dialogFormVisible = false;
+			},
+			screenshot(){
+				this.winInfo.img='./static/img/19.png';
+			},
 			//监控播放次数
 			insertPlayVideoNum(id){
 				let info={id:id}
@@ -303,6 +308,8 @@
 				this.dialogFormVisible = true;
 				this.options={
 					serial:row.ssVideo,
+					// serial:'rtmp://192.168.1.183/vod/out.flv',
+					
 					id:row.id,
 					title:row.name,
 				}
@@ -570,7 +577,7 @@
 				return coordinateList;
 			},
 			checkChange(obj,state){
-				if(obj.type==="0" || obj.type==="1"){
+				if(obj.type==="0" || obj.type==="1" || obj.type==="2"){
 					for(var index in this.equipmentData){
 						if(obj.id==this.equipmentData[index].id){
 							let item = this.equipmentData[index];
@@ -595,10 +602,18 @@
 					} = data;
 					if(success) {
 						console.log(data);
-						this.equipmentData = value;
-						for(var item of this.equipmentData){
-							item.show=true;
+						let arr=[];
+						for(var item of value){
+							if(item.latitude||item.longitude){
+									item.show=true;
+									arr.push(item);
+							}
 						}
+						this.equipmentData = arr;
+						console.log(this.equipmentData);
+// 						for(var item of this.equipmentData){
+// 							item.show=true;
+// 						}
 						
 					} else {
 						this.$message({
@@ -634,6 +649,13 @@
 		},
 		mounted() {
 			this.handler();
+			console.log($('.screenshot'));
+			$(document).on('onerror','.screenshot',function(){
+				console.log('hahahhahahhahahahhahhahahahhahahahhahahahhahahahahhahah');
+			});
+//			$('.bmMark img').error(function(){
+//			    $(this).attr('src',"http://img.zcool.cn/community/0117e2571b8b246ac72538120dd8a4.jpg@1280w_1l_2o_100sh.jpg");
+//			})
 
 		},
 		created() {
@@ -721,7 +743,7 @@
 	}
 	
 	.mapShow .video-js {
-		height: 80vh;
+		height: 90vh;
 	}
 	
 	.mapShow .el-dialog {
@@ -809,10 +831,14 @@
 		vertical-align: middle;
 	}
 	.mapShow .el-dialog__body{
-		height: calc(100% - 94px);
+		padding:0;
+		height: 100%;
+	}
+	.mapShow .el-dialog__header{
+		display: none;
 	}
 	.mapShow .closeBtn{
-		display: none;
+		/* display: none; */
 	}
 	span[title='显示三维地图']{
 		display: none;

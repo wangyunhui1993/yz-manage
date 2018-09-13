@@ -50,6 +50,8 @@
 		},
 		data() {
 			return {
+
+				eleIndex:0,
 				VLoading: false,
 				index: "",
 				modeClass: "",
@@ -71,7 +73,7 @@
 					overNative: true,
 					autoplay: true,
 					controls: false,
-
+					
 					bigPlayButton: false,
 					//      textTrackDisplay : false,
 					posterImage: false,
@@ -82,6 +84,8 @@
 					//					notSupportedMessage: '此视频暂无法播放，请稍后再试', //允许覆盖Video.js无法播放媒体源时显示的默认信息。
 					techOrder: ['flash', 'html5'],
 					sourceOrder: true,
+// 					fluid:true,
+					// aspectRatio:"16:9",
 					flash: {
 						hls: {
 							withCredentials: false
@@ -101,7 +105,7 @@
 					}, {
 						withCredentials: false,
 						type: 'application/x-mpegURL',
-						src: 'http://playertest.longtailvideo.com/adaptive/bipbop/gear4/prog_index.m3u8'
+						src: ''
 					}],
 					//					 fullscreenToggle: true, // 全屏
 					controlBar: {
@@ -128,6 +132,8 @@
 			},
 			onPlayerReadied() {
 				console.log("onPlayerReadied");
+// 				$('.videoItem').css({width:'99%'});
+				// $($('.videoItem')[this.eleIndex]).css({height:'99%'});
 				if(!this.initialized) {
 					this.initialized = true
 					//      this.currentTech = this.player.techName
@@ -181,6 +187,12 @@
 
 			},
 			onPlayerPlaying(player) {
+				// setTimeout(()=>{
+					// console.log('延迟运行了吗？',this.eleIndex,$('.videoItem'));
+// 					$('.videoItem').css({width:'100%'});
+					// $($('.videoItem')[this.eleIndex]).css({height:'100%'});
+				// },2000);
+				
 				this.VLoading = false;
 				console.log('player Playing!', player)
 
@@ -272,6 +284,7 @@
 
 			},
 			onPlayerCanplay(player) {
+				// $('.videoItem').css({padding:'0.5px'});
 				console.log('player Canplay!', player)
 			},
 			onPlayerCanplaythrough(player) {
@@ -284,6 +297,10 @@
 			errorInfo(player) {
 				this.VLoading = false;
 				console.log('player error!', player)
+				this.$message({
+					message: "视频加载失败",
+					type: 'error'
+				});
 			},
 			SingleLeftClick(player) {
 				console.log('player SingleLeftClick!', player)
@@ -327,33 +344,50 @@
 			closeBtn() {
 				this.playerOptions.sources[0].src = "";
 				this.VLoading = false;
+				this.$emit("CcloseWin");
+				
 			},
 
 		},
 		watch: {
 			VOptions(val) {
 				console.log('变化了吗？', val);
+//				console.log("index变化了",this.testIndex);
+				
 				this.playerOptions.sources[0].src = val.serial;
+				this.eleIndex=val.index;
+				console.log("element",this.eleIndex);
 				if(this.type === 'bigScreen') {
 					if(publicMethods.judgmentFlash()) {
 						this.modeShow = true;
 					} else {
-						this.modeShow = false;
+						// this.modeShow = false;
+						this.closeShow=false;
+						const h = this.$createElement;
+						this.$notify({
+						title: '提示',
+						message: h('i', { style: 'color: teal'}, '您的浏览器未启用Flash插件')
+						});
 					}
 				}
 			},
 			VParameters(val) {
-				console.log('变化了吗？', val);
 				this.parameters = Object.assign({}, val);
+			},
+			VIndex:function(val){
+				console.log("index变化了",val);
 			},
 
 		},
-		mounted() {
+		created(){
 			this.options = Object.assign({}, this.VOptions);
 			this.playerOptions.sources[0].src = this.VOptions.serial;
 			console.log('aaaaaaaaaaaa', this.options);
 			this.parameters = Object.assign({}, this.VParameters);
 			this.index = this.VIndex;
+		},
+		mounted() {
+			
 
 			$(".mode").bind("contextmenu", function() {
 				return false;
@@ -362,7 +396,12 @@
 				if(publicMethods.judgmentFlash()) {
 					this.modeShow = true;
 				} else {
-					this.modeShow = false;
+					// this.modeShow = false;
+					const h = this.$createElement;
+					this.$notify({
+					  title: '提示',
+					  message: h('i', { style: 'color: teal'}, '您的浏览器未启用Flash插件')
+					});
 				}
 			}
 
@@ -412,6 +451,7 @@
 	.videoItem {
 		height: 100%;
 		width: 100%;
+		box-sizing: border-box;
 	}
 	
 	.obMode {

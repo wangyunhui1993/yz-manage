@@ -258,9 +258,7 @@
 			this.tableDataLoading = true;
 			try {
 				if(this.$route.query.keywords) {
-					
 					this.searchData = Object.assign(this.searchData,JSON.parse(this.$route.query.keywords));
-					
 				}
 			} finally {}
 			console.log(this.searchData);
