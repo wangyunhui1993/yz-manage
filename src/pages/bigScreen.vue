@@ -100,7 +100,7 @@
 					</el-card>
 				</div>
 			</el-aside>
-			<el-container style="height: 100%;" id="dashboard_id">
+			<el-container style="height: 100%; width:500px !important" id="dashboard_id">
 				<el-main style="padding: 0;height: 100%;">
 					<div v-for="(i,index) in bigNum" @dragover="dragenter($event)" @drop="drop(index)" class="screenItem" :data-index='i' :key="index" :class="'part'+btn_H">
 						<!--<div class="selectScreenItem" :class="index==radio?'screenItemIndex':''"  @mouseenter="showInfo" @mouseleave="hideInfo">
@@ -552,7 +552,7 @@
 												children: [],
 												type: equArray[j].type,
 												serial:equArray[j].serial,
-//												serial:i%2==0?"rtmp://dxftech.asuscomm.com/hls/mystream":"rtmp://184.72.239.149/vod/&mp4:BigBuckBunny_115k.mov"
+												// serial:"rtmp://dxftech.asuscomm.com/hls/mystream",
 											};
 											console.log(i%2);
 											chiArr[i].children.push(obj);

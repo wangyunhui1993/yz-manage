@@ -6,6 +6,7 @@
 		</div>
 		<div v-loading="VLoading" element-loading-text="视频加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" class="mode" :class="index==0?'modeBorder':''" v-if="modeShow" @click="clickMode($event)" @dblclick="dblclickMode" @mouseenter="showInfo" @mouseleave="hideInfo">
 			<i class="el-icon-close closeBtn" title="关闭" v-if="closeShow" @click="closeBtn"></i>
+			<p v-if="checkFlash" style="font-size: 20px;color: #FFFFFF;text-align: center;">您的电脑flash版本过低或是异常,请点击<a href="https://www.flash.cn/" style="color: red;cursor: pointer;">安装</a></p>
 		</div>
 		<!--<iframe src="" width="" height="" class="vjs-resize-manager"></iframe>-->
 
@@ -46,11 +47,11 @@
 				type: Number,
 				require: true,
 				default: 0, //默认值
-			}
+			},
 		},
 		data() {
 			return {
-
+				checkFlash:false,
 				eleIndex:0,
 				VLoading: false,
 				index: "",
@@ -82,7 +83,8 @@
 					preload: 'auto',
 					//					 poster: "http://dxftech.asuscomm.com:9988/img/180608121946016861.jpg", //你的封面地址
 					//					notSupportedMessage: '此视频暂无法播放，请稍后再试', //允许覆盖Video.js无法播放媒体源时显示的默认信息。
-					techOrder: ['flash', 'html5'],
+//					techOrder: ['flash', 'html5'],
+					techOrder: ['flash'],
 					sourceOrder: true,
 // 					fluid:true,
 					// aspectRatio:"16:9",
@@ -93,20 +95,23 @@
 						swf: 'static/videojs-swf_5.4.1_video-js.swf',
 					},
 					html5: {
-						hls: {
-							withCredentials: false
-						}
+						nativeVideoTracks:false,
+//						hls: {
+//							withCredentials: false
+//						}
 					},
 					sources: [{
 						type: 'rtmp/mp4',
 						//						src: 'rtmp://184.72.239.149/vod/&mp4:BigBuckBunny_115k.mov'
 						//						src: 'rtmp://dxftech.asuscomm.com/hls/mystream'
 						src: ""
-					}, {
-						withCredentials: false,
-						type: 'application/x-mpegURL',
-						src: ''
-					}],
+					}, 
+//					{
+//						withCredentials: false,
+//						type: 'application/x-mpegURL',
+//						src: ''
+//					}
+					],
 					//					 fullscreenToggle: true, // 全屏
 					controlBar: {
 						timeDivider: false, // 时间分割线
@@ -123,7 +128,8 @@
 				return this.$refs.videoPlayer.player
 			},
 			currentStream() {
-				return this.currentTech === 'Flash' ? 'RTMP' : 'HLS'
+//				return this.currentTech === 'Flash' ? 'RTMP' : 'HLS'
+				return this.currentTech === 'Flash' ? 'RTMP' : 'RTMP'
 			}
 		},
 		methods: {
@@ -136,7 +142,7 @@
 				// $($('.videoItem')[this.eleIndex]).css({height:'99%'});
 				if(!this.initialized) {
 					this.initialized = true
-					//      this.currentTech = this.player.techName
+					     this.currentTech = this.player.techName
 				}
 			},
 			// record current time
@@ -148,7 +154,7 @@
 			},
 			changeTech() {
 				if(this.currentTech === 'Html5') {
-					this.playerOptions.techOrder = ['html5']
+					this.playerOptions.techOrder = ['flash']
 				} else if(this.currentTech === 'Flash') {
 					this.playerOptions.techOrder = ['flash']
 				}
@@ -187,101 +193,8 @@
 
 			},
 			onPlayerPlaying(player) {
-				// setTimeout(()=>{
-					// console.log('延迟运行了吗？',this.eleIndex,$('.videoItem'));
-// 					$('.videoItem').css({width:'100%'});
-					// $($('.videoItem')[this.eleIndex]).css({height:'100%'});
-				// },2000);
-				
 				this.VLoading = false;
 				console.log('player Playing!', player)
-
-				//         var aaa="<p class='ppp' v-if='false' onclick='function(){}'>123465794465465</p>";
-				//         $(this.player.el_).append(aaa);
-				player.hotkeys({
-					volumeStep: 0.1,
-					seekStep: 5,
-					enableMute: true,
-					enableFullscreen: true,
-					enableNumbers: false,
-					enableVolumeScroll: true,
-					// Enhance existing simple hotkey with a complex hotkey
-					fullscreenKey: function(e) {
-						// fullscreen with the F key or Ctrl+Enter
-						return((e.which === 70) || (e.ctrlKey && e.which === 13));
-					},
-					// Custom Keys
-					customKeys: {
-						// Add new simple hotkey
-						simpleKey: {
-							key: function(e) {
-								// Toggle something with S Key
-								return(e.which === 83);
-							},
-							handler: function(player, options, e) {
-								// Example
-								if(player.paused()) {
-									player.play();
-								} else {
-									player.pause();
-								}
-							}
-						},
-						// Add new complex hotkey
-						complexKey: {
-							key: function(e) {
-								// Toggle something with CTRL + D Key
-								return(e.ctrlKey && e.which === 68);
-							},
-							handler: function(player, options, event) {
-								// Example
-								if(options.enableMute) {
-									player.muted(!player.muted());
-								}
-							}
-						},
-						// Override number keys example from https://github.com/ctd1500/videojs-hotkeys/pull/36
-						numbersKey: {
-							key: function(event) {
-								// Override number keys
-								return((event.which > 47 && event.which < 59) || (event.which > 95 && event.which < 106));
-							},
-							handler: function(player, options, event) {
-								// Do not handle if enableModifiersForNumbers set to false and keys are Ctrl, Cmd or Alt
-								if(options.enableModifiersForNumbers || !(event.metaKey || event.ctrlKey || event.altKey)) {
-									var sub = 48;
-									if(event.which > 95) {
-										sub = 96;
-									}
-									var number = event.which - sub;
-									player.currentTime(player.duration() * number * 0.1);
-								}
-							}
-						},
-						emptyHotkey: {
-							// Empty
-						},
-						withoutKey: {
-							handler: function(player, options, event) {
-								console.log('withoutKey handler');
-							}
-						},
-						withoutHandler: {
-							key: function(e) {
-								return true;
-							}
-						},
-						malformedKey: {
-							key: function() {
-								console.log('I have a malformed customKey. The Key function must return a boolean.');
-							},
-							handler: function(player, options, event) {
-								//Empty
-							}
-						}
-					}
-				});
-
 			},
 			onPlayerCanplay(player) {
 				// $('.videoItem').css({padding:'0.5px'});
@@ -325,7 +238,7 @@
 				if(!this.playerOptions.sources[0].src) return false;
 				if(!this.player.isFullscreen()) {
 					this.closeShow = true;
-					//				this.modeClass="modeBorder";
+					//this.modeClass="modeBorder";
 				}
 			},
 			hideInfo() {
@@ -344,6 +257,7 @@
 			closeBtn() {
 				this.playerOptions.sources[0].src = "";
 				this.VLoading = false;
+				this.checkFlash=false;
 				this.$emit("CcloseWin");
 				
 			},
@@ -360,14 +274,16 @@
 				if(this.type === 'bigScreen') {
 					if(publicMethods.judgmentFlash()) {
 						this.modeShow = true;
+						this.checkFlash=false;
 					} else {
 						// this.modeShow = false;
 						this.closeShow=false;
 						const h = this.$createElement;
-						this.$notify({
-						title: '提示',
-						message: h('i', { style: 'color: teal'}, '您的浏览器未启用Flash插件')
-						});
+// 						this.$notify({
+// 						title: '提示',
+// 						message: h('i', { style: 'color: teal'}, '您的浏览器未启用Flash插件')
+// 						});
+							this.checkFlash=true;
 					}
 				}
 			},
@@ -387,21 +303,20 @@
 			this.index = this.VIndex;
 		},
 		mounted() {
-			
-
 			$(".mode").bind("contextmenu", function() {
 				return false;
 			})
 			if(this.type === 'map') {
 				if(publicMethods.judgmentFlash()) {
 					this.modeShow = true;
+					this.checkFlash=false;
 				} else {
-					// this.modeShow = false;
-					const h = this.$createElement;
-					this.$notify({
-					  title: '提示',
-					  message: h('i', { style: 'color: teal'}, '您的浏览器未启用Flash插件')
-					});
+// 					const h = this.$createElement;
+// 					this.$notify({
+// 					  title: '提示',
+// 					  message: h('i', { style: 'color: teal'}, '您的浏览器未启用Flash插件')
+// 					});
+					this.checkFlash=true;
 				}
 			}
 

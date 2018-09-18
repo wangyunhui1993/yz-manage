@@ -10,7 +10,7 @@
 					<h3 style="color:#333">设备访问热度</h3>
 				</bm-control>
 				<bm-polyline v-for="(item,index) in formatAfterLineArr"  :path="item.ll"  stroke-color="#0066FF" :stroke-opacity="1"  :stroke-weight="5"></bm-polyline>
-				<bml-heatmap :data="heatData" :max="hotMax" :radius="20"></bml-heatmap>
+				<bml-heatmap v-if="heatData.length"  :data="heatData" :max="hotMax" :radius="20"></bml-heatmap>
 			</baidu-map>
 		</div>
 		<div class="part">
@@ -258,7 +258,8 @@
 					} = data;
 					if(success) {
 						console.log(data);
-						this.heatData = [];
+						this.heatData.splice(0,this.heatData.length);
+						this.hotMax=10;
 						for(var item of value) {
 							this.heatData.push({
 								lng: item.longitude,
