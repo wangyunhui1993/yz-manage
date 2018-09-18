@@ -10,18 +10,17 @@
 				<el-tree :data="groupAndEqu" :default-checked-keys="defaultCheckedKeys" show-checkbox node-key="id" @check-change="checkChange"  :filter-node-method="filterNode"  default-expand-all :expand-on-click-node="false"  ref="tree2" >
 					<span class="custom-tree-node" slot-scope="{ node, data }">
 	       				 <span v-if="data.type=='group'"><i :class="Edata.icon.sitemap"></i> {{ data.title }}</span>
-						<span v-else-if="data.type=='0'"><i :class="Edata.icon.cameravideo"></i> {{ data.title }}</span>
-						<span v-else-if="data.type=='1'"><i :class="Edata.icon.domecamera"></i> {{ data.title }}</span>
-						<span v-else-if="data.type=='2'"><i :class="Edata.icon.hawkeye"></i> {{ data.title }}</span>
+						<span v-else-if="data.type=='0'"   @click="clickEquBtn(data)" ><i :class="Edata.icon.cameravideo"></i> {{ data.title }}</span>
+						<span v-else-if="data.type=='1'" @click="clickEquBtn(data)" ><i :class="Edata.icon.domecamera"></i> {{ data.title }}</span>
+						<span v-else-if="data.type=='2'" @click="clickEquBtn(data)" ><i :class="Edata.icon.hawkeye"></i> {{ data.title }}</span>
 					</span>
 				</el-tree>
 			</div>
 			<div style="height: 100%;padding: 0;">
-				<baidu-map class="map bm-view" :center="center" :zoom="zoom"  :scroll-wheel-zoom="true"   @ready="handler">
+				<baidu-map class="map bm-view" :center="center" :zoom="zoom"  @zoomend="zoomend" @moveend="moveend" :scroll-wheel-zoom="true"   @ready="handler">
 					<bm-scale anchor="BMAP_ANCHOR_BOTTOM_LEFT"></bm-scale>
 					<bm-overview-map anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :isOpen="true"></bm-overview-map>
 					<bm-traffic v-if="controlTraffic" :predictDate="trafficData"></bm-traffic>
-					<!--<bm-traffic v-if="controlTraffic" :pridictDate="{weekday: 5, hour: 12}"></bm-traffic>-->
 					<bm-city-list anchor="BMAP_ANCHOR_TOP_RIGHT" :offset="offsetCityList"></bm-city-list>
 					<bm-map-type class="map-type" :map-types="['BMAP_NORMAL_MAP', 'BMAP_HYBRID_MAP']" anchor="BMAP_ANCHOR_TOP_RIGHT" type="BMAP_MAPTYPE_CONTROL_MAP"  :offset="{width: 0,height: 0}" ></bm-map-type>
 					<bm-info-window :position="{lng: winInfo.longitude,lat: winInfo.latitude}" :width="250" :closeOnClick="false" :autoPan="true" :show="show" @clickclose="infoWindowClose" :offset="{width: -7,height: 2}">
@@ -37,26 +36,10 @@
 								<!--<el-button type="primary" size="mini" @click="history(winInfo.id)" style="padding: 5px;">历史监控</el-button>-->
 							</div>
 						</el-row>
-						<!--<el-row v-if="winInfo.type==='1'" style="margin-top: 5px;">
-							<p style="margin-top: 5px;">
-								编号：{{winInfo.serial}}
-								
-								
-							</p>
-							<p style="margin-top: 5px;">名称：{{winInfo.name}}</p>
-						<div style="margin-top: 5px;">
-								<p>过车数量（1小时）：5辆</p>
-								<p>2018-04-26 11:22:56</p>
-								<p>2018-04-26 11:22:56</p>
-								<p>2018-04-26 11:22:56</p>
-								<p>......</p>
-						</div>
-						</el-row>-->
 					</bm-info-window>
 					<bm-marker v-for=" (item,index) in equipmentData" v-if="item.show && item.type!==null" :key="index" :position="{lng: item.longitude,lat: item.latitude}" :icon="item.type==='0'?cameraIcon:item.type==='1'?carIcon:hawkeye" @click="infoWindowOpen(item)" :offset="iconOffset" >
 					</bm-marker>
 					<bm-polyline v-for="(item,index) in formatAfterLineArr"   v-if="item.show" :path="item.ll" stroke-color="#0066FF" :stroke-opacity="1" :stroke-weight="5"></bm-polyline>
-					<!--<bm-polyline :path="market|filterMarket " stroke-color="blue" :stroke-opacity="0.5" :stroke-weight="5"></bm-polyline>-->
 					<bm-control anchor="BMAP_ANCHOR_TOP_RIGHT" :offset="offsetControl">
 						<div style="position: relative;">
 							<div style="float: right;" class="traffic" :class="controlTraffic?'showTraffic':''" @click="traffic">路况</div>
@@ -93,9 +76,10 @@
 						</div>
 					</bm-control>
 					<bm-control anchor="BMAP_ANCHOR_TOP_RIGHT" :offset="offsetW">
-						<!--<template>-->
 							<div id="tp-weather-widget" v-if="showWeather"></div>
-						<!--</template>-->
+					</bm-control>
+					<bm-control anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :offset="offsetPosition">
+						<i class="el-icon-location-outline" @click="initPosition" title="初始化位置" style="font-size: 25px;border: 1px solid blue;cursor: pointer;"></i>
 					</bm-control>
 				</baidu-map>
 
@@ -158,6 +142,10 @@
 				offsetControl: {
 					width: 120,
 					height: 8
+				},
+				offsetPosition:{
+					width: 0,
+					height: 150
 				},
 				cameraIcon:{url: './static/img/map_camera.png', size: {width: 32, height: 32}},
 				carIcon:{url: './static/img/car.png', size: {width: 32, height: 32}},
@@ -236,6 +224,42 @@
 			}
 		},
 		methods: {
+			initPosition(){
+				this.center={
+					lng: 119.42285,
+					lat: 32.37020
+				};
+				this.zoom=14;
+			},
+			//地图更改缩放级别结束时触发触发此事件
+			zoomend(type, target){
+				this.zoom=type.currentTarget.Oa;
+			},
+			//地图移动结束时触发此事件
+			moveend(type, target){
+				this.center=Object.assign({},type.currentTarget.Oe);
+			},
+			clickEquBtn(val){
+				let state=true;
+				for(var index in this.equipmentData){
+						if(val.id==this.equipmentData[index].id){
+							state=false;
+							let item = this.equipmentData[index];
+							this.center={
+								lng: item.longitude,
+								lat: item.latitude
+							}
+							this.show = true;
+							this.winInfo= item;
+						}
+					}
+				if(state){
+							this.$message({
+							message: "此设备经纬度不合法，不在地图中显示",
+							type: 'error'
+						});
+						}
+			},
 			closeWin(){
 				this.showWin = false;
 				this.dialogFormVisible = false;
