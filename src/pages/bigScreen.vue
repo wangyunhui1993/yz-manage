@@ -100,7 +100,7 @@
 					</el-card>
 				</div>
 			</el-aside>
-			<el-container style="height: 100%; width:500px !important" id="dashboard_id">
+			<el-container style="height: 100%;" id="dashboard_id">
 				<el-main style="padding: 0;height: 100%;">
 					<div v-for="(i,index) in bigNum" @dragover="dragenter($event)" @drop="drop(index)" class="screenItem" :data-index='i' :key="index" :class="'part'+btn_H">
 						<!--<div class="selectScreenItem" :class="index==radio?'screenItemIndex':''"  @mouseenter="showInfo" @mouseleave="hideInfo">
@@ -119,7 +119,7 @@
 						<Vplayer  :VOptions="options[index]" :VIndex="index" :VParameters="videoParameters" @Cparameters="Pparameters" @CIndex="indexFn" type="bigScreen"></Vplayer>
 					</div>
 				</el-main>
-				<el-footer height="40px">
+				<el-footer height="44px">
 					<div class="btn_pic" style="margin: 3px 0;float: right;">
 						<img :src="1==btn_H?pic.pic_1_h:pic.pic_1" @click="selectNum(1)" />
 						<img :src="4==btn_H?pic.pic_4_h:pic.pic_4" @click="selectNum(4)" />
@@ -127,7 +127,7 @@
 						<img :src="16==btn_H?pic.pic_16_h:pic.pic_16" @click="selectNum(16)" />
 						<img :src="'3a'==btn_H?pic.pic_3a_h:pic.pic_3a" @click="selectNum('3a')" />
 						<img :src="'3b'==btn_H?pic.pic_3b_h:pic.pic_3b" @click="selectNum('3b')" />
-						<img :src="pic.pic_zoom" ref="bigScreeen" @click="selectNum('big')" />
+						<img :src="allScreen?pic.pic_zoom_h:pic.pic_zoom" ref="bigScreeen" @click="selectNum('big')" />
 					</div>
 				</el-footer>
 			</el-container>
@@ -420,10 +420,11 @@
 					//					this.allScreen ? window.event.currentTarget.src = './../../static/img/zoom_in.png' : window.event.currentTarget.src = './../../static/img/zoom_out.png'
 					if(this.allScreen) {
 						console.log("全屏");
+						window.event.currentTarget.src = this.pic.pic_zoom_h;
 						var elem = document.getElementById("dashboard_id");
 						elem.style.width = "100%";
 						elem.style.height = "100%";
-						elem.style.overflowY = "scroll";
+						// elem.style.overflowY = "scroll";
 						requestFullScreen(elem); // 某个页面元素
 						function requestFullScreen(element) {
 							// 判断各种浏览器，找到正确的方法
@@ -444,9 +445,9 @@
 							}
 						}
 					} else {
-						console.log("退出全屏");
+						console.log("退出全屏",this.allScreen);
+						console.log(window.event.currentTarget);
 						window.event.currentTarget.src = this.pic.pic_zoom;
-
 						if(document.exitFullscreen) {
 							document.exitFullscreen();
 						} else if(document.mozCancelFullScreen) {
@@ -456,6 +457,8 @@
 						} else if(document.msExitFullscreen) {
 							document.msExitFullscreen();
 						}
+						
+// 						this.$refs.bigScreeen.src = this.pic.pic_zoom;
 					}
 				}else if(arg == "3a"){
 					this.btn_H = "3a";
@@ -721,46 +724,38 @@
 			}
 		},
 		mounted() {
-//			var _this=this;
-//			$(".ptzCircle>div>span").click(function(){
-//				
-//				_this.movingSpeed=this.title * 10;
-//				console.log('移动速度',_this.movingSpeed);
-//				let val=(-(this.title-1)*171)+'px 0px';
-//				$('.ptzCircle').css('background-position',val);
-//			});
 			
-			
-//			var objEle=$("object");
-//			console.log(objEle);
-			$(".el-button").on("click",function(){
-				console.log(13465);
-//				event.preventDefault();
-				
-			});
-			
-			var _this = this;
-
-			window.onresize = function() {
+			window.onresize = ()=> {
 				if(!checkFull()) {
-					_this.allScreen = false;
-					_this.$refs.bigScreeen.src = _this.pic.pic_zoom;
+					this.allScreen = false;
+					// this.$refs.bigScreeen.src = this.pic.pic_zoom;
 					// console.log(1234);
 					//要执行的动作
-					//          $("#dashboard_id").removeClass('expand').addClass('contract');//这里捡个懒，直接用JQ来改className
+					//$("#dashboard_id").removeClass('expand').addClass('contract');//这里捡个懒，直接用JQ来改className
 				} else {
-					_this.allScreen = true;
-					_this.$refs.bigScreeen.src = _this.pic.pic_zoom_h;
+					this.allScreen = true;
+					// this.$refs.bigScreeen.src = this.pic.pic_zoom_h;
 				}
 			}
 
 			function checkFull() {
+				console.log("判断是否是全屏");
+				console.log(document);
+				console.log(window);
+				console.log(document.fullscreenEnabled);
+				console.log(window.fullScreen);
+				console.log(document.webkitIsFullScreen);
+				console.log(document.msFullscreenEnabled);
+				
+				console.log(document.isFullScreen);
+				console.log(document.mozIsFullScreen);
 				var isFull = document.fullscreenEnabled || window.fullScreen || document.webkitIsFullScreen || document.msFullscreenEnabled;
 				//to fix : false || undefined == undefined
 				if(isFull === undefined) {
-					// console.log("不是全屏");
+					console.log("不是全屏");
 					isFull = false;
 				}
+				console.log("全屏："+isFull);
 				return isFull;
 			}
 
